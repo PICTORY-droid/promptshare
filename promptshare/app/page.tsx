@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
 import PromptCard from './components/PromptCard'
@@ -18,31 +21,33 @@ interface Prompt {
   created_at: string
 }
 
-export default async function Home() {
-  let prompts: Prompt[] = []
-  let fetchError: string | null = null
+export default function Home() {
+  const [prompts, setPrompts] = useState<Prompt[]>([])
+  const [fetchError, setFetchError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  try {
-    console.log('Fetching prompts from Supabase...')
-    const { data, error } = await supabase
-      .from('prompts')
-      .select('id, title, description, category, author_name, likes, views, created_at')
-      .order('created_at', { ascending: false })
+  useEffect(() => {
+    const fetchPrompts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('prompts')
+          .select('id, title, description, category, author_name, likes, views, created_at')
+          .order('created_at', { ascending: false })
 
-    console.log('Data:', data)
-    console.log('Error:', error)
-
-    if (error) {
-      fetchError = error.message
-      console.error('Supabase error:', error)
-    } else if (data) {
-      prompts = data
-      console.log('Prompts loaded:', prompts.length)
+        if (error) {
+          setFetchError(error.message)
+        } else if (data) {
+          setPrompts(data)
+        }
+      } catch (error) {
+        setFetchError(error instanceof Error ? error.message : '알 수 없는 에러')
+      } finally {
+        setLoading(false)
+      }
     }
-  } catch (error) {
-    console.error('Error fetching prompts:', error)
-    fetchError = error instanceof Error ? error.message : '알 수 없는 에러'
-  }
+
+    fetchPrompts()
+  }, [])
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -72,7 +77,11 @@ export default async function Home() {
           </div>
         )}
 
-        {prompts.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-xl">로딩 중...</p>
+          </div>
+        ) : prompts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-xl mb-4">아직 프롬프트가 없습니다.</p>
             <Link
