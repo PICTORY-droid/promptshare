@@ -20,18 +20,28 @@ interface Prompt {
 
 export default async function Home() {
   let prompts: Prompt[] = []
+  let fetchError = null
 
   try {
+    console.log('Fetching prompts from Supabase...')
     const { data, error } = await supabase
       .from('prompts')
       .select('id, title, description, category, author_name, likes, views, created_at')
       .order('created_at', { ascending: false })
 
-    if (!error && data) {
+    console.log('Data:', data)
+    console.log('Error:', error)
+
+    if (error) {
+      fetchError = error
+      console.error('Supabase error:', error)
+    } else if (data) {
       prompts = data
+      console.log('Prompts loaded:', prompts.length)
     }
   } catch (error) {
     console.error('Error fetching prompts:', error)
+    fetchError = error
   }
 
   return (
@@ -55,6 +65,12 @@ export default async function Home() {
             AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.
           </p>
         </div>
+
+        {fetchError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <p>에러: {JSON.stringify(fetchError)}</p>
+          </div>
+        )}
 
         {prompts.length === 0 ? (
           <div className="text-center py-12">

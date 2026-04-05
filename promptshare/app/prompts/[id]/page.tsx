@@ -1,9 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/app/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
-import ReactMarkdown from 'react-markdown'
+import { notFound } from 'next/navigation'
+import { useState, useEffect } from 'react'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 interface Prompt {
   id: string
@@ -17,38 +22,36 @@ interface Prompt {
   created_at: string
 }
 
-export default function PromptDetail({ params }: { params: { id: string } }) {
+export default function PromptDetail({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const [prompt, setPrompt] = useState<Prompt | null>(null)
-  const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchPrompt()
-  }, [params.id])
-
-  const fetchPrompt = async () => {
-    try {
+    const fetchPrompt = async () => {
+      const { id } = await params
       const { data, error } = await supabase
         .from('prompts')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
-      if (error) throw error
-      setPrompt(data)
+      if (error || !data) {
+        notFound()
+      }
 
-      await supabase
-        .from('prompts')
-        .update({ views: (data?.views || 0) + 1 })
-        .eq('id', params.id)
-    } catch (error) {
-      console.error('Error fetching prompt:', error)
-    } finally {
+      setPrompt(data)
       setLoading(false)
     }
-  }
 
-  const copyToClipboard = () => {
+    fetchPrompt()
+  }, [params])
+
+  const handleCopy = () => {
     if (prompt) {
       navigator.clipboard.writeText(prompt.content)
       setCopied(true)
@@ -65,65 +68,82 @@ export default function PromptDetail({ params }: { params: { id: string } }) {
   }
 
   if (!prompt) {
-    return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">프롬프트를 찾을 수 없습니다.</p>
-      </main>
-    )
+    return notFound()
   }
+
+  const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
 
   return (
     <main className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-md">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <Link href="/" className="text-blue-600 hover:text-blue-800 font-semibold">
-            ← 돌아가기
+        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+          <Link href="/" className="text-3xl font-bold text-blue-600">
+            PromptShare
+          </Link>
+          <Link
+            href="/create"
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 font-semibold"
+          >
+            + 프롬프트 공유
           </Link>
         </div>
       </nav>
 
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <div className="flex justify-between items-start mb-6">
+        <Link href="/" className="text-blue-500 hover:underline mb-6 inline-block">
+          ← 돌아가기
+        </Link>
+
+        <article className="bg-white rounded-lg shadow-lg p-8">
+          <div className="mb-6">
+            <span className="inline-block bg-blue-100 text-blue-800 text-sm px-4 py-2 rounded-full font-semibold">
+              {prompt.category}
+            </span>
+          </div>
+
+          <h1 className="text-4xl font-bold mb-4">{prompt.title}</h1>
+
+          <p className="text-xl text-gray-600 mb-8">{prompt.description}</p>
+
+          <div className="flex gap-8 mb-8 text-gray-600 text-sm">
             <div>
-              <h1 className="text-4xl font-bold mb-2">{prompt.title}</h1>
-              <p className="text-gray-600 mb-4">{prompt.description}</p>
-              <div className="flex gap-4 text-sm text-gray-500">
-                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-                  {prompt.category}
-                </span>
-                <span>by {prompt.author_name}</span>
-                <span>👁️ {prompt.views}</span>
-              </div>
+              <span className="font-semibold">작성자</span>
+              <p>👤 {prompt.author_name}</p>
+            </div>
+            <div>
+              <span className="font-semibold">작성일</span>
+              <p>📅 {date}</p>
+            </div>
+            <div>
+              <span className="font-semibold">좋아요</span>
+              <p>❤️ {prompt.likes}</p>
+            </div>
+            <div>
+              <span className="font-semibold">조회수</span>
+              <p>👁️ {prompt.views}</p>
             </div>
           </div>
 
-          <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">프롬프트 본문</h2>
-              <button
-                onClick={copyToClipboard}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 font-semibold"
-              >
-                {copied ? '✓ 복사됨!' : '📋 복사하기'}
-              </button>
-            </div>
-            <div className="bg-white p-4 rounded border border-gray-300 max-h-96 overflow-y-auto">
-              <ReactMarkdown className="prose prose-sm max-w-none">
-                {prompt.content}
-              </ReactMarkdown>
+          <div className="border-t pt-8">
+            <h2 className="text-2xl font-bold mb-6">프롬프트 내용</h2>
+            <div className="prose prose-sm max-w-none whitespace-pre-wrap bg-gray-50 p-6 rounded-lg border border-gray-200">
+              {prompt.content}
             </div>
           </div>
 
-          <div className="text-center">
-            <Link
-              href="/create"
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 font-semibold inline-block"
+          <div className="mt-8">
+            <button
+              onClick={handleCopy}
+              className={`px-6 py-3 rounded-lg font-semibold transition ${
+                copied
+                  ? 'bg-green-500 text-white'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
             >
-              + 내 프롬프트 공유하기
-            </Link>
+              {copied ? '✅ 복사되었습니다!' : '📋 프롬프트 복사'}
+            </button>
           </div>
-        </div>
+        </article>
       </div>
     </main>
   )
