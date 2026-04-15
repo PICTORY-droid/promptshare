@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "PromptShare - 프롬프트 공유 커뮤니티",
   description: "AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.",
+  verification: {
+    google: "jnR9e_2rD2cYJr5-ZfNaCKWLBgqx9n9i411RoqO2A8s",
+  },
 };
 
 export default function RootLayout({
