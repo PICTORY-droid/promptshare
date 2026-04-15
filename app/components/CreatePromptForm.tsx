@@ -50,7 +50,7 @@ function GlitchSubmitButton({ loading }: { loading: boolean }) {
       disabled={loading}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="w-full py-4 rounded-xl font-mono font-bold text-base transition-all hover:scale-[1.02] active:scale-95"
+      className="w-full py-3 sm:py-4 rounded-xl font-mono font-bold text-sm sm:text-base transition-all hover:scale-[1.02] active:scale-95"
       style={{
         background: loading
           ? '#21262d'
@@ -136,7 +136,7 @@ export default function CreatePromptForm() {
 
   const inputStyle = {
     width: '100%',
-    padding: '10px 14px',
+    padding: '10px 12px',
     background: '#0d1117',
     border: '1px solid #30363d',
     borderRadius: '8px',
@@ -156,15 +156,15 @@ export default function CreatePromptForm() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-0 px-4 pt-3 rounded-t-xl" style={{
+      <div className="flex items-center gap-0 px-3 sm:px-4 pt-3 rounded-t-xl overflow-x-auto" style={{
         background: '#161b22', border: '1px solid #30363d', borderBottom: 'none'
       }}>
-        <div className="flex gap-1.5 mr-4">
+        <div className="flex gap-1.5 mr-3 sm:mr-4 flex-shrink-0">
           <div className="w-3 h-3 rounded-full" style={{ background: '#ff5f57' }}></div>
           <div className="w-3 h-3 rounded-full" style={{ background: '#ffbd2e' }}></div>
           <div className="w-3 h-3 rounded-full" style={{ background: '#28c840' }}></div>
         </div>
-        <div className="px-4 py-2 rounded-t-lg text-sm font-mono flex items-center gap-2" style={{
+        <div className="px-3 sm:px-4 py-2 rounded-t-lg text-xs sm:text-sm font-mono flex items-center gap-2 flex-shrink-0" style={{
           background: '#0d1117', color: '#e6edf3',
           border: '1px solid #30363d', borderBottom: '1px solid #0d1117', marginBottom: '-1px'
         }}>
@@ -175,10 +175,12 @@ export default function CreatePromptForm() {
 
       <form onSubmit={handleSubmit} style={{
         background: '#161b22', border: '1px solid #30363d',
-        borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '32px'
-      }}>
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold font-mono mb-1" style={{ color: '#e6edf3' }}>
+        borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '20px'
+      }}
+        className="sm:p-8"
+      >
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl font-bold font-mono mb-1" style={{ color: '#e6edf3' }}>
             <span style={{ color: '#8b949e' }}>// </span>
             <span style={{ color: '#58a6ff' }}>프롬프트</span>
             <span style={{ color: '#e6edf3' }}> 공유하기</span>
@@ -189,7 +191,7 @@ export default function CreatePromptForm() {
           </p>
         </div>
 
-        <div className="mb-5">
+        <div className="mb-4 sm:mb-5">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> authorName</span>
@@ -202,7 +204,7 @@ export default function CreatePromptForm() {
             onBlur={e => e.target.style.borderColor = '#30363d'} />
         </div>
 
-        <div className="mb-5">
+        <div className="mb-4 sm:mb-5">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> title</span>
@@ -215,7 +217,7 @@ export default function CreatePromptForm() {
             onBlur={e => e.target.style.borderColor = '#30363d'} />
         </div>
 
-        <div className="mb-5">
+        <div className="mb-4 sm:mb-5">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> description</span>
@@ -229,7 +231,7 @@ export default function CreatePromptForm() {
             onBlur={e => e.target.style.borderColor = '#30363d'} />
         </div>
 
-        <div className="mb-5">
+        <div className="mb-4 sm:mb-5">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> category</span>
@@ -249,7 +251,7 @@ export default function CreatePromptForm() {
           </select>
         </div>
 
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
             <span style={{ color: '#e6edf3' }}> content</span>
@@ -265,13 +267,16 @@ export default function CreatePromptForm() {
                 <div className="w-2 h-2 rounded-full" style={{ background: '#ffbd2e' }}></div>
                 <div className="w-2 h-2 rounded-full" style={{ background: '#28c840' }}></div>
               </div>
-              <span className="text-xs font-mono" style={{ color: '#484f58' }}>
+              <span className="text-xs font-mono hidden sm:inline" style={{ color: '#484f58' }}>
                 // 엔터 → - 자동생성 | 빈줄 엔터 → 목록종료
+              </span>
+              <span className="text-xs font-mono sm:hidden" style={{ color: '#484f58' }}>
+                // 엔터 → - 자동
               </span>
             </div>
             <div className="flex">
               <div className="py-3 px-2 text-right select-none flex-shrink-0" style={{
-                borderRight: '1px solid #21262d', minWidth: '40px', background: '#0d1117'
+                borderRight: '1px solid #21262d', minWidth: '36px', background: '#0d1117'
               }}>
                 {(content || ' ').split('\n').map((_, i) => (
                   <div key={i} className="text-xs leading-6 font-mono" style={{ color: '#484f58' }}>
@@ -279,17 +284,17 @@ export default function CreatePromptForm() {
                   </div>
                 ))}
               </div>
-              <div className="relative flex-1">
+              <div className="relative flex-1 min-w-0">
                 <textarea value={content} onChange={(e) => setContent(e.target.value)}
                   onKeyDown={handleContentKeyDown} onBlur={handleContentBlur}
-                  required rows={12}
+                  required rows={10}
                   style={{
-                    width: '100%', padding: '12px 14px', background: 'transparent',
+                    width: '100%', padding: '12px 12px', background: 'transparent',
                     border: 'none', color: '#e6edf3', fontFamily: 'monospace',
-                    fontSize: '14px', outline: 'none', resize: 'vertical', lineHeight: '1.5rem',
+                    fontSize: '13px', outline: 'none', resize: 'vertical', lineHeight: '1.5rem',
                   }} />
                 {content === '' && (
-                  <div className="absolute top-3 left-3.5 pointer-events-none font-mono text-sm leading-6"
+                  <div className="absolute top-3 left-3 pointer-events-none font-mono text-xs sm:text-sm leading-6"
                     style={{ color: '#484f58' }}>
                     <p>- 엔터를 치면 다음 항목이 자동으로 생성됩니다</p>
                     <p>- 빈 줄에서 엔터를 치면 목록이 종료됩니다</p>

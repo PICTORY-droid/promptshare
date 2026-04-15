@@ -90,14 +90,14 @@ export default function Home() {
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
       {/* 히어로 섹션 */}
       <div className="border-b" style={{ borderColor: '#21262d', background: '#0d1117' }}>
-        <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
           {/* 터미널 창 */}
-          <div className="rounded-xl overflow-hidden mb-8 glow-blue" style={{
+          <div className="rounded-xl overflow-hidden mb-6 sm:mb-8 glow-blue" style={{
             border: '1px solid #30363d',
             background: '#161b22',
             maxWidth: '600px'
           }}>
-            <div className="px-4 py-2 flex items-center gap-2" style={{ background: '#21262d' }}>
+            <div className="px-3 sm:px-4 py-2 flex items-center gap-2" style={{ background: '#21262d' }}>
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
                 <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
@@ -105,7 +105,7 @@ export default function Home() {
               </div>
               <span className="text-xs ml-2" style={{ color: '#8b949e', fontFamily: 'monospace' }}>terminal</span>
             </div>
-            <div className="px-4 py-3" style={{ fontFamily: 'monospace', minHeight: '48px' }}>
+            <div className="px-3 sm:px-4 py-3 overflow-x-auto" style={{ fontFamily: 'monospace', minHeight: '48px' }}>
               <span style={{ color: '#3fb950' }}>➜</span>
               <span style={{ color: '#58a6ff' }}> ~/promptshare</span>
               <span style={{ color: '#e6edf3' }}> {displayText}</span>
@@ -114,30 +114,30 @@ export default function Home() {
           </div>
 
           <div className="fade-in-up">
-            <h1 className="text-5xl font-bold mb-4" style={{ fontFamily: 'monospace' }}>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4" style={{ fontFamily: 'monospace' }}>
               <span style={{ color: '#8b949e' }}>// </span>
               <span style={{ color: '#e6edf3' }}>프롬프트 </span>
               <span style={{ color: '#58a6ff' }}>공유</span>
               <span style={{ color: '#e6edf3' }}> 커뮤니티</span>
             </h1>
-            <p className="text-lg mb-6" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
+            <p className="text-sm sm:text-base lg:text-lg mb-5 sm:mb-6" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
               <span style={{ color: '#3fb950' }}>{'>'}</span> AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.
             </p>
 
-            <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm" style={{
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm" style={{
                 background: '#161b22', border: '1px solid #30363d', color: '#8b949e', fontFamily: 'monospace'
               }}>
                 <span style={{ color: '#3fb950' }}>●</span>
                 <span>{prompts.length} prompts loaded</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm" style={{
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm" style={{
                 background: '#161b22', border: '1px solid #30363d', color: '#8b949e', fontFamily: 'monospace'
               }}>
                 <span style={{ color: '#58a6ff' }}>◈</span>
-                <span>open source community</span>
+                <span>open source</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm" style={{
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm" style={{
                 background: '#161b22', border: '1px solid #30363d', color: '#8b949e', fontFamily: 'monospace'
               }}>
                 <span style={{ color: '#f0883e' }}>⚡</span>
@@ -149,12 +149,12 @@ export default function Home() {
       </div>
 
       {/* 프롬프트 목록 */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-3 mb-6">
-          <span style={{ color: '#3fb950', fontFamily: 'monospace', fontSize: '1.2rem' }}>$</span>
-          <span style={{ color: '#e6edf3', fontFamily: 'monospace', fontSize: '1.1rem' }}>ls -la ./prompts</span>
-          <div className="h-px flex-1" style={{ background: '#21262d' }}></div>
-          <span style={{ color: '#8b949e', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        <div className="flex items-center gap-2 sm:gap-3 mb-5 sm:mb-6 flex-wrap">
+          <span style={{ color: '#3fb950', fontFamily: 'monospace', fontSize: '1.1rem' }}>$</span>
+          <span style={{ color: '#e6edf3', fontFamily: 'monospace', fontSize: '0.95rem' }}>ls -la ./prompts</span>
+          <div className="h-px flex-1 hidden sm:block" style={{ background: '#21262d' }}></div>
+          <span style={{ color: '#8b949e', fontFamily: 'monospace', fontSize: '0.8rem' }}>
             total {prompts.length} | page {currentPage}/{totalPages}
           </span>
         </div>
@@ -176,8 +176,8 @@ export default function Home() {
           </div>
         ) : prompts.length === 0 ? (
           <div className="text-center py-20 font-mono">
-            <p className="text-2xl mb-2" style={{ color: '#8b949e' }}>404: prompts not found</p>
-            <p className="mb-6" style={{ color: '#58a6ff' }}>// 첫 번째 프롬프트를 공유해보세요!</p>
+            <p className="text-xl sm:text-2xl mb-2" style={{ color: '#8b949e' }}>404: prompts not found</p>
+            <p className="mb-6 text-sm sm:text-base" style={{ color: '#58a6ff' }}>// 첫 번째 프롬프트를 공유해보세요!</p>
             <Link href="/create" className="px-6 py-3 rounded-lg font-semibold transition-all hover:scale-105"
               style={{ background: '#238636', color: '#ffffff', border: '1px solid #3fb950' }}>
               $ new prompt
@@ -185,7 +185,7 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {paginatedPrompts.map((prompt, index) => (
                 <div key={prompt.id} className="fade-in-up"
                   style={{ animationDelay: `${(index % 9) * 0.05}s` }}>
@@ -196,12 +196,11 @@ export default function Home() {
 
             {/* 페이지네이션 */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-12">
-                {/* 처음으로 */}
+              <div className="flex items-center justify-center flex-wrap gap-1.5 sm:gap-2 mt-10 sm:mt-12">
                 <button
                   onClick={() => handlePageChange(1)}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 rounded font-mono text-sm transition-all"
+                  className="px-2.5 py-1.5 rounded font-mono text-xs sm:text-sm transition-all"
                   style={{
                     background: currentPage === 1 ? '#21262d' : '#161b22',
                     color: currentPage === 1 ? '#484f58' : '#8b949e',
@@ -212,11 +211,10 @@ export default function Home() {
                   {'<<'}
                 </button>
 
-                {/* 이전 */}
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 rounded font-mono text-sm transition-all"
+                  className="px-2.5 py-1.5 rounded font-mono text-xs sm:text-sm transition-all"
                   style={{
                     background: currentPage === 1 ? '#21262d' : '#161b22',
                     color: currentPage === 1 ? '#484f58' : '#8b949e',
@@ -227,12 +225,11 @@ export default function Home() {
                   {'<'}
                 </button>
 
-                {/* 페이지 번호 */}
                 {Array.from({ length: totalPages }, (_, i) => i + 1)
                   .filter(page => {
-                    if (totalPages <= 7) return true
+                    if (totalPages <= 5) return true
                     if (page === 1 || page === totalPages) return true
-                    if (Math.abs(page - currentPage) <= 2) return true
+                    if (Math.abs(page - currentPage) <= 1) return true
                     return false
                   })
                   .reduce((acc: (number | string)[], page, idx, arr) => {
@@ -244,13 +241,13 @@ export default function Home() {
                   }, [])
                   .map((item, idx) => (
                     item === '...' ? (
-                      <span key={`dots-${idx}`} className="px-2 font-mono text-sm"
+                      <span key={`dots-${idx}`} className="px-1.5 font-mono text-xs sm:text-sm"
                         style={{ color: '#484f58' }}>...</span>
                     ) : (
                       <button
                         key={item}
                         onClick={() => handlePageChange(item as number)}
-                        className="px-3 py-1.5 rounded font-mono text-sm transition-all hover:scale-105"
+                        className="px-2.5 py-1.5 rounded font-mono text-xs sm:text-sm transition-all hover:scale-105"
                         style={{
                           background: currentPage === item ? '#1f6feb' : '#161b22',
                           color: currentPage === item ? '#ffffff' : '#8b949e',
@@ -264,11 +261,10 @@ export default function Home() {
                   ))
                 }
 
-                {/* 다음 */}
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 rounded font-mono text-sm transition-all"
+                  className="px-2.5 py-1.5 rounded font-mono text-xs sm:text-sm transition-all"
                   style={{
                     background: currentPage === totalPages ? '#21262d' : '#161b22',
                     color: currentPage === totalPages ? '#484f58' : '#8b949e',
@@ -279,11 +275,10 @@ export default function Home() {
                   {'>'}
                 </button>
 
-                {/* 마지막으로 */}
                 <button
                   onClick={() => handlePageChange(totalPages)}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 rounded font-mono text-sm transition-all"
+                  className="px-2.5 py-1.5 rounded font-mono text-xs sm:text-sm transition-all"
                   style={{
                     background: currentPage === totalPages ? '#21262d' : '#161b22',
                     color: currentPage === totalPages ? '#484f58' : '#8b949e',
