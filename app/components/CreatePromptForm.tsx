@@ -76,6 +76,7 @@ export default function CreatePromptForm() {
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('General')
   const [authorName, setAuthorName] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
@@ -88,7 +89,6 @@ export default function CreatePromptForm() {
       const textAfter = content.substring(cursorPos)
       const lines = textBefore.split('\n')
       const currentLine = lines[lines.length - 1]
-
       if (currentLine === '- ') {
         const newContent = textBefore.substring(0, textBefore.length - 2) + '\n' + textAfter
         setContent(newContent)
@@ -98,7 +98,6 @@ export default function CreatePromptForm() {
         }, 0)
         return
       }
-
       const newContent = textBefore + '\n- ' + textAfter
       setContent(newContent)
       setTimeout(() => {
@@ -114,10 +113,16 @@ export default function CreatePromptForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (password.length !== 4 || !/^\d{4}$/.test(password)) {
+      alert('비밀번호는 숫자 4자리여야 합니다.')
+      return
+    }
     setLoading(true)
     try {
       const { error } = await supabase.from('prompts').insert([{
-        title, description, content, category, author_name: authorName,
+        title, description, content, category,
+        author_name: authorName,
+        password,
       }])
       if (error) throw error
       setTitle('')
@@ -125,6 +130,7 @@ export default function CreatePromptForm() {
       setContent('')
       setCategory('General')
       setAuthorName('')
+      setPassword('')
       alert('프롬프트가 성공적으로 공유되었습니다!')
       router.push('/')
     } catch (error) {
@@ -175,10 +181,9 @@ export default function CreatePromptForm() {
 
       <form onSubmit={handleSubmit} style={{
         background: '#161b22', border: '1px solid #30363d',
-        borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '20px'
-      }}
-        className="sm:p-8"
-      >
+        borderTop: 'none', borderRadius: '0 0 12px 12px',
+      }} className="p-5 sm:p-8">
+
         <div className="mb-6 sm:mb-8">
           <h1 className="text-xl sm:text-2xl font-bold font-mono mb-1" style={{ color: '#e6edf3' }}>
             <span style={{ color: '#8b949e' }}>// </span>
@@ -191,6 +196,7 @@ export default function CreatePromptForm() {
           </p>
         </div>
 
+        {/* 작성자 */}
         <div className="mb-4 sm:mb-5">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
@@ -204,6 +210,50 @@ export default function CreatePromptForm() {
             onBlur={e => e.target.style.borderColor = '#30363d'} />
         </div>
 
+        {/* 비밀번호 */}
+        <div className="mb-4 sm:mb-5">
+          <label style={labelStyle}>
+            <span style={{ color: '#58a6ff' }}>const</span>
+            <span style={{ color: '#e6edf3' }}> password</span>
+            <span style={{ color: '#8b949e' }}> = </span>
+            <span style={{ color: '#ff7b72' }}>"****"</span>
+            <span style={{ color: '#484f58' }}> // 수정·삭제에 사용됩니다</span>
+          </label>
+          <div style={{ position: 'relative' }}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 4)
+                setPassword(val)
+              }}
+              required
+              maxLength={4}
+              inputMode="numeric"
+              pattern="\d{4}"
+              placeholder="// 숫자 4자리"
+              style={{
+                ...inputStyle,
+                letterSpacing: '0.3em',
+                fontSize: '18px',
+              }}
+              onFocus={e => e.target.style.borderColor = '#ff7b72'}
+              onBlur={e => e.target.style.borderColor = '#30363d'}
+            />
+            <div style={{
+              position: 'absolute', right: '12px', top: '50%',
+              transform: 'translateY(-50%)',
+              fontFamily: 'monospace', fontSize: '11px', color: '#484f58'
+            }}>
+              {password.length}/4
+            </div>
+          </div>
+          <p className="mt-1.5 text-xs font-mono" style={{ color: '#484f58' }}>
+            ⚠ 비밀번호를 잊으면 수정·삭제가 불가합니다
+          </p>
+        </div>
+
+        {/* 제목 */}
         <div className="mb-4 sm:mb-5">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
@@ -217,6 +267,7 @@ export default function CreatePromptForm() {
             onBlur={e => e.target.style.borderColor = '#30363d'} />
         </div>
 
+        {/* 설명 */}
         <div className="mb-4 sm:mb-5">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
@@ -231,6 +282,7 @@ export default function CreatePromptForm() {
             onBlur={e => e.target.style.borderColor = '#30363d'} />
         </div>
 
+        {/* 카테고리 */}
         <div className="mb-4 sm:mb-5">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
@@ -251,6 +303,7 @@ export default function CreatePromptForm() {
           </select>
         </div>
 
+        {/* 내용 */}
         <div className="mb-6 sm:mb-8">
           <label style={labelStyle}>
             <span style={{ color: '#58a6ff' }}>const</span>
