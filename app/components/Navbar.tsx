@@ -122,11 +122,14 @@ function CursorTrail() {
     }
 
     window.addEventListener('mousemove', onMove)
+    const onTouch = (e: TouchEvent) => { mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY; for (let i = 0; i < 3; i++) { particles.push({ x: mouseX, y: mouseY, size: Math.random() * 4 + 1, alpha: 1, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, color: colors[Math.floor(Math.random() * colors.length)] }) } }
+    window.addEventListener('touchmove', onTouch)
     window.addEventListener('resize', handleResize)
     animate()
 
     return () => {
       window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('touchmove', onTouch)
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animId)
     }
