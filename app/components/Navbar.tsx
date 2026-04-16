@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 function MatrixRain() {
   useEffect(() => {
@@ -43,6 +43,99 @@ function MatrixRain() {
     <canvas
       id="matrix-canvas-global"
       style={{ position: 'fixed', top: 0, left: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.07 }}
+    />
+  )
+}
+
+function CursorTrail() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    interface Particle {
+      x: number
+      y: number
+      size: number
+      alpha: number
+      vx: number
+      vy: number
+      color: string
+    }
+
+    const particles: Particle[] = []
+    const colors = ['#3fb950', '#58a6ff', '#bc8cff', '#39c5cf']
+    let mouseX = 0
+    let mouseY = 0
+    let animId: number
+
+    const onMove = (e: MouseEvent) => {
+      mouseX = e.clientX
+      mouseY = e.clientY
+      for (let i = 0; i < 3; i++) {
+        particles.push({
+          x: mouseX,
+          y: mouseY,
+          size: Math.random() * 4 + 1,
+          alpha: 1,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        })
+      }
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i]
+        p.x += p.vx
+        p.y += p.vy
+        p.alpha -= 0.03
+        p.size *= 0.97
+        if (p.alpha <= 0) {
+          particles.splice(i, 1)
+          continue
+        }
+        ctx.save()
+        ctx.globalAlpha = p.alpha
+        ctx.fillStyle = p.color
+        ctx.shadowBlur = 8
+        ctx.shadowColor = p.color
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      }
+      animId = requestAnimationFrame(animate)
+    }
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('resize', handleResize)
+    animate()
+
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('resize', handleResize)
+      cancelAnimationFrame(animId)
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{ position: 'fixed', top: 0, left: 0, zIndex: 1, pointerEvents: 'none' }}
     />
   )
 }
@@ -90,10 +183,10 @@ export default function Navbar() {
   return (
     <>
       <MatrixRain />
+      <CursorTrail />
       <nav className="sticky top-0 z-50 border-b" style={{
         background: '#0d1117', borderColor: '#30363d'
       }}>
-        {/* 터미널 상단 바 */}
         <div className="px-3 py-1 flex items-center gap-2 border-b" style={{
           borderColor: '#21262d', background: '#161b22'
         }}>
@@ -111,7 +204,6 @@ export default function Navbar() {
           </span>
         </div>
 
-        {/* 메인 네비 */}
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center gap-2">
           <div onClick={() => window.location.href = '/'} className="flex items-center gap-1 sm:gap-2 group min-w-0 cursor-pointer">
             <span style={{ color: '#3fb950', fontFamily: 'monospace', fontSize: '0.95rem' }}>~/</span>
