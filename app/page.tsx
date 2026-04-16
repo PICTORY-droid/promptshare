@@ -1,7 +1,7 @@
 'use client'
 
 import { supabase } from '@/app/lib/supabase'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface Prompt {
   id: string
@@ -26,7 +26,6 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 
 const CATEGORIES = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
 
-// 타이핑 애니메이션 컴포넌트
 function TypingAnimation() {
   const fullText = "// 최고의 AI 프롬프트를 공유하고 발견하세요"
   const [displayedText, setDisplayedText] = useState('')
@@ -34,7 +33,6 @@ function TypingAnimation() {
 
   useEffect(() => {
     if (!isTyping) return
-
     if (displayedText.length < fullText.length) {
       const timer = setTimeout(() => {
         setDisplayedText(fullText.slice(0, displayedText.length + 1))
@@ -53,12 +51,43 @@ function TypingAnimation() {
   )
 }
 
-function PromptCard({ prompt }: { prompt: Prompt }) {
+function PromptCard({ prompt, index }: { prompt: Prompt, index: number }) {
   const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
   const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              el.style.opacity = '1'
+              el.style.transform = 'translateY(0)'
+            }, index * 80)
+            observer.disconnect()
+          }
+        })
+      },
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [index])
 
   return (
-    <div onClick={() => window.location.href = `/prompts/${prompt.id}`} style={{ cursor: 'pointer' }}>
+    <div
+      ref={ref}
+      onClick={() => window.location.href = `/prompts/${prompt.id}`}
+      style={{
+        cursor: 'pointer',
+        opacity: 0,
+        transform: 'translateY(24px)',
+        transition: `opacity 0.5s ease, transform 0.5s ease`,
+      }}
+    >
       <div className="rounded-xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer"
         style={{ background: '#161b22', border: '1px solid #30363d' }}>
         <div className="flex items-center px-3 pt-2.5" style={{ borderBottom: '1px solid #30363d' }}>
@@ -118,7 +147,6 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
-  // 화면 크기 감지
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 640)
@@ -148,18 +176,15 @@ export default function Home() {
     return matchCat && matchSearch
   })
 
-  // 페이지네이션 설정
   const itemsPerPage = isSmallScreen ? 20 : 30
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedPrompts = filtered.slice(startIndex, startIndex + itemsPerPage)
 
-  // 카테고리나 검색 변경시 페이지 리셋
   useEffect(() => {
     setCurrentPage(1)
   }, [selectedCategory, searchQuery])
 
-  // 검색 버튼 클릭 핸들러
   const handleSearch = () => {
     if (searchQuery.trim()) {
       setCurrentPage(1)
@@ -167,34 +192,26 @@ export default function Home() {
     }
   }
 
-  // 페이지네이션 버튼 생성 함수
   const getPaginationButtons = () => {
     const buttons = []
     const maxButtons = isSmallScreen ? 5 : 7
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2))
     let endPage = Math.min(totalPages, startPage + maxButtons - 1)
-
     if (endPage - startPage + 1 < maxButtons) {
       startPage = Math.max(1, endPage - maxButtons + 1)
     }
-
     if (startPage > 1) {
       buttons.push(
-        <button
-          key="first"
-          onClick={() => setCurrentPage(1)}
+        <button key="first" onClick={() => setCurrentPage(1)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
           style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
           ◀ first
         </button>
       )
     }
-
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
-        <button
-          key={i}
-          onClick={() => setCurrentPage(i)}
+        <button key={i} onClick={() => setCurrentPage(i)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm transition-all hover:scale-105"
           style={{
             background: currentPage === i ? '#58a6ff' : 'transparent',
@@ -206,19 +223,15 @@ export default function Home() {
         </button>
       )
     }
-
     if (endPage < totalPages) {
       buttons.push(
-        <button
-          key="last"
-          onClick={() => setCurrentPage(totalPages)}
+        <button key="last" onClick={() => setCurrentPage(totalPages)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
           style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
           last ▶
         </button>
       )
     }
-
     return buttons
   }
 
@@ -230,15 +243,13 @@ export default function Home() {
           50%, 99% { opacity: 0; }
         }
       `}</style>
-      
+
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
 
-        {/* 헤더 - 타이핑 애니메이션 적용 */}
         <div className="mb-8 sm:mb-12 text-center">
           <TypingAnimation />
         </div>
 
-        {/* 검색 + 검색 버튼 */}
         <div className="flex gap-2 mb-5 sm:mb-6">
           <div className="relative flex-1">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm"
@@ -280,7 +291,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* 카테고리 필터 - 데스크톱 */}
         <div className="hidden sm:flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-1">
           {CATEGORIES.map(cat => {
             const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
@@ -299,20 +309,14 @@ export default function Home() {
           })}
         </div>
 
-        {/* 카테고리 필터 - 모바일 토글 */}
         <div className="sm:hidden mb-6">
           <button
             onClick={() => setShowCategories(!showCategories)}
             className="w-full px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all flex items-center justify-between"
-            style={{
-              background: '#161b22',
-              color: '#58a6ff',
-              border: '1px solid #30363d',
-            }}>
+            style={{ background: '#161b22', color: '#58a6ff', border: '1px solid #30363d' }}>
             <span>{selectedCategory === 'All' ? '📂 All Categories' : `📂 ${selectedCategory}`}</span>
             <span style={{ marginLeft: '8px' }}>{showCategories ? '▼' : '▶'}</span>
           </button>
-
           {showCategories && (
             <div className="mt-2 p-3 rounded-xl" style={{ background: '#161b22', border: '1px solid #30363d' }}>
               <div className="flex flex-wrap gap-2">
@@ -320,12 +324,8 @@ export default function Home() {
                   const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
                   const isActive = selectedCategory === cat
                   return (
-                    <button
-                      key={cat}
-                      onClick={() => {
-                        setSelectedCategory(cat)
-                        setShowCategories(false)
-                      }}
+                    <button key={cat}
+                      onClick={() => { setSelectedCategory(cat); setShowCategories(false) }}
                       className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all active:scale-95"
                       style={{
                         background: isActive ? (colors?.bg || '#21262d') : 'transparent',
@@ -341,7 +341,6 @@ export default function Home() {
           )}
         </div>
 
-        {/* 목록 */}
         {loading ? (
           <div className="text-center py-20 font-mono" style={{ color: '#58a6ff' }}>
             <span style={{ color: '#3fb950' }}>$</span> loading prompts
@@ -355,19 +354,17 @@ export default function Home() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              {paginatedPrompts.map(prompt => (
-                <PromptCard key={prompt.id} prompt={prompt} />
+              {paginatedPrompts.map((prompt, index) => (
+                <PromptCard key={prompt.id} prompt={prompt} index={index} />
               ))}
             </div>
 
-            {/* 페이지네이션 */}
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
                 {getPaginationButtons()}
               </div>
             )}
 
-            {/* 페이지 정보 */}
             <div className="text-center mt-6 font-mono text-xs sm:text-sm" style={{ color: '#484f58' }}>
               <span style={{ color: '#8b949e' }}>
                 // page {currentPage} of {totalPages} • {filtered.length} total prompts

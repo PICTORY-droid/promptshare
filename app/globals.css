@@ -141,3 +141,13 @@ body {
   background: #58a6ff44;
   color: #e6edf3;
 }
+.scroll-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.scroll-visible .scroll-item {
+  opacity: 1;
+  transform: translateY(0);
+}
