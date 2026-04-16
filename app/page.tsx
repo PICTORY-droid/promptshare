@@ -59,7 +59,7 @@ function PromptCard({ prompt }: { prompt: Prompt }) {
   const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
 
   return (
-    <Link href={`/prompts/${prompt.id}`}>
+    <div onClick={() => window.location.href = `/prompts/${prompt.id}`} style={{ cursor: 'pointer' }}>
       <div className="rounded-xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer"
         style={{ background: '#161b22', border: '1px solid #30363d' }}>
         <div className="flex items-center px-3 pt-2.5" style={{ borderBottom: '1px solid #30363d' }}>
@@ -106,7 +106,7 @@ function PromptCard({ prompt }: { prompt: Prompt }) {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   )
 }
 
