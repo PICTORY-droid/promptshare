@@ -13,33 +13,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   Other: '#39c5cf',
 }
 
-const selectOptionsStyle = `
-  select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-  }
-  
-  select option {
-    background: #0d1117 !important;
-    color: #e6edf3 !important;
-    padding: 6px 8px !important;
-    font-size: 14px !important;
-  }
-  
-  @media (max-width: 640px) {
-    select {
-      font-size: 14px !important;
-      max-height: 200px !important;
-    }
-    
-    select option {
-      padding: 4px 6px !important;
-      font-size: 13px !important;
-    }
-  }
-`
-
 function GlitchSubmitButton({ loading }: { loading: boolean }) {
   const [isHovered, setIsHovered] = useState(false)
   const originalText = '▶ 프롬프트 공유하기'
@@ -105,6 +78,7 @@ export default function CreatePromptForm() {
   const [authorName, setAuthorName] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const router = useRouter()
 
   const handleContentKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -187,9 +161,10 @@ export default function CreatePromptForm() {
     color: '#8b949e',
   }
 
+  const categories = ['General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
+
   return (
     <>
-      <style>{selectOptionsStyle}</style>
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center gap-0 px-3 sm:px-4 pt-3 rounded-t-xl overflow-x-auto" style={{
           background: '#161b22', border: '1px solid #30363d', borderBottom: 'none'
@@ -306,35 +281,84 @@ export default function CreatePromptForm() {
               onBlur={e => e.target.style.borderColor = '#30363d'} />
           </div>
 
-          {/* 카테고리 */}
+          {/* 카테고리 - 커스텀 드롭다운 */}
           <div className="mb-4 sm:mb-5">
             <label style={labelStyle}>
               <span style={{ color: '#58a6ff' }}>const</span>
               <span style={{ color: '#e6edf3' }}> category</span>
               <span style={{ color: '#484f58' }}> // 카테고리 선택</span>
             </label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)}
-              style={{
-                ...inputStyle,
-                cursor: 'pointer',
-                backgroundColor: '#0d1117',
-                color: '#e6edf3',
-              }}
-              onFocus={e => {
-                e.target.style.borderColor = '#58a6ff'
-                e.currentTarget.style.backgroundColor = '#0d1117'
-              }}
-              onBlur={e => {
-                e.target.style.borderColor = '#30363d'
-                e.currentTarget.style.backgroundColor = '#0d1117'
-              }}>
-              <option value="General" style={{ background: '#0d1117', color: '#e6edf3' }}>General</option>
-              <option value="Writing" style={{ background: '#0d1117', color: '#e6edf3' }}>Writing</option>
-              <option value="Coding" style={{ background: '#0d1117', color: '#e6edf3' }}>Coding</option>
-              <option value="Marketing" style={{ background: '#0d1117', color: '#e6edf3' }}>Marketing</option>
-              <option value="Education" style={{ background: '#0d1117', color: '#e6edf3' }}>Education</option>
-              <option value="Other" style={{ background: '#0d1117', color: '#e6edf3' }}>Other</option>
-            </select>
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                onBlur={() => setTimeout(() => setDropdownOpen(false), 150)}
+                style={{
+                  ...inputStyle,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  backgroundColor: '#0d1117',
+                  color: '#e6edf3',
+                  borderColor: dropdownOpen ? '#58a6ff' : '#30363d',
+                  transition: 'border-color 0.2s',
+                }}
+              >
+                <span>{category}</span>
+                <span style={{ fontSize: '12px', transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>▼</span>
+              </button>
+              {dropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    marginTop: '4px',
+                    background: '#161b22',
+                    border: '1px solid #30363d',
+                    borderRadius: '8px',
+                    zIndex: 1000,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
+                  }}
+                >
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => {
+                        setCategory(cat)
+                        setDropdownOpen(false)
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        background: category === cat ? '#1f6feb' : '#161b22',
+                        color: '#e6edf3',
+                        border: 'none',
+                        borderBottom: cat !== categories[categories.length - 1] ? '1px solid #30363d' : 'none',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        fontSize: '13px',
+                        fontFamily: 'monospace',
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseEnter={e => {
+                        if (category !== cat) {
+                          e.currentTarget.style.background = '#0d1117'
+                        }
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = category === cat ? '#1f6feb' : '#161b22'
+                      }}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* 내용 */}
