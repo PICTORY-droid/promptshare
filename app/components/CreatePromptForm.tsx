@@ -217,7 +217,7 @@ export default function CreatePromptForm() {
             <span style={{ color: '#e6edf3' }}> password</span>
             <span style={{ color: '#8b949e' }}> = </span>
             <span style={{ color: '#ff7b72' }}>"****"</span>
-            <span style={{ color: '#484f58' }}> // 수정·삭제에 사용됩니다</span>
+            <span style={{ color: '#484f58' }}> // 수정·삭제시</span>
           </label>
           <div style={{ position: 'relative' }}>
             <input
@@ -249,7 +249,7 @@ export default function CreatePromptForm() {
             </div>
           </div>
           <p className="mt-1.5 text-xs font-mono" style={{ color: '#484f58' }}>
-            ⚠ 비밀번호를 잊으면 수정·삭제가 불가합니다
+            ⚠ 비밀번호를 잊으면 수정·삭제가 불가
           </p>
         </div>
 
@@ -349,8 +349,8 @@ export default function CreatePromptForm() {
                 {content === '' && (
                   <div className="absolute top-3 left-3 pointer-events-none font-mono text-xs sm:text-sm leading-6"
                     style={{ color: '#484f58' }}>
-                    <p>- 엔터를 치면 다음 항목이 자동으로 생성됩니다</p>
-                    <p>- 빈 줄에서 엔터를 치면 목록이 종료됩니다</p>
+                    <p>- 엔터 다음 항목 자동 생성</p>
+                    <p>- 빈 줄에서 엔터 치면 목록 종료</p>
                   </div>
                 )}
               </div>
