@@ -2,7 +2,8 @@
 
 import { supabase } from '@/app/lib/supabase'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { notFound, useRouter } from 'next/navigation'
+import { useState, useEffect, useCallback, use } from 'react'
 
 interface Prompt {
   id: string
@@ -27,355 +28,606 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 
 const CATEGORIES = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
 
-// 타이핑 애니메이션 컴포넌트
-function TypingAnimation() {
-  const fullText = "// 최고의 AI 프롬프트를 공유하고 발견하세요"
-  const [displayedText, setDisplayedText] = useState('')
-  const [isTyping, setIsTyping] = useState(true)
-
-  useEffect(() => {
-    if (!isTyping) return
-
-    if (displayedText.length < fullText.length) {
-      const timer = setTimeout(() => {
-        setDisplayedText(fullText.slice(0, displayedText.length + 1))
-      }, 50)
-      return () => clearTimeout(timer)
-    } else {
-      setIsTyping(false)
-    }
-  }, [displayedText, isTyping, fullText])
-
-  return (
-    <p className="text-sm font-mono" style={{ color: '#484f58', minHeight: '1.5em' }}>
-      {displayedText}
-      {isTyping && <span style={{ color: '#58a6ff', animation: 'blink 1s infinite' }}>▍</span>}
-    </p>
-  )
+// ✅ 본문 첫 문장을 "."으로 줄바꿈하는 함수
+function formatContent(content: string): string {
+  const lines = content.split('\n')
+  if (lines.length === 0) return content
+  
+  const firstLine = lines[0]
+  const restLines = lines.slice(1).join('\n')
+  
+  // 첫 줄에서 첫 번째 "." 찾기
+  const dotIndex = firstLine.indexOf('.')
+  
+  if (dotIndex === -1) {
+    // "."이 없으면 원본 반환
+    return content
+  }
+  
+  // "." 이후에 공백이 있으면 제거
+  const firstSentence = firstLine.substring(0, dotIndex + 1).trim()
+  const rest = firstLine.substring(dotIndex + 1).trim()
+  
+  if (rest) {
+    // "." 뒤에 텍스트가 있으면 줄바꿈
+    return firstSentence + '\n' + rest + (restLines ? '\n' + restLines : '')
+  }
+  
+  // "." 뒤에 텍스트가 없으면 원본 반환
+  return content
 }
 
-function PromptCard({ prompt }: { prompt: Prompt }) {
-  const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
-  const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
+function PasswordModal({
+  mode, onConfirm, onCancel,
+}: {
+  mode: 'edit' | 'delete'
+  onConfirm: (pw: string) => void
+  onCancel: () => void
+}) {
+  const [pw, setPw] = useState('')
+  const [shake, setShake] = useState(false)
+  const isDelete = mode === 'delete'
+
+  const handleSubmit = () => {
+    if (pw.length !== 4) {
+      setShake(true)
+      setTimeout(() => setShake(false), 500)
+      return
+    }
+    onConfirm(pw)
+  }
 
   return (
-    <Link href={`/prompts/${prompt.id}`}>
-      <div className="rounded-xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer"
-        style={{ background: '#161b22', border: '1px solid #30363d' }}>
-        <div className="flex items-center px-3 pt-2.5" style={{ borderBottom: '1px solid #30363d' }}>
-          <div className="px-3 py-1.5 rounded-t-lg text-xs font-mono flex items-center gap-1.5"
-            style={{
-              background: '#0d1117', color: '#e6edf3',
-              border: '1px solid #30363d', borderBottom: '1px solid #0d1117', marginBottom: '-1px'
-            }}>
-            <span style={{ color: colors.text }}>◆</span>
-            <span>{prompt.title.substring(0, 16)}{prompt.title.length > 16 ? '...' : ''}.md</span>
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
+      <div className="w-full max-w-sm rounded-xl overflow-hidden"
+        style={{
+          background: '#161b22',
+          border: `1px solid ${isDelete ? '#f8514966' : '#30363d'}`,
+          boxShadow: `0 0 40px ${isDelete ? '#ff7b7222' : '#58a6ff22'}`
+        }}>
+        <div className="px-4 py-2 flex items-center gap-2" style={{ background: '#21262d' }}>
+          <div className="flex gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
           </div>
+          <span className="text-xs ml-2 font-mono" style={{ color: '#8b949e' }}>
+            {isDelete ? 'Delete prompt.md' : 'vim prompt.md'}
+          </span>
         </div>
-
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2.5">
-            <span className="text-xs px-2 py-0.5 rounded-full font-mono font-semibold"
-              style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}>
-              {prompt.category}
-            </span>
-            <span className="text-xs font-mono" style={{ color: '#484f58' }}>{date}</span>
-          </div>
-
-          <h3 className="font-bold font-mono mb-1.5 text-sm sm:text-base leading-snug"
-            style={{ color: '#e6edf3' }}>
-            {prompt.title}
-          </h3>
-          <p className="text-xs sm:text-sm mb-3 leading-relaxed line-clamp-2"
-            style={{ color: '#8b949e' }}>
-            {prompt.description}
+        <div className="p-5 sm:p-6">
+          <p className="font-mono text-sm mb-1" style={{ color: '#8b949e' }}>
+            <span style={{ color: isDelete ? '#ff7b72' : '#58a6ff' }}>$</span>{' '}
+            {isDelete ? 'sudo delete --confirm' : 'git checkout --edit'}
           </p>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{ background: '#21262d', color: '#58a6ff' }}>
-                {prompt.author_name.charAt(0).toUpperCase()}
-              </div>
-              <span className="text-xs font-mono" style={{ color: '#8b949e' }}>{prompt.author_name}</span>
+          <h2 className="font-mono font-bold text-base sm:text-lg mb-4" style={{ color: '#e6edf3' }}>
+            {isDelete ? '// 정말 삭제하시겠습니까?' : '// 수정하려면 비밀번호를 입력하세요'}
+          </h2>
+          <div style={{ position: 'relative', marginBottom: '16px' }}>
+            <input
+              type="password"
+              value={pw}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 4)
+                setPw(val)
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+              maxLength={4}
+              inputMode="numeric"
+              autoFocus
+              placeholder="숫자 4자리"
+              className={shake ? 'animate-bounce' : ''}
+              style={{
+                width: '100%', padding: '12px 44px 12px 14px',
+                background: '#0d1117',
+                border: `1px solid ${isDelete ? '#f8514966' : '#30363d'}`,
+                borderRadius: '8px', color: '#e6edf3',
+                fontFamily: 'monospace', fontSize: '20px',
+                letterSpacing: '0.4em', outline: 'none',
+                textAlign: 'center', transition: 'border-color 0.2s',
+              }}
+              onFocus={e => e.target.style.borderColor = isDelete ? '#ff7b72' : '#58a6ff'}
+              onBlur={e => e.target.style.borderColor = isDelete ? '#f8514966' : '#30363d'}
+            />
+            <div style={{
+              position: 'absolute', right: '12px', top: '50%',
+              transform: 'translateY(-50%)',
+              fontFamily: 'monospace', fontSize: '11px', color: '#484f58'
+            }}>
+              {pw.length}/4
             </div>
-            <div className="flex items-center gap-3 text-xs font-mono" style={{ color: '#484f58' }}>
-              <span>♥ {prompt.likes}</span>
-              <span>◎ {prompt.views}</span>
-            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={onCancel}
+              className="flex-1 py-2.5 rounded-lg font-mono text-sm transition-all hover:opacity-80"
+              style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
+              // cancel
+            </button>
+            <button onClick={handleSubmit}
+              className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
+              style={{
+                background: isDelete ? 'transparent' : 'transparent',
+                color: isDelete ? '#ff7b72' : '#58a6ff',
+                border: `1px solid ${isDelete ? '#f85149' : '#58a6ff'}`,
+                boxShadow: 'none',
+              }}>
+              {isDelete ? '$ Delete' : '$ confirm'}
+            </button>
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   )
 }
 
-export default function Home() {
-  const [prompts, setPrompts] = useState<Prompt[]>([])
-  const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState('All')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showCategories, setShowCategories] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isSmallScreen, setIsSmallScreen] = useState(false)
+function EditModal({
+  prompt, onSave, onCancel,
+}: {
+  prompt: Prompt
+  onSave: (updated: Partial<Prompt>) => void
+  onCancel: () => void
+}) {
+  const [title, setTitle] = useState(prompt.title)
+  const [description, setDescription] = useState(prompt.description)
+  const [content, setContent] = useState(prompt.content)
+  const [category, setCategory] = useState(prompt.category)
 
-  // 화면 크기 감지
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 640)
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  useEffect(() => {
-    const fetchPrompts = async () => {
-      const { data, error } = await supabase
-        .from('prompts')
-        .select('*')
-        .order('created_at', { ascending: false })
-      if (!error && data) setPrompts(data)
-      setLoading(false)
-    }
-    fetchPrompts()
-  }, [])
-
-  const filtered = prompts.filter(p => {
-    const matchCat = selectedCategory === 'All' || p.category === selectedCategory
-    const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.author_name.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchCat && matchSearch
-  })
-
-  // 페이지네이션 설정
-  const itemsPerPage = isSmallScreen ? 20 : 30
-  const totalPages = Math.ceil(filtered.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedPrompts = filtered.slice(startIndex, startIndex + itemsPerPage)
-
-  // 카테고리나 검색 변경시 페이지 리셋
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [selectedCategory, searchQuery])
-
-  // 검색 버튼 클릭 핸들러
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      setCurrentPage(1)
-      document.querySelector('.grid')?.scrollIntoView({ behavior: 'smooth' })
-    }
+  const CATEGORY_COLORS_TEXT: Record<string, string> = {
+    General: '#d29922', Writing: '#bc8cff', Coding: '#58a6ff',
+    Marketing: '#f0883e', Education: '#3fb950', Other: '#39c5cf',
   }
 
-  // 페이지네이션 버튼 생성 함수
-  const getPaginationButtons = () => {
-    const buttons = []
-    const maxButtons = isSmallScreen ? 5 : 7
-    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2))
-    let endPage = Math.min(totalPages, startPage + maxButtons - 1)
-
-    if (endPage - startPage + 1 < maxButtons) {
-      startPage = Math.max(1, endPage - maxButtons + 1)
-    }
-
-    if (startPage > 1) {
-      buttons.push(
-        <button
-          key="first"
-          onClick={() => setCurrentPage(1)}
-          className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
-          style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
-          ◀ first
-        </button>
-      )
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      buttons.push(
-        <button
-          key={i}
-          onClick={() => setCurrentPage(i)}
-          className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm transition-all hover:scale-105"
-          style={{
-            background: currentPage === i ? '#58a6ff' : 'transparent',
-            color: currentPage === i ? '#0d1117' : '#8b949e',
-            border: `1px solid ${currentPage === i ? '#58a6ff' : '#30363d'}`,
-            fontWeight: currentPage === i ? 'bold' : 'normal',
-          }}>
-          {i}
-        </button>
-      )
-    }
-
-    if (endPage < totalPages) {
-      buttons.push(
-        <button
-          key="last"
-          onClick={() => setCurrentPage(totalPages)}
-          className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
-          style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
-          last ▶
-        </button>
-      )
-    }
-
-    return buttons
+  const inputStyle = {
+    width: '100%', padding: '10px 12px',
+    background: '#0d1117', border: '1px solid #30363d',
+    borderRadius: '8px', color: '#e6edf3',
+    fontFamily: 'monospace', fontSize: '14px', outline: 'none',
   }
 
   return (
-    <main className="min-h-screen" style={{ background: '#0d1117' }}>
-      <style>{`
-        @keyframes blink {
-          0%, 49%, 100% { opacity: 1; }
-          50%, 99% { opacity: 0; }
-        }
-      `}</style>
-      
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
-
-        {/* 헤더 - 타이핑 애니메이션 적용 */}
-        <div className="mb-8 sm:mb-12 text-center">
-          <TypingAnimation />
+    <div className="fixed inset-0 z-50 flex items-start justify-center px-3 py-4 sm:py-8 overflow-y-auto"
+      style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}>
+      <div className="w-full max-w-2xl rounded-xl overflow-hidden my-auto"
+        style={{ background: '#161b22', border: '1px solid #30363d' }}>
+        <div className="px-4 py-2 flex items-center gap-2" style={{ background: '#21262d' }}>
+          <div className="flex gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
+          </div>
+          <span className="text-xs ml-2 font-mono" style={{ color: '#8b949e' }}>vim prompt.md — INSERT MODE</span>
         </div>
-
-        {/* 검색 + 검색 버튼 */}
-        <div className="flex gap-2 mb-5 sm:mb-6">
-          <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm"
-              style={{ color: '#3fb950' }}>$</span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="// 프롬프트 검색..."
-              style={{
-                width: '100%', padding: '10px 12px 10px 28px',
-                background: '#161b22', border: '1px solid #30363d',
-                borderRadius: '10px', color: '#e6edf3',
-                fontFamily: 'monospace', fontSize: '14px', outline: 'none',
-              }}
+        <div className="p-4 sm:p-6">
+          <h2 className="font-mono font-bold text-base sm:text-lg mb-5" style={{ color: '#e6edf3' }}>
+            <span style={{ color: '#8b949e' }}>// </span>
+            <span style={{ color: '#58a6ff' }}>프롬프트</span> 수정
+            <span className="blink" style={{ color: '#58a6ff' }}>_</span>
+          </h2>
+          <div className="mb-4">
+            <label className="block mb-1.5 text-xs font-mono" style={{ color: '#8b949e' }}>
+              <span style={{ color: '#58a6ff' }}>const</span> title =
+            </label>
+            <input type="text" value={title} onChange={e => setTitle(e.target.value)}
+              style={inputStyle}
               onFocus={e => e.target.style.borderColor = '#58a6ff'}
-              onBlur={e => e.target.style.borderColor = '#30363d'}
-              onKeyPress={e => e.key === 'Enter' && handleSearch()}
-            />
+              onBlur={e => e.target.style.borderColor = '#30363d'} />
           </div>
-          <button
-            onClick={handleSearch}
-            className="px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
-            style={{
-              background: 'transparent',
-              color: '#3fb950',
-              border: '2px solid #3fb950',
-              boxShadow: 'none',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#ffffff'
-              e.currentTarget.style.boxShadow = '0 0 15px #3fb95066'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#3fb950'
-              e.currentTarget.style.boxShadow = 'none'
+          <div className="mb-4">
+            <label className="block mb-1.5 text-xs font-mono" style={{ color: '#8b949e' }}>
+              <span style={{ color: '#58a6ff' }}>const</span> description =
+            </label>
+            <textarea value={description} onChange={e => setDescription(e.target.value)}
+              style={{ ...inputStyle, resize: 'vertical' }} rows={2}
+              onFocus={e => e.target.style.borderColor = '#58a6ff'}
+              onBlur={e => e.target.style.borderColor = '#30363d'} />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1.5 text-xs font-mono" style={{ color: '#8b949e' }}>
+              <span style={{ color: '#58a6ff' }}>const</span>{' '}
+              <span style={{ color: CATEGORY_COLORS_TEXT[category] }}>category</span> =
+            </label>
+            <select value={category} onChange={e => setCategory(e.target.value)}
+              style={{ ...inputStyle, cursor: 'pointer' }}
+              onFocus={e => e.target.style.borderColor = '#58a6ff'}
+              onBlur={e => e.target.style.borderColor = '#30363d'}>
+              <option value="General">General</option>
+              <option value="Writing">Writing</option>
+              <option value="Coding">Coding</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Education">Education</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="mb-5">
+            <label className="block mb-1.5 text-xs font-mono" style={{ color: '#8b949e' }}>
+              <span style={{ color: '#58a6ff' }}>const</span> content =
+            </label>
+            <textarea value={content} onChange={e => setContent(e.target.value)}
+              style={{ ...inputStyle, resize: 'vertical' }} rows={10}
+              onFocus={e => e.target.style.borderColor = '#58a6ff'}
+              onBlur={e => e.target.style.borderColor = '#30363d'} />
+          </div>
+          <div className="flex gap-2">
+            <button onClick={onCancel}
+              className="flex-1 py-2.5 rounded-lg font-mono text-sm transition-all hover:opacity-80"
+              style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
+              // cancel
+            </button>
+            <button onClick={() => onSave({ title, description, content, category })}
+              className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
+              style={{
+                background: 'transparent',
+                color: '#3fb950',
+                border: '1px solid #3fb950',
+                boxShadow: 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 15px #3fb95066'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = 'none'
+              }}>
+              $ git commit -m &quot;update&quot;
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function GlitchButton({ onClick, text, copied }: {
+  onClick: () => void, text: string, copied: boolean
+}) {
+  const [isHovered, setIsHovered] = useState(false)
+  const [glitchText, setGlitchText] = useState(text)
+  const glitchChars = '!@#$%^&*<>?/\\|[]{}~`'
+
+  useEffect(() => { setGlitchText(text) }, [text])
+
+  useEffect(() => {
+    if (!isHovered) { setGlitchText(text); return }
+    let iteration = 0
+    const interval = setInterval(() => {
+      setGlitchText(text.split('').map((char, index) => {
+        if (char === ' ') return ' '
+        if (index < iteration) return text[index]
+        return glitchChars[Math.floor(Math.random() * glitchChars.length)]
+      }).join(''))
+      if (iteration >= text.length) iteration = 0
+      iteration += 0.5
+    }, 50)
+    return () => clearInterval(interval)
+  }, [isHovered, text])
+
+  return (
+    <button onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="w-full py-3 sm:py-4 rounded-xl font-mono font-bold text-sm sm:text-base transition-all hover:scale-[1.02] active:scale-95"
+      style={{
+        background: 'transparent',
+        color: copied ? '#ffffff' : isHovered ? '#ffffff' : '#58a6ff',
+        border: copied ? '2px solid #3fb950' : isHovered ? '2px solid #bc8cff' : '2px solid #58a6ff',
+        boxShadow: copied ? '0 0 20px #3fb95044' : isHovered ? '0 0 15px #bc8cff66' : 'none',
+      }}>
+      {glitchText}
+    </button>
+  )
+}
+
+function MatrixRain({ active }: { active: boolean }) {
+  useEffect(() => {
+    if (!active) return
+    const canvas = document.getElementById('matrix-canvas') as HTMLCanvasElement
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    const chars = 'アイウエオカキクケコ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const fontSize = 14
+    const columns = Math.floor(canvas.width / fontSize)
+    const drops: number[] = Array(columns).fill(1)
+    const draw = () => {
+      ctx.fillStyle = 'rgba(13, 17, 23, 0.05)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.fillStyle = '#3fb950'
+      ctx.font = `${fontSize}px monospace`
+      drops.forEach((y, i) => {
+        const char = chars[Math.floor(Math.random() * chars.length)]
+        ctx.fillText(char, i * fontSize, y * fontSize)
+        if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0
+        drops[i]++
+      })
+    }
+    const interval = setInterval(draw, 33)
+    return () => clearInterval(interval)
+  }, [active])
+  if (!active) return null
+  return <canvas id="matrix-canvas" style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999, pointerEvents: 'none' }} />
+}
+
+function useEasterEgg() {
+  useEffect(() => {
+    console.log('%c🚀 PromptShare', 'color: #58a6ff; font-size: 24px; font-weight: bold;')
+    console.log('%c당신은 진짜 개발자군요! 콘솔까지 열어보다니 😄', 'color: #3fb950; font-size: 14px;')
+    console.log('%c// TODO: 여기에 최고의 프롬프트를 작성하세요', 'color: #8b949e; font-size: 12px;')
+    console.log('%cconst bestPrompt = await fetch("/api/your-imagination")', 'color: #bc8cff; font-size: 12px; font-family: monospace;')
+  }, [])
+}
+
+const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']
+
+export default function PromptDetail({ params }: { params: Promise<{ id: string }> }) {
+  const router = useRouter()
+  // ✅ 핵심 수정: use()로 params 언래핑
+  const { id } = use(params)
+
+  const [prompt, setPrompt] = useState<Prompt | null>(null)
+  const [copied, setCopied] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [isLiking, setIsLiking] = useState(false)
+  const [matrixActive, setMatrixActive] = useState(false)
+  const [showEasterMsg, setShowEasterMsg] = useState(false)
+  const [konamiProgress, setKonamiProgress] = useState(0)
+  const [modalMode, setModalMode] = useState<'edit' | 'delete' | null>(null)
+  const [showEditModal, setShowEditModal] = useState(false)
+
+  useEasterEgg()
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    setKonamiProgress(prev => {
+      if (e.key === KONAMI[prev]) {
+        const next = prev + 1
+        if (next === KONAMI.length) {
+          setMatrixActive(true); setShowEasterMsg(true)
+          setTimeout(() => { setMatrixActive(false); setShowEasterMsg(false) }, 5000)
+          return 0
+        }
+        return next
+      }
+      return 0
+    })
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
+  useEffect(() => {
+    const fetchAndIncrement = async () => {
+      const { data, error } = await supabase
+        .from('prompts').select('*').eq('id', id).single()
+      if (error || !data) { notFound(); return }
+      setPrompt(data)
+      setLoading(false)
+      await supabase.from('prompts').update({ views: (data.views || 0) + 1 }).eq('id', id)
+    }
+    fetchAndIncrement()
+  }, [id])
+
+  const handleCopy = () => {
+    if (prompt) {
+      navigator.clipboard.writeText(prompt.content)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  const handleLike = async () => {
+    if (!prompt || isLiking) return
+    setIsLiking(true)
+    try {
+      const { data, error } = await supabase
+        .from('prompts').update({ likes: (prompt.likes || 0) + 1 })
+        .eq('id', prompt.id).select().single()
+      if (error) throw error
+      if (data) setPrompt(data)
+    } catch { alert('좋아요 처리 중 오류가 발생했습니다.') }
+    finally { setIsLiking(false) }
+  }
+
+  const handlePasswordConfirm = async (pw: string) => {
+    if (!prompt) return
+    const { data, error } = await supabase
+      .from('prompts').select('password').eq('id', prompt.id).single()
+    if (error || !data) return
+    if (data.password !== pw) {
+      alert('❌ 비밀번호가 틀렸습니다.')
+      setModalMode(null)
+      return
+    }
+    if (modalMode === 'delete') {
+      const { error: delErr } = await supabase.from('prompts').delete().eq('id', prompt.id)
+      if (delErr) { alert('삭제 중 오류가 발생했습니다.'); return }
+      alert('✓ 삭제되었습니다.')
+      router.push('/')
+    } else if (modalMode === 'edit') {
+      setModalMode(null)
+      setShowEditModal(true)
+    }
+  }
+
+  const handleEditSave = async (updated: Partial<Prompt>) => {
+    if (!prompt) return
+    const { data, error } = await supabase
+      .from('prompts')
+      .update({ ...updated, updated_at: new Date().toISOString() })
+      .eq('id', prompt.id).select().single()
+    if (error) { alert('수정 중 오류가 발생했습니다.'); return }
+    if (data) setPrompt(data)
+    setShowEditModal(false)
+    alert('✓ 수정되었습니다.')
+  }
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
+        <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
+          <span style={{ color: '#3fb950' }}>$</span> loading prompt
+          <span className="blink">_</span>
+        </div>
+      </main>
+    )
+  }
+
+  if (!prompt) return notFound()
+
+  const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
+  const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
+  const formattedContent = formatContent(prompt.content)
+
+  return (
+    <main className="min-h-screen" style={{ background: '#0d1117' }}>
+      <MatrixRain active={matrixActive} />
+
+      {modalMode && (
+        <PasswordModal
+          mode={modalMode}
+          onConfirm={handlePasswordConfirm}
+          onCancel={() => setModalMode(null)}
+        />
+      )}
+
+      {showEditModal && (
+        <EditModal
+          prompt={prompt}
+          onSave={handleEditSave}
+          onCancel={() => setShowEditModal(false)}
+        />
+      )}
+
+      {showEasterMsg && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10000] text-center px-4 w-full max-w-sm">
+          <div className="px-6 py-5 rounded-xl" style={{
+            background: '#161b22', border: '2px solid #3fb950',
+            boxShadow: '0 0 40px #3fb95066', fontFamily: 'monospace'
+          }}>
+            <p className="text-xl sm:text-2xl font-bold mb-2" style={{ color: '#3fb950' }}>🎮 KONAMI CODE ACTIVATED!</p>
+            <p style={{ color: '#8b949e' }}>// 진짜 개발자를 발견했습니다</p>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
+        <Link href="/" className="inline-flex items-center gap-2 mb-6 sm:mb-8 font-mono text-sm hover:opacity-80 transition-opacity"
+          style={{ color: '#58a6ff' }}>
+          ← cd ..
+        </Link>
+
+        <article className="rounded-xl overflow-hidden" style={{ background: '#161b22', border: '1px solid #30363d' }}>
+          <div className="flex items-center px-4 pt-3 overflow-x-auto" style={{ borderBottom: '1px solid #30363d' }}>
+            <div className="px-3 sm:px-4 py-2 rounded-t-lg text-xs sm:text-sm font-mono flex items-center gap-2 flex-shrink-0" style={{
+              background: '#0d1117', color: '#e6edf3',
+              border: '1px solid #30363d', borderBottom: '1px solid #0d1117', marginBottom: '-1px'
             }}>
-            🔍 search
-          </button>
-        </div>
-
-        {/* 카테고리 필터 - 데스크톱 */}
-        <div className="hidden sm:flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-1">
-          {CATEGORIES.map(cat => {
-            const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
-            const isActive = selectedCategory === cat
-            return (
-              <button key={cat} onClick={() => setSelectedCategory(cat)}
-                className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all hover:scale-105 whitespace-nowrap flex-shrink-0"
-                style={{
-                  background: isActive ? (colors?.bg || '#21262d') : 'transparent',
-                  color: isActive ? (colors?.text || '#e6edf3') : '#484f58',
-                  border: `1px solid ${isActive ? (colors?.border || '#30363d') : '#21262d'}`,
-                }}>
-                {cat}
-              </button>
-            )
-          })}
-        </div>
-
-        {/* 카테고리 필터 - 모바일 토글 */}
-        <div className="sm:hidden mb-6">
-          <button
-            onClick={() => setShowCategories(!showCategories)}
-            className="w-full px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all flex items-center justify-between"
-            style={{
-              background: '#161b22',
-              color: '#58a6ff',
-              border: '1px solid #30363d',
-            }}>
-            <span>{selectedCategory === 'All' ? '📂 All Categories' : `📂 ${selectedCategory}`}</span>
-            <span style={{ marginLeft: '8px' }}>{showCategories ? '▼' : '▶'}</span>
-          </button>
-
-          {showCategories && (
-            <div className="mt-2 p-3 rounded-xl" style={{ background: '#161b22', border: '1px solid #30363d' }}>
-              <div className="flex flex-wrap gap-2">
-                {CATEGORIES.map(cat => {
-                  const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
-                  const isActive = selectedCategory === cat
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => {
-                        setSelectedCategory(cat)
-                        setShowCategories(false)
-                      }}
-                      className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all active:scale-95"
-                      style={{
-                        background: isActive ? (colors?.bg || '#21262d') : 'transparent',
-                        color: isActive ? (colors?.text || '#e6edf3') : '#484f58',
-                        border: `1px solid ${isActive ? (colors?.border || '#30363d') : '#21262d'}`,
-                      }}>
-                      {cat}
-                    </button>
-                  )
-                })}
-              </div>
+              <span style={{ color: colors.text }}>◆</span>
+              <span>{prompt.title.substring(0, 20)}{prompt.title.length > 20 ? '...' : ''}.md</span>
             </div>
-          )}
-        </div>
-
-        {/* 목록 */}
-        {loading ? (
-          <div className="text-center py-20 font-mono" style={{ color: '#58a6ff' }}>
-            <span style={{ color: '#3fb950' }}>$</span> loading prompts
-            <span className="blink">_</span>
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20 font-mono" style={{ color: '#484f58' }}>
-            <p>// 프롬프트가 없습니다</p>
-            <p className="text-sm mt-2">// 첫 번째 프롬프트를 공유해보세요!</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              {paginatedPrompts.map(prompt => (
-                <PromptCard key={prompt.id} prompt={prompt} />
-              ))}
-            </div>
 
-            {/* 페이지네이션 */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
-                {getPaginationButtons()}
-              </div>
-            )}
-
-            {/* 페이지 정보 */}
-            <div className="text-center mt-6 font-mono text-xs sm:text-sm" style={{ color: '#484f58' }}>
-              <span style={{ color: '#8b949e' }}>
-                // page {currentPage} of {totalPages} • {filtered.length} total prompts
+          <div className="p-4 sm:p-8">
+            <div className="flex items-center justify-between mb-5 sm:mb-6 gap-2 flex-wrap">
+              <span className="text-xs px-3 py-1 rounded-full font-mono font-semibold flex-shrink-0" style={{
+                background: colors.bg, color: colors.text, border: `1px solid ${colors.border}`
+              }}>
+                {prompt.category}
               </span>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button onClick={() => setModalMode('edit')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
+                  style={{ background: 'transparent', color: '#58a6ff', border: '1px solid #1f6feb' }}>
+                  <span>✎</span>
+                  <span className="hidden sm:inline">edit</span>
+                </button>
+                <button onClick={() => setModalMode('delete')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs transition-all hover:scale-105 active:scale-95"
+                  style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
+                  <span>✕</span>
+                  <span className="hidden sm:inline">delete</span>
+                </button>
+                <button onClick={handleLike} disabled={isLiking}
+                  className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
+                  style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
+                  <span>♥</span>
+                  <span className="font-bold">{prompt.likes}</span>
+                </button>
+              </div>
             </div>
-          </>
-        )}
+
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 font-mono" style={{ color: '#e6edf3' }}>
+              {prompt.title}
+            </h1>
+            <p className="text-sm sm:text-base mb-6 sm:mb-8" style={{ color: '#8b949e' }}>
+              {prompt.description}
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8 p-3 sm:p-4 rounded-lg font-mono"
+              style={{ background: '#0d1117', border: '1px solid #21262d' }}>
+              <div className="flex sm:block items-center gap-4 sm:gap-0">
+                <p className="text-xs mb-0 sm:mb-1 w-16 sm:w-auto flex-shrink-0" style={{ color: '#484f58' }}>// author</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                    style={{ background: '#21262d', color: '#58a6ff' }}>
+                    {prompt.author_name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm" style={{ color: '#e6edf3' }}>{prompt.author_name}</span>
+                </div>
+              </div>
+              <div className="flex sm:block items-center gap-4 sm:gap-0">
+                <p className="text-xs mb-0 sm:mb-1 w-16 sm:w-auto flex-shrink-0" style={{ color: '#484f58' }}>// date</p>
+                <p className="text-sm" style={{ color: '#e6edf3' }}>{date}</p>
+              </div>
+              <div className="flex sm:block items-center gap-4 sm:gap-0">
+                <p className="text-xs mb-0 sm:mb-1 w-16 sm:w-auto flex-shrink-0" style={{ color: '#484f58' }}>// views</p>
+                <p className="text-sm" style={{ color: '#e6edf3' }}>◎ {prompt.views}</p>
+              </div>
+            </div>
+
+            <div className="mb-5 sm:mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <span style={{ color: '#3fb950', fontFamily: 'monospace' }}>$</span>
+                <span className="font-mono text-sm" style={{ color: '#8b949e' }}>cat prompt.txt</span>
+              </div>
+              <div className="rounded-lg overflow-hidden" style={{ border: '1px solid #30363d', background: '#0d1117' }}>
+                <div className="flex items-center justify-between px-3 sm:px-4 py-2"
+                  style={{ background: '#161b22', borderBottom: '1px solid #30363d' }}>
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
+                  </div>
+                  <span className="text-xs font-mono" style={{ color: '#484f58' }}>prompt.txt</span>
+                </div>
+                <div className="flex overflow-x-auto">
+                  <div className="py-4 px-2 sm:px-3 text-right select-none flex-shrink-0"
+                    style={{ borderRight: '1px solid #21262d', minWidth: '40px' }}>
+                    {formattedContent.split('\n').map((_, i) => (
+                      <div key={i} className="text-xs leading-6 font-mono" style={{ color: '#484f58' }}>{i + 1}</div>
+                    ))}
+                  </div>
+                  <pre className="py-4 px-3 sm:px-4 text-xs sm:text-sm leading-6 font-mono flex-1 min-w-0"
+                    style={{ color: '#e6edf3', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                    {formattedContent}
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            <GlitchButton
+              onClick={handleCopy}
+              text={copied ? '✓ copied to clipboard!' : '$ copy prompt'}
+              copied={copied}
+            />
+
+            <p className="text-center mt-4 text-xs font-mono" style={{ color: '#484f58' }}>
+              // 키보드로 ↑↑↓↓←→←→BA 를 입력해보세요 😏
+            </p>
+          </div>
+        </article>
       </div>
     </main>
   )
