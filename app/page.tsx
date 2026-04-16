@@ -2,6 +2,7 @@
 
 import { supabase } from '@/app/lib/supabase'
 import { useState, useEffect, useRef } from 'react'
+import GravityEffect from '@/app/components/GravityEffect'
 
 interface Prompt {
   id: string
@@ -80,12 +81,13 @@ function PromptCard({ prompt, index }: { prompt: Prompt, index: number }) {
   return (
     <div
       ref={ref}
+      className="prompt-card"
       onClick={() => window.location.href = `/prompts/${prompt.id}`}
       style={{
         cursor: 'pointer',
         opacity: 0,
         transform: 'translateY(24px)',
-        transition: `opacity 0.5s ease, transform 0.5s ease`,
+        transition: 'opacity 0.5s ease, transform 0.5s ease',
       }}
     >
       <div className="rounded-xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer"
@@ -237,6 +239,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
+      <GravityEffect />
       <style>{`
         @keyframes blink {
           0%, 49%, 100% { opacity: 1; }
