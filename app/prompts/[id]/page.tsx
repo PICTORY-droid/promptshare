@@ -93,7 +93,7 @@ function PasswordModal({
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
           </div>
           <span className="text-xs ml-2 font-mono" style={{ color: '#8b949e' }}>
-            {isDelete ? 'rm -rf prompt.md' : 'vim prompt.md'}
+            {isDelete ? 'Delete prompt.md' : 'vim prompt.md'}
           </span>
         </div>
         <div className="p-5 sm:p-6">
@@ -152,7 +152,7 @@ function PasswordModal({
                 border: `1px solid ${isDelete ? '#f85149' : '#58a6ff'}`,
                 boxShadow: 'none',
               }}>
-              {isDelete ? '$ rm -rf' : '$ confirm'}
+              {isDelete ? '$ Delete' : '$ confirm'}
             </button>
           </div>
         </div>
