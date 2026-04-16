@@ -121,14 +121,8 @@ export default function Home() {
     <main className="min-h-screen" style={{ background: '#0d1117' }}>
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
 
-        {/* 헤더 */}
+        {/* 헤더 - 제목만 표시 (설명 텍스트 유지) */}
         <div className="mb-8 sm:mb-12 text-center">
-          <h1 className="text-2xl sm:text-4xl font-bold font-mono mb-2" style={{ color: '#e6edf3' }}>
-            <span style={{ color: '#8b949e' }}>// </span>
-            <span style={{ color: '#58a6ff' }}>Prompt</span>
-            <span style={{ color: '#e6edf3' }}>Share</span>
-            <span className="blink" style={{ color: '#58a6ff' }}>_</span>
-          </h1>
           <p className="text-sm font-mono" style={{ color: '#484f58' }}>
             // 최고의 AI 프롬프트를 공유하고 발견하세요
           </p>

@@ -71,7 +71,14 @@ export default function Navbar() {
 
       {/* 메인 네비 */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center gap-2">
-        <div className="flex-1"></div>
+        <Link href="/" className="flex items-center gap-1 sm:gap-2 group min-w-0">
+          <span style={{ color: '#3fb950', fontFamily: 'monospace', fontSize: '0.95rem' }}>~/</span>
+          <span className="text-lg sm:text-2xl font-bold tracking-tight" style={{
+            color: '#e6edf3', fontFamily: 'monospace'
+          }}>prompt</span>
+          <span className="text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff', fontFamily: 'monospace' }}>share</span>
+          <span className="blink ml-0.5 text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff' }}>_</span>
+        </Link>
 
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{
