@@ -28,32 +28,16 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 
 const CATEGORIES = ['All', 'General', 'Writing', 'Coding', 'Marketing', 'Education', 'Other']
 
-// ✅ 본문 첫 문장을 "."으로 줄바꿈하는 함수
 function formatContent(content: string): string {
   const lines = content.split('\n')
   if (lines.length === 0) return content
-  
   const firstLine = lines[0]
   const restLines = lines.slice(1).join('\n')
-  
-  // 첫 줄에서 첫 번째 "." 찾기
   const dotIndex = firstLine.indexOf('.')
-  
-  if (dotIndex === -1) {
-    // "."이 없으면 원본 반환
-    return content
-  }
-  
-  // "." 이후에 공백이 있으면 제거
+  if (dotIndex === -1) return content
   const firstSentence = firstLine.substring(0, dotIndex + 1).trim()
   const rest = firstLine.substring(dotIndex + 1).trim()
-  
-  if (rest) {
-    // "." 뒤에 텍스트가 있으면 줄바꿈
-    return firstSentence + '\n' + rest + (restLines ? '\n' + restLines : '')
-  }
-  
-  // "." 뒤에 텍스트가 없으면 원본 반환
+  if (rest) return firstSentence + '\n' + rest + (restLines ? '\n' + restLines : '')
   return content
 }
 
@@ -147,7 +131,7 @@ function PasswordModal({
             <button onClick={handleSubmit}
               className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
               style={{
-                background: isDelete ? 'transparent' : 'transparent',
+                background: 'transparent',
                 color: isDelete ? '#ff7b72' : '#58a6ff',
                 border: `1px solid ${isDelete ? '#f85149' : '#58a6ff'}`,
                 boxShadow: 'none',
@@ -262,13 +246,9 @@ function EditModal({
                 border: '1px solid #3fb950',
                 boxShadow: 'none',
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 0 15px #3fb95066'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = 'none'
-              }}>
-              $ git commit -m &quot;update&quot;
+              onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 15px #3fb95066' }}
+              onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none' }}>
+              git commit -m &quot;update&quot;
             </button>
           </div>
         </div>
@@ -362,7 +342,6 @@ const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRi
 
 export default function PromptDetail({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
-  // ✅ 핵심 수정: use()로 params 언래핑
   const { id } = use(params)
 
   const [prompt, setPrompt] = useState<Prompt | null>(null)
@@ -617,11 +596,27 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
               </div>
             </div>
 
-            <GlitchButton
-              onClick={handleCopy}
-              text={copied ? '✓ copied to clipboard!' : 'copy prompt'}
-              copied={copied}
-            />
+            <div style={{ position: 'relative' }}>
+              {copied && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-28px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  color: '#8b949e',
+                  fontSize: '12px',
+                  fontFamily: 'monospace',
+                  whiteSpace: 'nowrap',
+                }}>
+                  // 복사 완료!
+                </div>
+              )}
+              <GlitchButton
+                onClick={handleCopy}
+                text={copied ? '✓ copied to clipboard!' : 'copy prompt'}
+                copied={copied}
+              />
+            </div>
 
             <p className="text-center mt-4 text-xs font-mono" style={{ color: '#484f58' }}>
               // 키보드로 ↑↑↓↓←→←→BA 를 입력해보세요 😏
