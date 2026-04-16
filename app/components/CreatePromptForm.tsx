@@ -13,6 +13,33 @@ const CATEGORY_COLORS: Record<string, string> = {
   Other: '#39c5cf',
 }
 
+const selectOptionsStyle = `
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  
+  select option {
+    background: #0d1117 !important;
+    color: #e6edf3 !important;
+    padding: 6px 8px !important;
+    font-size: 14px !important;
+  }
+  
+  @media (max-width: 640px) {
+    select {
+      font-size: 14px !important;
+      max-height: 200px !important;
+    }
+    
+    select option {
+      padding: 4px 6px !important;
+      font-size: 13px !important;
+    }
+  }
+`
+
 function GlitchSubmitButton({ loading }: { loading: boolean }) {
   const [isHovered, setIsHovered] = useState(false)
   const originalText = '▶ 프롬프트 공유하기'
@@ -161,198 +188,212 @@ export default function CreatePromptForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-0 px-3 sm:px-4 pt-3 rounded-t-xl overflow-x-auto" style={{
-        background: '#161b22', border: '1px solid #30363d', borderBottom: 'none'
-      }}>
-        <div className="flex gap-1.5 mr-3 sm:mr-4 flex-shrink-0">
-          <div className="w-3 h-3 rounded-full" style={{ background: '#ff5f57' }}></div>
-          <div className="w-3 h-3 rounded-full" style={{ background: '#ffbd2e' }}></div>
-          <div className="w-3 h-3 rounded-full" style={{ background: '#28c840' }}></div>
-        </div>
-        <div className="px-3 sm:px-4 py-2 rounded-t-lg text-xs sm:text-sm font-mono flex items-center gap-2 flex-shrink-0" style={{
-          background: '#0d1117', color: '#e6edf3',
-          border: '1px solid #30363d', borderBottom: '1px solid #0d1117', marginBottom: '-1px'
+    <>
+      <style>{selectOptionsStyle}</style>
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center gap-0 px-3 sm:px-4 pt-3 rounded-t-xl overflow-x-auto" style={{
+          background: '#161b22', border: '1px solid #30363d', borderBottom: 'none'
         }}>
-          <span style={{ color: CATEGORY_COLORS[category] }}>◆</span>
-          <span>new_prompt.md</span>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit} style={{
-        background: '#161b22', border: '1px solid #30363d',
-        borderTop: 'none', borderRadius: '0 0 12px 12px',
-      }} className="p-5 sm:p-8">
-
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl font-bold font-mono mb-1" style={{ color: '#e6edf3' }}>
-            <span style={{ color: '#8b949e' }}>// </span>
-            <span style={{ color: '#58a6ff' }}>프롬프트</span>
-            <span style={{ color: '#e6edf3' }}> 공유하기</span>
-            <span className="blink" style={{ color: '#58a6ff' }}>_</span>
-          </h1>
-          <p className="text-xs font-mono mb-1" style={{ color: '#484f58' }}>
-            // 당신의 최고의 프롬프트를 커뮤니티와 공유하세요
-          </p>
+          <div className="flex gap-1.5 mr-3 sm:mr-4 flex-shrink-0">
+            <div className="w-3 h-3 rounded-full" style={{ background: '#ff5f57' }}></div>
+            <div className="w-3 h-3 rounded-full" style={{ background: '#ffbd2e' }}></div>
+            <div className="w-3 h-3 rounded-full" style={{ background: '#28c840' }}></div>
+          </div>
+          <div className="px-3 sm:px-4 py-2 rounded-t-lg text-xs sm:text-sm font-mono flex items-center gap-2 flex-shrink-0" style={{
+            background: '#0d1117', color: '#e6edf3',
+            border: '1px solid #30363d', borderBottom: '1px solid #0d1117', marginBottom: '-1px'
+          }}>
+            <span style={{ color: CATEGORY_COLORS[category] }}>◆</span>
+            <span>new_prompt.md</span>
+          </div>
         </div>
 
-        {/* 작성자 */}
-        <div className="mb-4 sm:mb-5">
-          <label style={labelStyle}>
-            <span style={{ color: '#58a6ff' }}>const</span>
-            <span style={{ color: '#e6edf3' }}> authorName</span>
-            <span style={{ color: '#484f58' }}> // 작성자 이름</span>
-          </label>
-          <input type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)}
-            required style={inputStyle} placeholder="// 작성자 이름을 입력하세요"
-            onFocus={e => e.target.style.borderColor = '#58a6ff'}
-            onBlur={e => e.target.style.borderColor = '#30363d'} />
-        </div>
+        <form onSubmit={handleSubmit} style={{
+          background: '#161b22', border: '1px solid #30363d',
+          borderTop: 'none', borderRadius: '0 0 12px 12px',
+        }} className="p-5 sm:p-8">
 
-        {/* 비밀번호 */}
-        <div className="mb-4 sm:mb-5">
-          <label style={labelStyle}>
-            <span style={{ color: '#58a6ff' }}>const</span>
-            <span style={{ color: '#e6edf3' }}> password</span>
-            <span style={{ color: '#484f58' }}> // 수정·삭제시</span>
-          </label>
-          <div style={{ position: 'relative' }}>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, '').slice(0, 4)
-                setPassword(val)
-              }}
-              required
-              maxLength={4}
-              inputMode="numeric"
-              pattern="\d{4}"
-              placeholder="// 숫자 4자리"
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-xl sm:text-2xl font-bold font-mono mb-1" style={{ color: '#e6edf3' }}>
+              <span style={{ color: '#8b949e' }}>// </span>
+              <span style={{ color: '#58a6ff' }}>프롬프트</span>
+              <span style={{ color: '#e6edf3' }}> 공유하기</span>
+              <span className="blink" style={{ color: '#58a6ff' }}>_</span>
+            </h1>
+            <p className="text-xs font-mono mb-1" style={{ color: '#484f58' }}>
+              // 당신의 최고의 프롬프트를 커뮤니티와 공유하세요
+            </p>
+          </div>
+
+          {/* 작성자 */}
+          <div className="mb-4 sm:mb-5">
+            <label style={labelStyle}>
+              <span style={{ color: '#58a6ff' }}>const</span>
+              <span style={{ color: '#e6edf3' }}> authorName</span>
+              <span style={{ color: '#484f58' }}> // 작성자 이름</span>
+            </label>
+            <input type="text" value={authorName} onChange={(e) => setAuthorName(e.target.value)}
+              required style={inputStyle} placeholder="// 작성자 이름을 입력하세요"
+              onFocus={e => e.target.style.borderColor = '#58a6ff'}
+              onBlur={e => e.target.style.borderColor = '#30363d'} />
+          </div>
+
+          {/* 비밀번호 */}
+          <div className="mb-4 sm:mb-5">
+            <label style={labelStyle}>
+              <span style={{ color: '#58a6ff' }}>const</span>
+              <span style={{ color: '#e6edf3' }}> password</span>
+              <span style={{ color: '#484f58' }}> // 수정·삭제시</span>
+            </label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 4)
+                  setPassword(val)
+                }}
+                required
+                maxLength={4}
+                inputMode="numeric"
+                pattern="\d{4}"
+                placeholder="// 숫자 4자리"
+                style={{
+                  ...inputStyle,
+                  letterSpacing: '0.3em',
+                  fontSize: '18px',
+                }}
+                onFocus={e => e.target.style.borderColor = '#ff7b72'}
+                onBlur={e => e.target.style.borderColor = '#30363d'}
+              />
+              <div style={{
+                position: 'absolute', right: '12px', top: '50%',
+                transform: 'translateY(-50%)',
+                fontFamily: 'monospace', fontSize: '11px', color: '#484f58'
+              }}>
+                {password.length}/4
+              </div>
+            </div>
+            <p className="mt-1.5 text-xs font-mono" style={{ color: '#484f58' }}>
+              ⚠ 비밀번호를 잊으면 수정·삭제가 불가
+            </p>
+          </div>
+
+          {/* 제목 */}
+          <div className="mb-4 sm:mb-5">
+            <label style={labelStyle}>
+              <span style={{ color: '#58a6ff' }}>const</span>
+              <span style={{ color: '#e6edf3' }}> title</span>
+              <span style={{ color: '#484f58' }}> // 프롬프트 제목</span>
+            </label>
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
+              required style={inputStyle} placeholder="// 프롬프트 제목"
+              onFocus={e => e.target.style.borderColor = '#58a6ff'}
+              onBlur={e => e.target.style.borderColor = '#30363d'} />
+          </div>
+
+          {/* 설명 */}
+          <div className="mb-4 sm:mb-5">
+            <label style={labelStyle}>
+              <span style={{ color: '#58a6ff' }}>const</span>
+              <span style={{ color: '#e6edf3' }}> description</span>
+              <span style={{ color: '#484f58' }}> // 한 줄 설명</span>
+            </label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)}
+              style={{ ...inputStyle, resize: 'vertical' }}
+              placeholder="// 한 줄로 프롬프트를 설명해주세요" rows={3}
+              onFocus={e => e.target.style.borderColor = '#58a6ff'}
+              onBlur={e => e.target.style.borderColor = '#30363d'} />
+          </div>
+
+          {/* 카테고리 */}
+          <div className="mb-4 sm:mb-5">
+            <label style={labelStyle}>
+              <span style={{ color: '#58a6ff' }}>const</span>
+              <span style={{ color: '#e6edf3' }}> category</span>
+              <span style={{ color: '#484f58' }}> // 카테고리 선택</span>
+            </label>
+            <select value={category} onChange={(e) => setCategory(e.target.value)}
               style={{
                 ...inputStyle,
-                letterSpacing: '0.3em',
-                fontSize: '18px',
+                cursor: 'pointer',
+                backgroundColor: '#0d1117',
+                color: '#e6edf3',
               }}
-              onFocus={e => e.target.style.borderColor = '#ff7b72'}
-              onBlur={e => e.target.style.borderColor = '#30363d'}
-            />
-            <div style={{
-              position: 'absolute', right: '12px', top: '50%',
-              transform: 'translateY(-50%)',
-              fontFamily: 'monospace', fontSize: '11px', color: '#484f58'
-            }}>
-              {password.length}/4
-            </div>
-          </div>
-          <p className="mt-1.5 text-xs font-mono" style={{ color: '#484f58' }}>
-            ⚠ 비밀번호를 잊으면 수정·삭제가 불가
-          </p>
-        </div>
-
-        {/* 제목 */}
-        <div className="mb-4 sm:mb-5">
-          <label style={labelStyle}>
-            <span style={{ color: '#58a6ff' }}>const</span>
-            <span style={{ color: '#e6edf3' }}> title</span>
-            <span style={{ color: '#484f58' }}> // 프롬프트 제목</span>
-          </label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-            required style={inputStyle} placeholder="// 프롬프트 제목"
-            onFocus={e => e.target.style.borderColor = '#58a6ff'}
-            onBlur={e => e.target.style.borderColor = '#30363d'} />
-        </div>
-
-        {/* 설명 */}
-        <div className="mb-4 sm:mb-5">
-          <label style={labelStyle}>
-            <span style={{ color: '#58a6ff' }}>const</span>
-            <span style={{ color: '#e6edf3' }}> description</span>
-            <span style={{ color: '#484f58' }}> // 한 줄 설명</span>
-          </label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)}
-            style={{ ...inputStyle, resize: 'vertical' }}
-            placeholder="// 한 줄로 프롬프트를 설명해주세요" rows={3}
-            onFocus={e => e.target.style.borderColor = '#58a6ff'}
-            onBlur={e => e.target.style.borderColor = '#30363d'} />
-        </div>
-
-        {/* 카테고리 */}
-        <div className="mb-4 sm:mb-5">
-          <label style={labelStyle}>
-            <span style={{ color: '#58a6ff' }}>const</span>
-            <span style={{ color: '#e6edf3' }}> category</span>
-            <span style={{ color: '#484f58' }}> // 카테고리 선택</span>
-          </label>
-          <select value={category} onChange={(e) => setCategory(e.target.value)}
-            style={{ ...inputStyle, cursor: 'pointer' }}
-            onFocus={e => e.target.style.borderColor = '#58a6ff'}
-            onBlur={e => e.target.style.borderColor = '#30363d'}>
-            <option value="General">General</option>
-            <option value="Writing">Writing</option>
-            <option value="Coding">Coding</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Education">Education</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        {/* 내용 */}
-        <div className="mb-6 sm:mb-8">
-          <label style={labelStyle}>
-            <span style={{ color: '#58a6ff' }}>const</span>
-            <span style={{ color: '#e6edf3' }}> content</span>
-            <span style={{ color: '#484f58' }}> // 본문 내용 작성</span>
-          </label>
-          <div style={{ border: '1px solid #30363d', borderRadius: '8px', overflow: 'hidden', background: '#0d1117' }}>
-            <div className="flex items-center justify-between px-3 py-1.5" style={{
-              background: '#161b22', borderBottom: '1px solid #30363d'
-            }}>
-              <div className="flex gap-1.5">
-                <div className="w-2 h-2 rounded-full" style={{ background: '#ff5f57' }}></div>
-                <div className="w-2 h-2 rounded-full" style={{ background: '#ffbd2e' }}></div>
-                <div className="w-2 h-2 rounded-full" style={{ background: '#28c840' }}></div>
-              </div>
-              <span className="text-xs font-mono hidden sm:inline" style={{ color: '#484f58' }}>
-                // 엔터 → - 자동생성 | 빈줄 엔터 → 목록종료
-              </span>
-              <span className="text-xs font-mono sm:hidden" style={{ color: '#484f58' }}>
-                // 엔터 → - 자동
-              </span>
-            </div>
-            <div className="flex">
-              <div className="py-3 px-2 text-right select-none flex-shrink-0" style={{
-                borderRight: '1px solid #21262d', minWidth: '36px', background: '#0d1117'
+              onFocus={e => {
+                e.target.style.borderColor = '#58a6ff'
+                e.currentTarget.style.backgroundColor = '#0d1117'
+              }}
+              onBlur={e => {
+                e.target.style.borderColor = '#30363d'
+                e.currentTarget.style.backgroundColor = '#0d1117'
               }}>
-                {(content || ' ').split('\n').map((_, i) => (
-                  <div key={i} className="text-xs leading-6 font-mono" style={{ color: '#484f58' }}>
-                    {i + 1}
-                  </div>
-                ))}
+              <option value="General" style={{ background: '#0d1117', color: '#e6edf3' }}>General</option>
+              <option value="Writing" style={{ background: '#0d1117', color: '#e6edf3' }}>Writing</option>
+              <option value="Coding" style={{ background: '#0d1117', color: '#e6edf3' }}>Coding</option>
+              <option value="Marketing" style={{ background: '#0d1117', color: '#e6edf3' }}>Marketing</option>
+              <option value="Education" style={{ background: '#0d1117', color: '#e6edf3' }}>Education</option>
+              <option value="Other" style={{ background: '#0d1117', color: '#e6edf3' }}>Other</option>
+            </select>
+          </div>
+
+          {/* 내용 */}
+          <div className="mb-6 sm:mb-8">
+            <label style={labelStyle}>
+              <span style={{ color: '#58a6ff' }}>const</span>
+              <span style={{ color: '#e6edf3' }}> content</span>
+              <span style={{ color: '#484f58' }}> // 본문 내용 작성</span>
+            </label>
+            <div style={{ border: '1px solid #30363d', borderRadius: '8px', overflow: 'hidden', background: '#0d1117' }}>
+              <div className="flex items-center justify-between px-3 py-1.5" style={{
+                background: '#161b22', borderBottom: '1px solid #30363d'
+              }}>
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-2 rounded-full" style={{ background: '#ff5f57' }}></div>
+                  <div className="w-2 h-2 rounded-full" style={{ background: '#ffbd2e' }}></div>
+                  <div className="w-2 h-2 rounded-full" style={{ background: '#28c840' }}></div>
+                </div>
+                <span className="text-xs font-mono hidden sm:inline" style={{ color: '#484f58' }}>
+                  // 엔터 → - 자동생성 | 빈줄 엔터 → 목록종료
+                </span>
+                <span className="text-xs font-mono sm:hidden" style={{ color: '#484f58' }}>
+                  // 엔터 → - 자동
+                </span>
               </div>
-              <div className="relative flex-1 min-w-0">
-                <textarea value={content} onChange={(e) => setContent(e.target.value)}
-                  onKeyDown={handleContentKeyDown} onBlur={handleContentBlur}
-                  required rows={10}
-                  style={{
-                    width: '100%', padding: '12px 12px', background: 'transparent',
-                    border: 'none', color: '#e6edf3', fontFamily: 'monospace',
-                    fontSize: '13px', outline: 'none', resize: 'vertical', lineHeight: '1.5rem',
-                  }} />
-                {content === '' && (
-                  <div className="absolute top-3 left-3 pointer-events-none font-mono text-xs sm:text-sm leading-6"
-                    style={{ color: '#484f58' }}>
-                    <p>- 엔터 다음 항목 자동 생성</p>
-                    <p>- 빈 줄에서 엔터 치면 목록 종료</p>
-                  </div>
-                )}
+              <div className="flex">
+                <div className="py-3 px-2 text-right select-none flex-shrink-0" style={{
+                  borderRight: '1px solid #21262d', minWidth: '36px', background: '#0d1117'
+                }}>
+                  {(content || ' ').split('\n').map((_, i) => (
+                    <div key={i} className="text-xs leading-6 font-mono" style={{ color: '#484f58' }}>
+                      {i + 1}
+                    </div>
+                  ))}
+                </div>
+                <div className="relative flex-1 min-w-0">
+                  <textarea value={content} onChange={(e) => setContent(e.target.value)}
+                    onKeyDown={handleContentKeyDown} onBlur={handleContentBlur}
+                    required rows={10}
+                    style={{
+                      width: '100%', padding: '12px 12px', background: 'transparent',
+                      border: 'none', color: '#e6edf3', fontFamily: 'monospace',
+                      fontSize: '13px', outline: 'none', resize: 'vertical', lineHeight: '1.5rem',
+                    }} />
+                  {content === '' && (
+                    <div className="absolute top-3 left-3 pointer-events-none font-mono text-xs sm:text-sm leading-6"
+                      style={{ color: '#484f58' }}>
+                      <p>- 엔터 다음 항목 자동 생성</p>
+                      <p>- 빈 줄에서 엔터 치면 목록 종료</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <GlitchSubmitButton loading={loading} />
-      </form>
-    </div>
+          <GlitchSubmitButton loading={loading} />
+        </form>
+      </div>
+    </>
   )
 }
