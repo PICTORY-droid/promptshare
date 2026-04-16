@@ -98,7 +98,6 @@ function PasswordModal({
         </div>
         <div className="p-5 sm:p-6">
           <p className="font-mono text-sm mb-1" style={{ color: '#8b949e' }}>
-            <span style={{ color: isDelete ? '#ff7b72' : '#58a6ff' }}>$</span>{' '}
             {isDelete ? 'sudo delete --confirm' : 'git checkout --edit'}
           </p>
           <h2 className="font-mono font-bold text-base sm:text-lg mb-4" style={{ color: '#e6edf3' }}>
@@ -152,7 +151,7 @@ function PasswordModal({
                 border: `1px solid ${isDelete ? '#f85149' : '#58a6ff'}`,
                 boxShadow: 'none',
               }}>
-              {isDelete ? '$ Delete' : '$ confirm'}
+              {isDelete ? 'Delete' : 'confirm'}
             </button>
           </div>
         </div>
