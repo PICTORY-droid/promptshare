@@ -33,6 +33,9 @@ function TypingAnimation() {
   const fullText = "// 최고의 AI 프롬프트를 공유하고 발견하세요"
   const [displayedText, setDisplayedText] = useState('')
   const [isTyping, setIsTyping] = useState(true)
+  const [glitchText, setGlitchText] = useState(fullText)
+  const [isGlitching, setIsGlitching] = useState(false)
+  const glitchChars = '!@#$%^&*<>?/\\|[]{}~`ﾊﾐﾋｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂ'
 
   useEffect(() => {
     if (!isTyping) return
@@ -46,9 +49,37 @@ function TypingAnimation() {
     }
   }, [displayedText, isTyping, fullText])
 
+  useEffect(() => {
+    if (isTyping) return
+    const scheduleRef = { current: null as ReturnType<typeof setTimeout> | null }
+    const triggerGlitch = () => {
+      setIsGlitching(true)
+      let count = 0
+      const interval = setInterval(() => {
+        setGlitchText(
+          fullText.split('').map((char) => {
+            if (char === ' ' || char === '/') return char
+            return Math.random() > 0.3 ? char : glitchChars[Math.floor(Math.random() * glitchChars.length)]
+          }).join('')
+        )
+        count++
+        if (count >= 6) {
+          clearInterval(interval)
+          setGlitchText(fullText)
+          setIsGlitching(false)
+          scheduleRef.current = setTimeout(triggerGlitch, 2000 + Math.random() * 4000)
+        }
+      }, 60)
+    }
+    scheduleRef.current = setTimeout(triggerGlitch, 2000 + Math.random() * 3000)
+    return () => { if (scheduleRef.current) clearTimeout(scheduleRef.current) }
+  }, [isTyping])
+
+  const shown = isTyping ? displayedText : (isGlitching ? glitchText : fullText)
+
   return (
-    <p className="text-sm font-mono" style={{ color: '#484f58', minHeight: '1.5em' }}>
-      {displayedText}
+    <p className="text-sm font-mono" style={{ color: isGlitching ? '#8b949e' : '#484f58', minHeight: '1.5em', transition: 'color 0.1s' }}>
+      {shown}
       {isTyping && <span style={{ color: '#58a6ff', animation: 'blink 1s infinite' }}>▍</span>}
     </p>
   )
