@@ -36,6 +36,11 @@ export default function RootLayout({
         <ScrollProgressBar />
         <Navbar />
         {children}
+        <footer className="mt-auto py-6 text-center font-mono"
+          style={{ borderTop: '1px solid #21262d' }}>
+          <p style={{ color: '#58a6ff' }}>// made by seoin · PICTORY-droid</p>
+          <p style={{ color: '#3fb950' }}>// since 2024.01</p>
+        </footer>
       </body>
     </html>
   );
