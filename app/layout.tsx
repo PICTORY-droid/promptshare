@@ -38,9 +38,20 @@ export default function RootLayout({
         {children}
         <footer className="mt-auto py-4 text-center font-mono"
           style={{ borderTop: '1px solid #21262d' }}>
-          <p className="text-xs" style={{ color: '#58a6ff' }}>// made by seoin · PICTORY-droid</p>
-          <p className="text-xs mt-1" style={{ color: '#3fb950' }}>// since 2024.01</p>
+          <p className="text-xs" style={{ color: '#a0b4c8' }}>
+            $ whoami → seoin · PICTORY-droid
+            <span style={{
+              color: '#7ec99a',
+              animation: 'blink 1s step-end infinite',
+            }}>▌</span>
+          </p>
+          <p className="text-xs mt-1" style={{ color: '#6b7988' }}>// since 2024.01</p>
         </footer>
+        <style>{`
+          @keyframes blink {
+            50% { opacity: 0; }
+          }
+        `}</style>
       </body>
     </html>
   );
