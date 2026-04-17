@@ -75,15 +75,15 @@ export default function PromptList() {
     currentPage * ITEMS_PER_PAGE
   )
 
-  // 현재 페이지 기준 5개 페이지 번호 계산
   const getPageNumbers = () => {
-    const half = 2
-    let start = Math.max(1, currentPage - half)
-    let end = Math.min(totalPages, start + 4)
-    if (end - start < 4) start = Math.max(1, end - 4)
-    const pages = []
-    for (let i = start; i <= end; i++) pages.push(i)
-    return pages
+    if (totalPages <= 5) {
+      const pages = []
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+      return pages
+    }
+    if (currentPage <= 3) return [1, 2, 3, 4, 5]
+    if (currentPage >= totalPages - 2) return [totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages]
+    return [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2]
   }
 
   const chevronStyle = {
@@ -164,6 +164,15 @@ export default function PromptList() {
             <div className="mt-10 flex flex-col items-center gap-3">
               <div className="flex items-center gap-1">
 
+                {/* 처음으로 */}
+                <button
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                  style={currentPage === 1 ? btnDisabled : btnBase}
+                >
+                  «
+                </button>
+
                 {/* 이전 */}
                 <button
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
@@ -173,7 +182,7 @@ export default function PromptList() {
                   <span style={currentPage === 1 ? {} : chevronStyle}>◄</span>
                 </button>
 
-                {/* 페이지 번호 */}
+                {/* 페이지 번호 — 항상 5개 */}
                 {getPageNumbers().map(page => (
                   <button
                     key={page}
@@ -193,9 +202,22 @@ export default function PromptList() {
                   <span style={currentPage === totalPages ? {} : chevronStyle}>►</span>
                 </button>
 
+                {/* 마지막으로 */}
+                <button
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  style={currentPage === totalPages ? btnDisabled : btnBase}
+                >
+                  »
+                </button>
+
               </div>
 
-              
+              {/* 페이지 정보 */}
+              <div style={{ fontFamily: 'monospace', fontSize: '12px', color: '#484f58' }}>
+                // page {currentPage} of {totalPages} · {prompts.length} total prompts
+              </div>
+
             </div>
           )}
         </>
