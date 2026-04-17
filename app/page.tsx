@@ -374,7 +374,6 @@ export default function Home() {
 
             <div className="text-center mt-6 font-mono text-xs sm:text-sm" style={{ color: '#484f58' }}>
               <span style={{ color: '#8b949e' }}>
-                // page {currentPage} of {totalPages} • {filtered.length} total prompts
               </span>
             </div>
           </>
