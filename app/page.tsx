@@ -1,7 +1,8 @@
 'use client'
 
 import { supabase } from '@/app/lib/supabase'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import GravityEffect from '@/app/components/GravityEffect'
 import NeuralNetwork from '@/app/components/NeuralNetwork'
 import HologramCard from '@/app/components/HologramCard'
@@ -85,10 +86,17 @@ function TypingAnimation() {
   )
 }
 
-function PromptCard({ prompt, index }: { prompt: Prompt, index: number }) {
+function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery }: {
+  prompt: Prompt
+  index: number
+  currentPage: number
+  selectedCategory: string
+  searchQuery: string
+}) {
   const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
   const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
   const ref = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   useEffect(() => {
     const el = ref.current
@@ -111,11 +119,21 @@ function PromptCard({ prompt, index }: { prompt: Prompt, index: number }) {
     return () => observer.disconnect()
   }, [index])
 
+  const handleClick = () => {
+    const params = new URLSearchParams()
+    if (currentPage > 1) params.set('page', String(currentPage))
+    if (selectedCategory !== 'All') params.set('category', selectedCategory)
+    if (searchQuery.trim()) params.set('q', searchQuery)
+    const queryStr = params.toString()
+    router.replace(queryStr ? `/?${queryStr}` : '/', { scroll: false })
+    router.push(`/prompts/${prompt.id}`)
+  }
+
   return (
     <div
       ref={ref}
       className="prompt-card"
-      onClick={() => window.location.href = `/prompts/${prompt.id}`}
+      onClick={handleClick}
       style={{
         cursor: 'pointer',
         opacity: 0,
@@ -173,13 +191,19 @@ function PromptCard({ prompt, index }: { prompt: Prompt, index: number }) {
   )
 }
 
-export default function Home() {
+function HomeInner() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [prompts, setPrompts] = useState<Prompt[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState('All')
-  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get('category') || 'All')
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
   const [showCategories, setShowCategories] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(() => {
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    return isNaN(page) || page < 1 ? 1 : page
+  })
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   useEffect(() => {
@@ -203,6 +227,15 @@ export default function Home() {
     fetchPrompts()
   }, [])
 
+  const updateURL = (page: number, category: string, query: string) => {
+    const params = new URLSearchParams()
+    if (page > 1) params.set('page', String(page))
+    if (category !== 'All') params.set('category', category)
+    if (query.trim()) params.set('q', query)
+    const queryStr = params.toString()
+    router.replace(queryStr ? `/?${queryStr}` : '/', { scroll: false })
+  }
+
   const filtered = prompts.filter(p => {
     const matchCat = selectedCategory === 'All' || p.category === selectedCategory
     const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -216,13 +249,22 @@ export default function Home() {
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedPrompts = filtered.slice(startIndex, startIndex + itemsPerPage)
 
-  useEffect(() => {
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    updateURL(page, selectedCategory, searchQuery)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleCategoryChange = (cat: string) => {
+    setSelectedCategory(cat)
     setCurrentPage(1)
-  }, [selectedCategory, searchQuery])
+    updateURL(1, cat, searchQuery)
+  }
 
   const handleSearch = () => {
+    setCurrentPage(1)
+    updateURL(1, selectedCategory, searchQuery)
     if (searchQuery.trim()) {
-      setCurrentPage(1)
       document.querySelector('.grid')?.scrollIntoView({ behavior: 'smooth' })
     }
   }
@@ -237,7 +279,7 @@ export default function Home() {
     }
     if (startPage > 1) {
       buttons.push(
-        <button key="first" onClick={() => setCurrentPage(1)}
+        <button key="first" onClick={() => handlePageChange(1)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
           style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
           ◀ first
@@ -246,7 +288,7 @@ export default function Home() {
     }
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
-        <button key={i} onClick={() => setCurrentPage(i)}
+        <button key={i} onClick={() => handlePageChange(i)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm transition-all hover:scale-105"
           style={{
             background: currentPage === i ? '#58a6ff' : 'transparent',
@@ -260,7 +302,7 @@ export default function Home() {
     }
     if (endPage < totalPages) {
       buttons.push(
-        <button key="last" onClick={() => setCurrentPage(totalPages)}
+        <button key="last" onClick={() => handlePageChange(totalPages)}
           className="px-2 py-1 sm:px-3 sm:py-2 rounded font-mono text-xs sm:text-sm"
           style={{ background: 'transparent', color: '#8b949e', border: '1px solid #30363d' }}>
           last ▶
@@ -334,7 +376,7 @@ export default function Home() {
             const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
             const isActive = selectedCategory === cat
             return (
-              <button key={cat} onClick={() => setSelectedCategory(cat)}
+              <button key={cat} onClick={() => handleCategoryChange(cat)}
                 className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all hover:scale-105 whitespace-nowrap flex-shrink-0"
                 style={{
                   background: isActive ? (colors?.bg || '#21262d') : 'transparent',
@@ -363,7 +405,7 @@ export default function Home() {
                   const isActive = selectedCategory === cat
                   return (
                     <button key={cat}
-                      onClick={() => { setSelectedCategory(cat); setShowCategories(false) }}
+                      onClick={() => { handleCategoryChange(cat); setShowCategories(false) }}
                       className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all active:scale-95"
                       style={{
                         background: isActive ? (colors?.bg || '#21262d') : 'transparent',
@@ -393,7 +435,14 @@ export default function Home() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
               {paginatedPrompts.map((prompt, index) => (
-                <PromptCard key={prompt.id} prompt={prompt} index={index} />
+                <PromptCard
+                  key={prompt.id}
+                  prompt={prompt}
+                  index={index}
+                  currentPage={currentPage}
+                  selectedCategory={selectedCategory}
+                  searchQuery={searchQuery}
+                />
               ))}
             </div>
 
@@ -411,5 +460,19 @@ export default function Home() {
         )}
       </div>
     </main>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
+        <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
+          <span style={{ color: '#3fb950' }}>$</span> loading<span style={{ animation: 'blink 1s infinite' }}>_</span>
+        </div>
+      </main>
+    }>
+      <HomeInner />
+    </Suspense>
   )
 }
