@@ -12,7 +12,6 @@ interface Prompt {
   category: string
   author_name: string
   likes: number
-  dislikes: number
   views: number
   created_at: string
 }
@@ -433,7 +432,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(true)
   const [isLiking, setIsLiking] = useState(false)
-  const [isDisliking, setIsDisliking] = useState(false)
   const [matrixActive, setMatrixActive] = useState(false)
   const [showEasterMsg, setShowEasterMsg] = useState(false)
   const [konamiProgress, setKonamiProgress] = useState(0)
@@ -509,19 +507,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
       if (data) setPrompt(data)
     } catch { alert('좋아요 처리 중 오류가 발생했습니다.') }
     finally { setIsLiking(false) }
-  }
-
-  const handleDislike = async () => {
-    if (!prompt || isDisliking) return
-    setIsDisliking(true)
-    try {
-      const { data, error } = await supabase
-        .from('prompts').update({ dislikes: (prompt.dislikes || 0) + 1 })
-        .eq('id', prompt.id).select().single()
-      if (error) throw error
-      if (data) setPrompt(data)
-    } catch { alert('아쉬워요 처리 중 오류가 발생했습니다.') }
-    finally { setIsDisliking(false) }
   }
 
   const handlePasswordConfirm = async (pw: string) => {
@@ -669,17 +654,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                   style={{ background: 'transparent', color: '#ff7b72', border: '1px solid #f85149' }}>
                   <span>♥</span>
                   <span className="font-bold">{prompt.likes}</span>
-                </button>
-                <button onClick={handleDislike} disabled={isDisliking}
-                  className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'transparent', color: '#8b949e', border: '1px solid #484f58' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b949e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M8 15s1.5-2 4-2 4 2 4 2"/>
-                    <line x1="9" y1="9" x2="9.01" y2="9" strokeWidth="3"/>
-                    <line x1="15" y1="9" x2="15.01" y2="9" strokeWidth="3"/>
-                  </svg>
-                  <span className="font-bold">{prompt.dislikes ?? 0}</span>
                 </button>
               </div>
             </div>
