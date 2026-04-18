@@ -18,7 +18,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install google-generativeai supabase requests
+        run: pip install google-genai supabase requests
 
       - name: Run generator
         env:
