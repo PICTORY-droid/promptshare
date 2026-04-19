@@ -27,16 +27,12 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 }
 
 function formatContent(content: string): string {
-  const lines = content.split('\n')
-  if (lines.length === 0) return content
-  const firstLine = lines[0]
-  const restLines = lines.slice(1).join('\n')
-  const dotIndex = firstLine.indexOf('.')
-  if (dotIndex === -1) return content
-  const firstSentence = firstLine.substring(0, dotIndex + 1).trim()
-  const rest = firstLine.substring(dotIndex + 1).trim()
-  if (rest) return firstSentence + '\n' + rest + (restLines ? '\n' + restLines : '')
+  // \r\n 정규화 후 연속 빈 줄 최대 1개로 제한
   return content
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
 }
 
 function AuthModal({
