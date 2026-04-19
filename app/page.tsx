@@ -48,26 +48,30 @@ const CATEGORIES = ['All', 'Coding', 'Marketing', 'Writing', 'Education', 'Gener
 
 function TypingAnimation() {
   const fullText = "// 프롬프트를 제대로 알면 AI 수준이 달라진다"
-  const [displayedText, setDisplayedText] = useState('')
-  const [isTyping, setIsTyping] = useState(true)
+  const [scanProgress, setScanProgress] = useState(0)
+  const [scanDone, setScanDone] = useState(false)
   const [glitchText, setGlitchText] = useState(fullText)
   const [isGlitching, setIsGlitching] = useState(false)
   const glitchChars = '!@#$%^&*<>?/\\|[]{}~`ﾊﾐﾋｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂ'
 
   useEffect(() => {
-    if (!isTyping) return
-    if (displayedText.length < fullText.length) {
-      const timer = setTimeout(() => {
-        setDisplayedText(fullText.slice(0, displayedText.length + 1))
-      }, 50)
-      return () => clearTimeout(timer)
-    } else {
-      setIsTyping(false)
+    const start = performance.now()
+    let rafId: number
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / 1500, 1)
+      setScanProgress(t * 100)
+      if (t < 1) {
+        rafId = requestAnimationFrame(tick)
+      } else {
+        setScanDone(true)
+      }
     }
-  }, [displayedText, isTyping, fullText])
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [])
 
   useEffect(() => {
-    if (isTyping) return
+    if (!scanDone) return
     const scheduleRef = { current: null as ReturnType<typeof setTimeout> | null }
     const triggerGlitch = () => {
       setIsGlitching(true)
@@ -90,15 +94,42 @@ function TypingAnimation() {
     }
     scheduleRef.current = setTimeout(triggerGlitch, 2000 + Math.random() * 3000)
     return () => { if (scheduleRef.current) clearTimeout(scheduleRef.current) }
-  }, [isTyping])
-
-  const shown = isTyping ? displayedText : (isGlitching ? glitchText : fullText)
+  }, [scanDone])
 
   return (
-    <p className="text-sm font-mono" style={{ color: isGlitching ? '#8b949e' : '#484f58', minHeight: '1.5em', transition: 'color 0.1s' }}>
-      {shown}
-      {isTyping && <span style={{ color: '#58a6ff', animation: 'blink 1s infinite' }}>▍</span>}
-    </p>
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      {/* 레이아웃 높이 확보용 투명 텍스트 */}
+      <p className="text-sm font-mono" style={{ color: 'transparent', margin: 0, userSelect: 'none', pointerEvents: 'none' }}>
+        {fullText}
+      </p>
+      {/* 실제 표시 텍스트 — 스캔 중엔 clip-path로 위→아래 reveal */}
+      <p
+        className="text-sm font-mono"
+        style={{
+          position: 'absolute', top: 0, left: 0, margin: 0,
+          color: isGlitching ? '#8b949e' : '#484f58',
+          transition: 'color 0.1s',
+          clipPath: scanDone ? 'none' : `inset(0 0 ${100 - scanProgress}% 0)`,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {isGlitching ? glitchText : fullText}
+      </p>
+      {/* 스캔라인 */}
+      {!scanDone && (
+        <div
+          style={{
+            position: 'absolute',
+            left: '-8px', right: '-8px',
+            top: `calc(${scanProgress}% - 1px)`,
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent 0%, #7ec99a 20%, #c8f7d8 50%, #7ec99a 80%, transparent 100%)',
+            boxShadow: '0 0 6px #7ec99a, 0 0 14px #7ec99a88',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+    </div>
   )
 }
 
