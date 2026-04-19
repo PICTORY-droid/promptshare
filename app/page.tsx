@@ -172,7 +172,7 @@ function TypingAnimation() {
 }
 
 function CategoryTyping() {
-  const fullText = '카테고리로 검색하세요'
+  const fullText = '단어로 검색하세요'
   const [displayed, setDisplayed] = useState('')
   const [done, setDone] = useState(false)
 
@@ -432,6 +432,7 @@ function HomeInner() {
           0%, 49%, 100% { opacity: 1; }
           50%, 99% { opacity: 0; }
         }
+        input::placeholder { color: #484f58; }
       `}</style>
 
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
@@ -442,15 +443,13 @@ function HomeInner() {
 
         <div className="flex gap-2 mb-5 sm:mb-6">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-sm"
-              style={{ color: '#3fb950' }}>$</span>
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="// 프롬프트 검색..."
+              placeholder="단어로 검색하세요"
               style={{
-                width: '100%', padding: '10px 12px 10px 28px',
+                width: '100%', padding: '10px 12px',
                 background: '#161b22', border: '1px solid #30363d',
                 borderRadius: '10px', color: '#e6edf3',
                 fontFamily: 'monospace', fontSize: '14px', outline: 'none',
