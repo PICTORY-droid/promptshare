@@ -4,6 +4,18 @@ import { supabase } from '@/app/lib/supabase'
 import { notFound, useRouter } from 'next/navigation'
 import { useState, useEffect, useCallback, use } from 'react'
 
+declare global {
+  interface Window {
+    Kakao: {
+      init: (key: string) => void
+      isInitialized: () => boolean
+      Share: {
+        sendDefault: (options: Record<string, unknown>) => void
+      }
+    }
+  }
+}
+
 interface Prompt {
   id: string
   title: string
@@ -349,6 +361,21 @@ function ShareModal({
 }) {
   const [urlCopied, setUrlCopied] = useState(false)
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (window.Kakao) {
+      if (!window.Kakao.isInitialized()) window.Kakao.init('6407d028b50c91d6225c1002c8fd282e')
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js'
+    script.async = true
+    script.onload = () => {
+      if (!window.Kakao.isInitialized()) window.Kakao.init('6407d028b50c91d6225c1002c8fd282e')
+    }
+    document.head.appendChild(script)
+  }, [])
+
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://promptshare-woad.vercel.app'
   const url = `${baseUrl}/prompts/${prompt.id}`
   const shareText = `[PromptLab] ${prompt.title}\n${url}\n\n더 많은 프롬프트 → promptshare-woad.vercel.app`
@@ -380,8 +407,28 @@ function ShareModal({
         </svg>
       ),
       action: () => {
-        if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-          window.location.href = `kakaotalk://send?text=${encText}`
+        if (window.Kakao?.isInitialized()) {
+          window.Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+              title: `[PromptLab] ${prompt.title}`,
+              description: prompt.description || '더 많은 프롬프트를 PromptLab에서 확인하세요.',
+              imageUrl: 'https://promptshare-woad.vercel.app/og-image.png',
+              link: {
+                mobileWebUrl: `${url}?ref=kakao`,
+                webUrl: `${url}?ref=kakao`,
+              },
+            },
+            buttons: [
+              {
+                title: '프롬프트 보기',
+                link: {
+                  mobileWebUrl: `${url}?ref=kakao`,
+                  webUrl: `${url}?ref=kakao`,
+                },
+              },
+            ],
+          })
           onShare()
         } else {
           handleCopyURL()
