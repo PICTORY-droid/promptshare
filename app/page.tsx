@@ -110,7 +110,6 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
   searchQuery: string
 }) {
   const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
-  const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
   const ref = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -176,7 +175,7 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
               style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}>
               {prompt.category}
             </span>
-            <span className="text-xs font-mono" style={{ color: '#484f58' }}>{date}</span>
+
           </div>
 
           <h3 className="font-bold font-mono mb-1.5 text-sm sm:text-base leading-snug"
