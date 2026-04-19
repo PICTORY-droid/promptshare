@@ -213,7 +213,7 @@ export default function Navbar() {
             <span className="text-lg sm:text-2xl font-bold tracking-tight" style={{
               color: '#e6edf3', fontFamily: 'monospace'
             }}>prompt</span>
-            <span className="text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff', fontFamily: 'monospace' }}>share</span>
+            <span className="text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff', fontFamily: 'monospace' }}>lab</span>
             <span className="blink ml-0.5 text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff' }}>_</span>
           </div>
 
