@@ -314,6 +314,9 @@ function HomeInner() {
     const page = parseInt(searchParams.get('page') || '1', 10)
     return isNaN(page) || page < 1 ? 1 : page
   })
+  const [sortBy, setSortBy] = useState<'latest' | 'popular'>(() =>
+    (searchParams.get('sort') as 'latest' | 'popular') || 'latest'
+  )
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   useEffect(() => {
@@ -337,22 +340,33 @@ function HomeInner() {
     fetchPrompts()
   }, [])
 
-  const updateURL = (page: number, category: string, query: string) => {
+  const updateURL = (page: number, category: string, query: string, sort: string = sortBy) => {
     const params = new URLSearchParams()
     if (page > 1) params.set('page', String(page))
     if (category !== 'All') params.set('category', category)
     if (query.trim()) params.set('q', query)
+    if (sort !== 'latest') params.set('sort', sort)
     const queryStr = params.toString()
     router.replace(queryStr ? `/?${queryStr}` : '/', { scroll: false })
   }
 
-  const filtered = prompts.filter(p => {
-    const matchCat = selectedCategory === 'All' || p.category === selectedCategory
-    const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.author_name.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchCat && matchSearch
-  })
+  const handleSortChange = (sort: 'latest' | 'popular') => {
+    setSortBy(sort)
+    setCurrentPage(1)
+    updateURL(1, selectedCategory, searchQuery, sort)
+  }
+
+  const filtered = prompts
+    .filter(p => {
+      const matchCat = selectedCategory === 'All' || p.category === selectedCategory
+      const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.author_name.toLowerCase().includes(searchQuery.toLowerCase())
+      return matchCat && matchSearch
+    })
+    .sort((a, b) =>
+      sortBy === 'popular' ? (b.views - a.views) : 0
+    )
 
   const itemsPerPage = isSmallScreen ? 20 : 30
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
@@ -512,6 +526,25 @@ function HomeInner() {
               </div>
             </div>
           )}
+        </div>
+
+        <div className="flex items-center gap-1 mb-5" style={{ borderBottom: '1px solid #21262d', paddingBottom: '0' }}>
+          {(['latest', 'popular'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => handleSortChange(tab)}
+              className="px-4 py-2 font-mono text-xs transition-all"
+              style={{
+                background: 'transparent',
+                color: sortBy === tab ? '#58a6ff' : '#484f58',
+                border: 'none',
+                borderBottom: sortBy === tab ? '2px solid #58a6ff' : '2px solid transparent',
+                cursor: 'pointer',
+                marginBottom: '-1px',
+              }}>
+              {tab === 'latest' ? '// 최신순' : '// 인기순'}
+            </button>
+          ))}
         </div>
 
         {loading ? (

@@ -952,7 +952,6 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
                     <polyline points="16 6 12 2 8 6"/>
                     <line x1="12" y1="2" x2="12" y2="15"/>
                   </svg>
-                  <span className="font-bold">{prompt.shares ?? 0}</span>
                 </button>
                 <button onClick={handleMyLab}
                   className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
