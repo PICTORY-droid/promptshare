@@ -23,7 +23,6 @@ interface PromptCardProps {
 }
 
 export default function PromptCard({ prompt }: PromptCardProps) {
-  const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
   const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
 
   return (
@@ -55,9 +54,6 @@ export default function PromptCard({ prompt }: PromptCardProps) {
             }}
           >
             {prompt.category}
-          </span>
-          <span className="text-xs" style={{ color: '#8b949e' }}>
-            {date}
           </span>
         </div>
 

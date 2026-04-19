@@ -574,7 +574,6 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
 
   if (!prompt) return notFound()
 
-  const date = new Date(prompt.created_at).toLocaleDateString('ko-KR')
   const colors = CATEGORY_COLORS[prompt.category] || CATEGORY_COLORS['Other']
   const formattedContent = formatContent(prompt.content)
 
@@ -695,7 +694,7 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
               {prompt.description}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8 p-3 sm:p-4 rounded-lg font-mono"
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8 p-3 sm:p-4 rounded-lg font-mono"
               style={{ background: '#0d1117', border: '1px solid #21262d' }}>
               <div className="flex sm:block items-center gap-4 sm:gap-0">
                 <p className="text-xs mb-0 sm:mb-1 w-16 sm:w-auto flex-shrink-0" style={{ color: '#484f58' }}>// author</p>
@@ -707,11 +706,7 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                   <span className="text-sm" style={{ color: '#e6edf3' }}>{prompt.author_name}</span>
                 </div>
               </div>
-              <div className="flex sm:block items-center gap-4 sm:gap-0">
-                <p className="text-xs mb-0 sm:mb-1 w-16 sm:w-auto flex-shrink-0" style={{ color: '#484f58' }}>// date</p>
-                <p className="text-sm" style={{ color: '#e6edf3' }}>{date}</p>
-              </div>
-              <div className="flex sm:block items-center gap-4 sm:gap-0">
+<div className="flex sm:block items-center gap-4 sm:gap-0">
                 <p className="text-xs mb-0 sm:mb-1 w-16 sm:w-auto flex-shrink-0" style={{ color: '#484f58' }}>// views</p>
                 <p className="text-sm" style={{ color: '#e6edf3' }}>◎ {prompt.views}</p>
               </div>
