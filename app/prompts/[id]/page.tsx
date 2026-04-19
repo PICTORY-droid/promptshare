@@ -439,8 +439,28 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
   const [showEditModal, setShowEditModal] = useState(false)
   const [isAuthor, setIsAuthor] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [inMyLab, setInMyLab] = useState(false)
 
   useEasterEgg()
+
+  useEffect(() => {
+    const saved: { id: string }[] = JSON.parse(localStorage.getItem('mylab') || '[]')
+    setInMyLab(saved.some(p => p.id === id))
+  }, [id])
+
+  const handleMyLab = () => {
+    if (!prompt) return
+    const saved: { id: string; title: string; category: string }[] = JSON.parse(localStorage.getItem('mylab') || '[]')
+    if (inMyLab) {
+      localStorage.setItem('mylab', JSON.stringify(saved.filter(p => p.id !== prompt.id)))
+      setInMyLab(false)
+    } else {
+      saved.push({ id: prompt.id, title: prompt.title, category: prompt.category })
+      localStorage.setItem('mylab', JSON.stringify(saved))
+      setInMyLab(true)
+    }
+    window.dispatchEvent(new Event('mylab-update'))
+  }
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     setKonamiProgress(prev => {
@@ -679,6 +699,16 @@ export default function PromptDetail({ params }: { params: Promise<{ id: string 
                     <line x1="15" y1="9" x2="15.01" y2="9" strokeWidth="3"/>
                   </svg>
                   <span className="font-bold">{prompt.dislikes ?? 0}</span>
+                </button>
+                <button onClick={handleMyLab}
+                  className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-mono text-sm transition-all hover:scale-105 active:scale-95"
+                  style={{ background: 'transparent', color: inMyLab ? '#7ec99a' : '#8b949e', border: inMyLab ? '1px solid #7ec99a' : '1px solid #484f58' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={inMyLab ? '#7ec99a' : '#8b949e'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 3H15L17 9L21 21H3L7 9L9 3Z"/>
+                    <path d="M9 3C9 3 10 6 12 6C14 6 15 3 15 3"/>
+                    <path d="M7 9H17"/>
+                  </svg>
+                  <span className="hidden sm:inline font-bold">My Lab</span>
                 </button>
               </div>
             </div>

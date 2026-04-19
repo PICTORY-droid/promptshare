@@ -145,6 +145,8 @@ function CursorTrail() {
 export default function Navbar() {
   const [time, setTime] = useState('')
   const [mounted, setMounted] = useState(false)
+  const [mylabCount, setMylabCount] = useState(0)
+
   useEffect(() => {
     setMounted(true)
     const updateTime = () => {
@@ -153,7 +155,20 @@ export default function Navbar() {
     }
     updateTime()
     const interval = setInterval(updateTime, 1000)
-    return () => clearInterval(interval)
+
+    const updateCount = () => {
+      const saved = JSON.parse(localStorage.getItem('mylab') || '[]')
+      setMylabCount(saved.length)
+    }
+    updateCount()
+    window.addEventListener('storage', updateCount)
+    window.addEventListener('mylab-update', updateCount)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('storage', updateCount)
+      window.removeEventListener('mylab-update', updateCount)
+    }
   }, [])
 
   return (
@@ -191,6 +206,26 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => window.location.href = '/mylab'}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-mono text-xs transition-all hover:scale-105 active:scale-95"
+              style={{ background: 'transparent', color: '#7ec99a', border: '1px solid #7ec99a44' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#7ec99a'; e.currentTarget.style.boxShadow = '0 0 10px #7ec99a33' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#7ec99a44'; e.currentTarget.style.boxShadow = 'none' }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7ec99a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 3H15L17 9L21 21H3L7 9L9 3Z"/>
+                <path d="M9 3C9 3 10 6 12 6C14 6 15 3 15 3"/>
+                <path d="M7 9H17"/>
+              </svg>
+              <span>My Lab</span>
+              {mounted && mylabCount > 0 && (
+                <span className="flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold"
+                  style={{ background: '#7ec99a', color: '#0d1117', fontSize: '10px' }}>
+                  {mylabCount}
+                </span>
+              )}
+            </button>
             <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{
               background: '#21262d', color: '#3fb950',
               fontFamily: 'monospace', border: '1px solid #30363d'
