@@ -387,25 +387,7 @@ function HomeInner() {
           </button>
         </div>
 
-        <div className="hidden sm:flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-1">
-          {CATEGORIES.map(cat => {
-            const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
-            const isActive = selectedCategory === cat
-            return (
-              <button key={cat} onClick={() => handleCategoryChange(cat)}
-                className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all hover:scale-105 whitespace-nowrap flex-shrink-0"
-                style={{
-                  background: isActive ? (colors?.bg || '#21262d') : 'transparent',
-                  color: isActive ? (colors?.text || '#e6edf3') : '#484f58',
-                  border: `1px solid ${isActive ? (colors?.border || '#30363d') : '#21262d'}`,
-                }}>
-                {cat}
-              </button>
-            )
-          })}
-        </div>
-
-        <div className="sm:hidden mb-6">
+        <div className="mb-6">
           <button
             onClick={() => setShowCategories(!showCategories)}
             className="w-full px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all flex items-center justify-between"
