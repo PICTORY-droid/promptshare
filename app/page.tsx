@@ -55,28 +55,26 @@ function TypingAnimation() {
   const glitchChars = '!@#$%^&*<>?/\\|[]{}~`ﾊﾐﾋｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂ'
 
   useEffect(() => {
-    const start = performance.now()
     let rafId: number
-    const tick = (now: number) => {
-      const t = Math.min((now - start) / 1500, 1)
-      setScanProgress(t * 100)
-      if (t < 1) {
-        rafId = requestAnimationFrame(tick)
-      } else {
-        setScanDone(true)
-      }
-    }
-    rafId = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafId)
-  }, [])
+    let glitchTimer: ReturnType<typeof setTimeout> | null = null
+    let glitchInterval: ReturnType<typeof setInterval> | null = null
+    let cycleTimer: ReturnType<typeof setTimeout> | null = null
+    let pauseTimer: ReturnType<typeof setTimeout> | null = null
+    let destroyed = false
 
-  useEffect(() => {
-    if (!scanDone) return
-    const scheduleRef = { current: null as ReturnType<typeof setTimeout> | null }
+    const clearAll = () => {
+      cancelAnimationFrame(rafId)
+      if (glitchTimer) clearTimeout(glitchTimer)
+      if (glitchInterval) clearInterval(glitchInterval)
+      if (cycleTimer) clearTimeout(cycleTimer)
+      if (pauseTimer) clearTimeout(pauseTimer)
+    }
+
     const triggerGlitch = () => {
+      if (destroyed) return
       setIsGlitching(true)
       let count = 0
-      const interval = setInterval(() => {
+      glitchInterval = setInterval(() => {
         setGlitchText(
           fullText.split('').map((char) => {
             if (char === ' ' || char === '/') return char
@@ -85,16 +83,56 @@ function TypingAnimation() {
         )
         count++
         if (count >= 6) {
-          clearInterval(interval)
+          clearInterval(glitchInterval!)
+          glitchInterval = null
           setGlitchText(fullText)
           setIsGlitching(false)
-          scheduleRef.current = setTimeout(triggerGlitch, 2000 + Math.random() * 4000)
+          if (!destroyed) {
+            glitchTimer = setTimeout(triggerGlitch, 2000 + Math.random() * 3000)
+          }
         }
       }, 60)
     }
-    scheduleRef.current = setTimeout(triggerGlitch, 2000 + Math.random() * 3000)
-    return () => { if (scheduleRef.current) clearTimeout(scheduleRef.current) }
-  }, [scanDone])
+
+    const onScanDone = () => {
+      if (destroyed) return
+      // 글리치 시작
+      glitchTimer = setTimeout(triggerGlitch, 1500 + Math.random() * 2000)
+      // 5.5s 후 글리치 중단 → 3s 클린 대기 → 재스캔 (총 사이클 10s)
+      cycleTimer = setTimeout(() => {
+        if (destroyed) return
+        if (glitchTimer) clearTimeout(glitchTimer)
+        if (glitchInterval) { clearInterval(glitchInterval); glitchInterval = null }
+        setIsGlitching(false)
+        setGlitchText(fullText)
+        pauseTimer = setTimeout(startScan, 3000)
+      }, 5500)
+    }
+
+    function startScan() {
+      if (destroyed) return
+      setScanProgress(0)
+      setScanDone(false)
+      setIsGlitching(false)
+      setGlitchText(fullText)
+      const start = performance.now()
+      const tick = (now: number) => {
+        if (destroyed) return
+        const t = Math.min((now - start) / 1500, 1)
+        setScanProgress(t * 100)
+        if (t < 1) {
+          rafId = requestAnimationFrame(tick)
+        } else {
+          setScanDone(true)
+          onScanDone()
+        }
+      }
+      rafId = requestAnimationFrame(tick)
+    }
+
+    startScan()
+    return () => { destroyed = true; clearAll() }
+  }, [])
 
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
