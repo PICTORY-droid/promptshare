@@ -9,9 +9,9 @@ dist/
 .DS_Store
 Desktop
 vibe
-promptshare
+promptlab
 *.backup
 *.sql
-promptshare_*.md
+promptlab_*.md
 9회차_prompts_50.sql
-promptshare_가이드라인_업데이트.md
+promptlab_가이드라인_업데이트.md

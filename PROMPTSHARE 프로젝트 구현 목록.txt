@@ -1,5 +1,5 @@
 ==============================
-PROMPTSHARE 프로젝트 구현 목록
+PROMPTLAB 프로젝트 구현 목록
 ==============================
 
 📁 프로젝트 경로: C:/Desktop/vibe/promptshare
@@ -52,7 +52,7 @@ PROMPTSHARE 프로젝트 구현 목록
 아래 내용을 Claude에게 그대로 붙여넣으세요:
 
 ---
-나는 Next.js + Supabase + Vercel로 만든 promptshare 프로젝트를 개발 중입니다.
+나는 Next.js + Supabase + Vercel로 만든 promptlab 프로젝트를 개발 중입니다.
 경로: C:/Desktop/vibe/promptshare
 Git Bash 사용 중이고 초보자입니다.
 

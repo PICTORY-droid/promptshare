@@ -199,8 +199,8 @@ export default function Navbar() {
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
           </div>
           <span className="text-xs ml-1 truncate" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
-            <span className="hidden sm:inline">promptshare — zsh — 80×24</span>
-            <span className="sm:hidden">promptshare</span>
+            <span className="hidden sm:inline">promptlab — zsh — 80×24</span>
+            <span className="sm:hidden">promptlab</span>
           </span>
           <span className="ml-auto text-xs flex-shrink-0" style={{ color: '#8b949e', fontFamily: 'monospace' }}>
             {mounted ? time : ''}

@@ -351,7 +351,7 @@ function MatrixRain({ active }: { active: boolean }) {
 
 function useEasterEgg() {
   useEffect(() => {
-    console.log('%c🚀 PromptShare', 'color: #58a6ff; font-size: 24px; font-weight: bold;')
+    console.log('%c🚀 PromptLab', 'color: #58a6ff; font-size: 24px; font-weight: bold;')
     console.log('%c당신은 진짜 개발자군요! 콘솔까지 열어보다니 😄', 'color: #3fb950; font-size: 14px;')
     console.log('%c// TODO: 여기에 최고의 프롬프트를 작성하세요', 'color: #8b949e; font-size: 12px;')
     console.log('%cconst bestPrompt = await fetch("/api/your-imagination")', 'color: #bc8cff; font-size: 12px; font-family: monospace;')
