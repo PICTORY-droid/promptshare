@@ -172,7 +172,7 @@ function TypingAnimation() {
 }
 
 function CategoryTyping() {
-  const fullText = '단어로 검색하세요'
+  const fullText = '카테고리별로 보기 클릭'
   const [displayed, setDisplayed] = useState('')
   const [done, setDone] = useState(false)
 
