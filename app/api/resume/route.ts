@@ -1,6 +1,6 @@
 // app/api/resume/route.ts
 // OpenRouter 무료 티어 기반 — 비용 0원
-// Vision 모델: google/gemma-4-31b-it:free
+// Vision 모델: 자동 폴백 (429/404 시 다음 모델로 전환)
 // ANTHROPIC_API_KEY는 Claude Code 자동화 전용 — 이 파일에서 사용 안 함
 
 import { NextRequest, NextResponse } from "next/server";
@@ -16,7 +16,13 @@ const client = new OpenAI({
   },
 });
 
-const VISION_MODEL = "google/gemma-4-31b-it:free";
+// 폴백 순서: 성능 좋은 순으로 나열, 실패 시 다음으로 자동 전환
+const VISION_MODELS = [
+  "google/gemma-4-31b-it:free",
+  "google/gemma-4-26b-a4b-it:free",
+  "meta-llama/llama-3.2-11b-vision-instruct:free",
+  "mistralai/mistral-small-3.1-24b-instruct:free",
+];
 
 interface ImageInput {
   base64: string;
@@ -24,6 +30,44 @@ interface ImageInput {
 }
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+async function callWithFallback(
+  messages: OpenAI.Chat.ChatCompletionMessageParam[]
+): Promise<string> {
+  let lastError: Error | null = null;
+
+  for (const model of VISION_MODELS) {
+    try {
+      console.log(`[Resume] 모델 시도: ${model}`);
+      const response = await client.chat.completions.create({
+        model,
+        max_tokens: 4000,
+        messages,
+      });
+
+      const result = response.choices[0]?.message?.content;
+      if (result) {
+        console.log(`[Resume] 성공: ${model}`);
+        return result;
+      }
+    } catch (error: unknown) {
+      const err = error as { status?: number; message?: string };
+      const status = err?.status;
+      console.warn(`[Resume] 실패 (${model}): ${status} ${err?.message}`);
+
+      // 429(Rate Limit) 또는 404(모델 없음) 일 때만 다음 모델로 폴백
+      if (status === 429 || status === 404) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        continue;
+      }
+
+      // 그 외 오류는 즉시 throw
+      throw error;
+    }
+  }
+
+  throw lastError ?? new Error("모든 모델에서 응답을 받지 못했습니다.");
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -177,24 +221,15 @@ ${hasResume ? `
 4. 입사 후 포부
 (내용)`;
 
-    const response = await client.chat.completions.create({
-      model: VISION_MODEL,
-      max_tokens: 4000,
-      messages: [
-        {
-          role: "user",
-          content: [
-            ...imageContents,
-            { type: "text", text: prompt },
-          ],
-        },
-      ],
-    });
-
-    const result = response.choices[0]?.message?.content;
-    if (!result) {
-      return NextResponse.json({ error: "응답 형식 오류" }, { status: 500 });
-    }
+    const result = await callWithFallback([
+      {
+        role: "user",
+        content: [
+          ...imageContents,
+          { type: "text", text: prompt },
+        ],
+      },
+    ]);
 
     return NextResponse.json({
       resume: result,
