@@ -9,7 +9,8 @@
       "Bash(curl *)",
       "Bash(node -e ' *)",
       "Bash(npx supabase *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "WebFetch(domain:hkijkcoshdzzmaxiihzm.supabase.co)"
     ]
   }
 }
