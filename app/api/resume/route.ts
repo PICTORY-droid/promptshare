@@ -6,7 +6,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-// OpenRouter 클라이언트 — OPENROUTER_API_KEY 사용
 const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -16,12 +15,9 @@ const client = new OpenAI({
   },
 });
 
-// 폴백 순서: 성능 좋은 순으로 나열, 실패 시 다음으로 자동 전환
 const VISION_MODELS = [
   "google/gemma-4-31b-it:free",
   "google/gemma-4-26b-a4b-it:free",
-  "meta-llama/llama-3.2-11b-vision-instruct:free",
-  "mistralai/mistral-small-3.1-24b-instruct:free",
 ];
 
 interface ImageInput {
@@ -29,6 +25,7 @@ interface ImageInput {
   mediaType: string;
 }
 
+// PDF는 page.tsx에서 이미지로 변환되어 오므로 image/* 만 허용
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 async function callWithFallback(
@@ -55,13 +52,11 @@ async function callWithFallback(
       const status = err?.status;
       console.warn(`[Resume] 실패 (${model}): ${status} ${err?.message}`);
 
-      // 429(Rate Limit) 또는 404(모델 없음) 일 때만 다음 모델로 폴백
       if (status === 429 || status === 404) {
         lastError = error instanceof Error ? error : new Error(String(error));
         continue;
       }
 
-      // 그 외 오류는 즉시 throw
       throw error;
     }
   }
@@ -109,7 +104,6 @@ export async function POST(req: NextRequest) {
 
     const hasResume = validResumeImages.length > 0;
 
-    // OpenAI 호환 형식으로 이미지 구성
     const imageContents: OpenAI.Chat.ChatCompletionContentPart[] = [];
 
     imageContents.push({
