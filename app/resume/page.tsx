@@ -10,6 +10,23 @@ const CHECKLIST_ITEMS = [
   "각 항목이 500자 이상인가 (부족하면 직접 보완)",
 ];
 
+// 이력서 빈 값 정제 — "기술 스택: , ," 같은 항목 제거
+function cleanResumeInput(text: string): string {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => {
+      if (!line) return false;
+      const valueMatch = line.match(/^[-\s]*[^:]+:\s*(.*)$/);
+      if (valueMatch) {
+        const value = valueMatch[1].replace(/[,\s]/g, "");
+        if (!value) return false;
+      }
+      return true;
+    })
+    .join("\n");
+}
+
 export default function ResumePage() {
   const [jobText, setJobText] = useState("");
   const [resumeText, setResumeText] = useState("");
@@ -25,12 +42,13 @@ export default function ResumePage() {
     if (!jobText.trim()) { setError("채용공고 내용을 입력해주세요."); return; }
     setLoading(true); setError(""); setResume("");
     try {
+      const cleanedResume = resumeText.trim() ? cleanResumeInput(resumeText.trim()) : "";
       const res = await fetch("/api/resume", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           jobText: jobText.trim(),
-          resumeText: resumeText.trim() || undefined,
+          resumeText: cleanedResume || undefined,
           userInfo: userInfo.trim() || undefined,
         }),
       });
@@ -90,7 +108,7 @@ export default function ResumePage() {
               <textarea
                 value={jobText}
                 onChange={(e) => setJobText(e.target.value)}
-                placeholder={"채용공고 내용을 여기에 붙여넣으세요\n\n예:\n[회사명] OO기업\n[직무] 백엔드 개발자\n[자격요건] ...\n[우대사항] ..."}
+                placeholder={"채용공고 내용을 여기에 붙여넣으세요\n\n예:\n[회사명] OO기업\n[직무] 마케터\n[자격요건] ...\n[우대사항] ..."}
                 rows={10}
                 style={{ width: "100%", background: "#0d1117", border: `1px solid ${jobText ? "#238636" : "#30363d"}`, borderRadius: "8px", color: "#e6edf3", fontSize: "12px", padding: "10px 12px", resize: "vertical", fontFamily: "'Courier New', monospace", boxSizing: "border-box", outline: "none", lineHeight: 1.6 }}
               />
@@ -100,15 +118,16 @@ export default function ResumePage() {
             {/* STEP 2 */}
             <div style={{ background: "#161b22", border: "1px solid #21262d", borderRadius: "10px", padding: "16px" }}>
               <div style={{ fontSize: "12px", color: "#3fb950", fontWeight: 700, marginBottom: "8px" }}>
-                STEP 2 · 이력서 <span style={{ color: "#6e7681", fontWeight: "normal" }}>(선택)</span>
+                STEP 2 · 이력서 <span style={{ color: "#6e7681", fontWeight: "normal" }}>(선택 — 넣을수록 정확도 상승)</span>
               </div>
               <div style={{ background: "#0d1117", border: "1px solid #30363d", borderRadius: "6px", padding: "8px 12px", fontSize: "11px", color: "#6e7681", lineHeight: 1.7, marginBottom: "10px" }}>
-                📄 이력서 내용 복사 후 붙여넣기 — 학력·경력·프로젝트·기술스택 포함
+                📄 학력·경력·프로젝트·기술스택·수치 포함해서 붙여넣기<br />
+                <span style={{ color: "#484f58" }}>빈 항목은 자동으로 제외됩니다</span>
               </div>
               <textarea
                 value={resumeText}
                 onChange={(e) => setResumeText(e.target.value)}
-                placeholder={"이력서 내용을 여기에 붙여넣으세요 (선택)\n\n예:\n[학력] OO대학교 컴퓨터공학과 졸업\n[경력] OO회사 백엔드 개발 2년\n[프로젝트] ...\n[기술] Python, Django, AWS"}
+                placeholder={"이력서 내용을 여기에 붙여넣으세요 (선택)\n\n예:\n[학력] OO대학교 컴퓨터공학과 졸업\n[경력] OO회사 마케터 1년 5개월\n[기술] 구글 스프레드시트, Canva\n[자격증] GAC, AIPD 1급"}
                 rows={10}
                 style={{ width: "100%", background: "#0d1117", border: `1px solid ${resumeText ? "#238636" : "#30363d"}`, borderRadius: "8px", color: "#e6edf3", fontSize: "12px", padding: "10px 12px", resize: "vertical", fontFamily: "'Courier New', monospace", boxSizing: "border-box", outline: "none", lineHeight: 1.6 }}
               />
@@ -123,7 +142,7 @@ export default function ResumePage() {
               <textarea
                 value={userInfo}
                 onChange={(e) => setUserInfo(e.target.value)}
-                placeholder={"이력서에 없는 내용 보완\n예: 희망 연봉, 지원 이유, 강조할 경험"}
+                placeholder={"이력서에 없는 내용 보완\n예: 강조하고 싶은 경험, 특이사항"}
                 rows={3}
                 style={{ width: "100%", background: "#161b22", border: "1px solid #30363d", borderRadius: "8px", color: "#e6edf3", fontSize: "12px", padding: "10px 12px", resize: "vertical", fontFamily: "'Courier New', monospace", boxSizing: "border-box", outline: "none", lineHeight: 1.6 }}
               />
@@ -134,7 +153,7 @@ export default function ResumePage() {
               <div style={{ background: "#2d1117", border: "1px solid #f85149", borderRadius: "6px", padding: "10px 14px", fontSize: "12px", color: "#f85149" }}>
                 ⚠ {error}
                 <div style={{ marginTop: "6px", color: "#8b949e", fontSize: "11px" }}>
-                  현재 무료 API 제공. 잠시 후 다시 시도해주세요.
+                  무료 API 한도 초과 시 잠시 후 다시 시도해주세요.
                 </div>
               </div>
             )}
@@ -146,7 +165,7 @@ export default function ResumePage() {
                 disabled={!canGenerate}
                 style={{ flex: 1, background: canGenerate ? "#238636" : "#21262d", color: canGenerate ? "#fff" : "#6e7681", border: "none", borderRadius: "8px", padding: "13px", fontSize: "14px", fontWeight: 700, cursor: canGenerate ? "pointer" : "not-allowed", fontFamily: "'Courier New', monospace" }}
               >
-                {loading ? "⏳ AI 작성 중..." : "자소서 생성하기"}
+                {loading ? "⏳ AI 작성 중... (15~30초)" : "자소서 생성하기"}
               </button>
               {(jobText || resume) && (
                 <button
