@@ -1,9 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import * as pdfjsLib from "pdfjs-dist";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface ImageSlot {
   file: File | null;
@@ -13,8 +10,7 @@ interface ImageSlot {
 }
 
 const emptySlot = (): ImageSlot => ({ file: null, preview: null, base64: null, mediaType: null });
-const ALLOWED_IMAGE = ["image/jpeg", "image/png", "image/webp"];
-const ALLOWED_ALL = [...ALLOWED_IMAGE, "application/pdf"];
+const ALLOWED_ALL = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
 
 function toBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -26,6 +22,8 @@ function toBase64(file: File): Promise<string> {
 }
 
 async function pdfToBase64(file: File): Promise<{ base64: string; preview: string }> {
+  const pdfjsLib = await import("pdfjs-dist");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   const page = await pdf.getPage(1);
