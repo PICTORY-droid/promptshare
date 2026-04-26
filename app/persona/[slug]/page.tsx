@@ -5,6 +5,8 @@ import { supabase } from '@/app/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { use } from 'react'
 
+declare global { interface Window { Kakao: { init: (key: string) => void; isInitialized: () => boolean; Share: { sendDefault: (options: Record<string, unknown>) => void } } } }
+
 interface PersonaCard {
   id: string
   name: string
@@ -29,6 +31,22 @@ export default function PersonaSlugPage({ params }: { params: Promise<{ slug: st
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const [shareMenuOpen, setShareMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (!window.Kakao) {
+        const script = document.createElement('script')
+        script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js'
+        script.async = true
+        script.onload = () => {
+          if (!window.Kakao.isInitialized()) window.Kakao.init('8d2c2590ce75f2f21d3bb4bf6b437e61')
+        }
+        document.head.appendChild(script)
+      } else if (!window.Kakao.isInitialized()) {
+        window.Kakao.init('8d2c2590ce75f2f21d3bb4bf6b437e61')
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const fetch = async () => {
@@ -108,6 +126,27 @@ export default function PersonaSlugPage({ params }: { params: Promise<{ slug: st
               <button onClick={() => { window.location.href = 'sms:?body=' + encodeURIComponent(shareText); setShareMenuOpen(false) }}
                 style={{ padding: '12px', background: '#21262d', border: '1px solid #30363d', borderRadius: '8px', color: '#3fb950', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', textAlign: 'left' }}>
                 💬 문자로 공유
+              </button>
+              <button onClick={() => {
+                  if (window.Kakao?.isInitialized()) {
+                    window.Kakao.Share.sendDefault({
+                      objectType: 'feed',
+                      content: {
+                        title: '[PromptLab] ' + persona.name + ' AI 페르소나',
+                        description: persona.role.substring(0, 80),
+                        imageUrl: 'https://promptlab.io.kr/og-image-v2.png',
+                        link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
+                      },
+                      buttons: [{ title: '페르소나 카드 보기', link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }],
+                    })
+                  } else {
+                    navigator.clipboard.writeText(shareUrl)
+                    alert('카카오 SDK 미로드 - 링크가 복사됐습니다.')
+                  }
+                  setShareMenuOpen(false)
+                }}
+                style={{ padding: '12px', background: '#FEE500', border: 'none', borderRadius: '8px', color: '#191919', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', textAlign: 'left' }}>
+                💬 카카오톡으로 공유
               </button>
               <button onClick={() => { window.location.href = 'mailto:?subject=' + encodeURIComponent(persona.name) + '&body=' + encodeURIComponent(shareText); setShareMenuOpen(false) }}
                 style={{ padding: '12px', background: '#21262d', border: '1px solid #30363d', borderRadius: '8px', color: '#58a6ff', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', textAlign: 'left' }}>
