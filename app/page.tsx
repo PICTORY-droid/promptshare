@@ -437,9 +437,7 @@ function HomeInner() {
       `}</style>
 
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-10">
-        <div className="mb-6 sm:mb-8 text-center">
-          <TypingAnimation />
-        </div>
+
 
         {/* 검색바 + 카테고리 한 줄 */}
         <div className="flex gap-2 mb-4">
