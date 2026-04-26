@@ -5,6 +5,8 @@ import { supabase } from '@/app/lib/supabase'
 import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 
+declare global { interface Window { _shareData: { text: string; encText: string; encUrl: string; encTitle: string; url: string } } }
+
 interface UserPrompt {
   id: string
   title: string
@@ -87,10 +89,25 @@ export default function MyCollectionPage() {
     }
   }
 
+  const [shareMenu, setShareMenu] = useState(false)
+  const [shareTarget, setShareTarget] = useState<UserPrompt | null>(null)
+
   const handleCopy = async (content: string, id: string) => {
     await navigator.clipboard.writeText(content)
     setCopied(id)
     setTimeout(() => setCopied(null), 2000)
+  }
+
+
+  const handleShare = (p: UserPrompt) => {
+    const url = typeof window !== 'undefined' ? window.location.origin + '/prompts/' + p.original_prompt_id : ''
+    const text = '[PromptLab] ' + p.title + '\n' + (url || '') + '\n\n더 많은 프롬프트 → promptlab.io.kr'
+    const encText = encodeURIComponent(text)
+    const encUrl = encodeURIComponent(url || 'https://promptlab.io.kr')
+    const encTitle = encodeURIComponent(p.title)
+    setShareTarget(p)
+    setShareMenu(true)
+    window._shareData = { text, encText, encUrl, encTitle, url }
   }
 
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '사용자'
@@ -116,6 +133,78 @@ export default function MyCollectionPage() {
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }}>
+      {/* 공유 모달 */}
+      {shareMenu && shareTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)' }}
+          onClick={() => setShareMenu(false)}>
+          <div className="w-full max-w-sm rounded-xl overflow-hidden"
+            style={{ background: '#161b22', border: '1px solid #30363d', boxShadow: '0 0 50px #58a6ff18' }}
+            onClick={e => e.stopPropagation()}>
+            <div className="px-4 py-2 flex items-center justify-between" style={{ background: '#21262d' }}>
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }}></div>
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ffbd2e' }}></div>
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#28c840' }}></div>
+                </div>
+                <span className="text-xs ml-1 font-mono" style={{ color: '#8b949e' }}>share.prompt</span>
+              </div>
+              <button onClick={() => setShareMenu(false)} style={{ color: '#484f58', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+            </div>
+            <div className="p-5">
+              <p className="font-mono text-xs mb-1" style={{ color: '#8b949e' }}>
+                <span style={{ color: '#58a6ff' }}>$</span> share --my-prompt
+              </p>
+              <p className="font-mono text-sm mb-4 truncate" style={{ color: '#e6edf3' }}>{shareTarget.title}</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button onClick={() => {
+                  const d = window._shareData
+                  window.open('https://share.naver.com/web/shareView?url=' + d.encUrl + '&title=' + d.encTitle, '_blank', 'width=600,height=500')
+                  setShareMenu(false)
+                }} className="flex items-center gap-2 px-4 py-3 rounded-xl font-mono text-xs font-bold"
+                  style={{ background: '#03C75A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z"/></svg>
+                  네이버 블로그
+                </button>
+                <button onClick={() => {
+                  const d = window._shareData
+                  if (window.Kakao?.isInitialized()) {
+                    window.Kakao.Share.sendDefault({ objectType: 'feed', content: { title: '[PromptLab] ' + shareTarget.title, description: shareTarget.description || '', imageUrl: 'https://promptlab.io.kr/og-image.png', link: { mobileWebUrl: d.url, webUrl: d.url } }, buttons: [{ title: '프롬프트 보기', link: { mobileWebUrl: d.url, webUrl: d.url } }] })
+                  } else {
+                    navigator.clipboard.writeText(d.text)
+                    alert('카카오 SDK 미로드 - URL이 복사됐습니다.')
+                  }
+                  setShareMenu(false)
+                }} className="flex items-center gap-2 px-4 py-3 rounded-xl font-mono text-xs font-bold"
+                  style={{ background: '#FEE500', color: '#191919', border: 'none', cursor: 'pointer' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#191919"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.7 1.68 5.07 4.2 6.48l-1.08 3.96L9.6 18.9c.78.12 1.58.18 2.4.18 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/></svg>
+                  카카오톡
+                </button>
+                <button onClick={() => {
+                  const d = window._shareData
+                  window.location.href = 'sms:?body=' + d.encText
+                  setShareMenu(false)
+                }} className="flex items-center gap-2 px-4 py-3 rounded-xl font-mono text-xs font-bold"
+                  style={{ background: '#21262d', color: '#3fb950', border: '1px solid #30363d', cursor: 'pointer' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3fb950" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  문자
+                </button>
+                <button onClick={() => {
+                  const d = window._shareData
+                  window.location.href = 'mailto:?subject=' + d.encTitle + '&body=' + d.encText
+                  setShareMenu(false)
+                }} className="flex items-center gap-2 px-4 py-3 rounded-xl font-mono text-xs font-bold"
+                  style={{ background: '#21262d', color: '#58a6ff', border: '1px solid #30363d', cursor: 'pointer' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  이메일
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 삭제 확인 모달 */}
       {deleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
@@ -216,7 +305,7 @@ export default function MyCollectionPage() {
                 <button onClick={handleEditSave}
                   className="flex-1 py-2.5 rounded-lg font-mono text-sm font-bold"
                   style={{ background: 'transparent', color: '#3fb950', border: '1px solid #3fb950', cursor: 'pointer' }}>
-                  git commit -m "update"
+                  ✓ 저장하기
                 </button>
               </div>
             </div>
@@ -300,20 +389,25 @@ export default function MyCollectionPage() {
                     </pre>
 
                     {isSelected && (
-                      <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
+                      <div className="flex flex-wrap gap-2 mt-3" onClick={e => e.stopPropagation()}>
                         <button onClick={() => handleCopy(p.content, p.id)}
                           className="flex-1 py-2 rounded-lg font-mono text-xs font-bold transition-all"
                           style={{
                             background: 'transparent',
                             color: copied === p.id ? '#3fb950' : '#58a6ff',
                             border: copied === p.id ? '1px solid #3fb950' : '1px solid #58a6ff',
-                            cursor: 'pointer',
+                            cursor: 'pointer', minWidth: '80px',
                           }}>
-                          {copied === p.id ? '✓ 복사됨' : 'copy prompt'}
+                          {copied === p.id ? '✓ 복사됨' : 'copy'}
+                        </button>
+                        <button onClick={() => handleShare(p)}
+                          className="flex-1 py-2 rounded-lg font-mono text-xs transition-all"
+                          style={{ background: 'transparent', color: '#39c5cf', border: '1px solid #39c5cf', cursor: 'pointer', minWidth: '80px' }}>
+                          ↗ 공유
                         </button>
                         <button onClick={() => handleEdit(p)}
                           className="flex-1 py-2 rounded-lg font-mono text-xs transition-all"
-                          style={{ background: 'transparent', color: '#bc8cff', border: '1px solid #bc8cff', cursor: 'pointer' }}>
+                          style={{ background: 'transparent', color: '#bc8cff', border: '1px solid #bc8cff', cursor: 'pointer', minWidth: '80px' }}>
                           ✎ 수정
                         </button>
                         <button onClick={() => setDeleteId(p.id)}
