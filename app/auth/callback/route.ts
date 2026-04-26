@@ -13,9 +13,10 @@ export async function GET(request: NextRequest) {
     )
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(origin + next)
     }
   }
 
-  return NextResponse.redirect(`${origin}/?error=auth`)
+  // access_token이 있으면 fragment 방식 로그인 성공 → 메인으로
+  return NextResponse.redirect(origin + '/')
 }
