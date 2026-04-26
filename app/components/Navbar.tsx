@@ -205,30 +205,51 @@ export default function Navbar() {
     updateTime()
     const interval = setInterval(updateTime, 1000)
 
+    let realtimeSub: ReturnType<typeof supabase.channel> | null = null
+
+    const loadActivity = async (userId: string) => {
+      const { data } = await supabase.from('user_activity').select('total_copied').eq('user_id', userId).single()
+      if (data) {
+        setTotalCopied(data.total_copied || 0)
+      } else {
+        await supabase.from('user_activity').insert({ user_id: userId, total_copied: 0, daily_copied: 0 })
+      }
+    }
+
+    const setupRealtime = (userId: string) => {
+      if (realtimeSub) supabase.removeChannel(realtimeSub)
+      realtimeSub = supabase
+        .channel('user_activity_' + userId)
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'user_activity',
+          filter: 'user_id=eq.' + userId,
+        }, (payload) => {
+          setTotalCopied((payload.new as { total_copied: number }).total_copied || 0)
+        })
+        .subscribe()
+    }
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null)
       if (session?.user) {
-        const { data } = await supabase.from('user_activity').select('total_copied').eq('user_id', session.user.id).single()
-        if (data) {
-          setTotalCopied(data.total_copied || 0)
-        } else {
-          await supabase.from('user_activity').insert({ user_id: session.user.id, total_copied: 0, daily_copied: 0 })
-        }
-      }
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        const { data } = await supabase.from('user_activity').select('total_copied').eq('user_id', session.user.id).single()
-        if (data) {
-          setTotalCopied(data.total_copied || 0)
-        } else {
-          await supabase.from('user_activity').insert({ user_id: session.user.id, total_copied: 0, daily_copied: 0 })
-        }
+        await loadActivity(session.user.id)
+        setupRealtime(session.user.id)
       }
     })
 
-    return () => { clearInterval(interval); subscription.unsubscribe() }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        await loadActivity(session.user.id)
+        setupRealtime(session.user.id)
+      } else {
+        if (realtimeSub) supabase.removeChannel(realtimeSub)
+      }
+    })
+
+    return () => { clearInterval(interval); subscription.unsubscribe(); if (realtimeSub) supabase.removeChannel(realtimeSub) }
   }, [])
 
   useEffect(() => {
