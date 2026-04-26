@@ -743,12 +743,58 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
     setShowAuthModal(false)
   }
 
-  const handleCopy = () => {
-    if (prompt) {
-      navigator.clipboard.writeText(prompt.content)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+  const handleCopy = async () => {
+    if (!prompt) return
+    navigator.clipboard.writeText(prompt.content)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+
+    // user_activity 업데이트
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) return
+    const userId = session.user.id
+    const today = new Date().toISOString().split('T')[0]
+
+    const { data: activity } = await supabase
+      .from('user_activity')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+
+    if (!activity) {
+      await supabase.from('user_activity').insert({
+        user_id: userId,
+        copied_prompt_ids: [prompt.id],
+        total_copied: 1,
+        daily_copied: 1,
+        last_copied_date: today,
+      })
+      return
     }
+
+    const isAlreadyCopied = (activity.copied_prompt_ids || []).includes(prompt.id)
+    if (isAlreadyCopied) return
+
+    const lastDate = activity.last_copied_date
+    const isNewDay = lastDate !== today
+    const dailyCopied = isNewDay ? 0 : (activity.daily_copied || 0)
+
+    // 하루 30개 초과 어뷰징 감지
+    if (dailyCopied >= 30) {
+      await supabase.from('user_activity').update({
+        abuse_warned: true,
+      }).eq('user_id', userId)
+      alert('⚠️ 오늘 하루 최대 복사 인정 횟수(30개)를 초과했습니다. 비정상적인 복사 패턴이 감지됐습니다.')
+      return
+    }
+
+    await supabase.from('user_activity').update({
+      copied_prompt_ids: [...(activity.copied_prompt_ids || []), prompt.id],
+      total_copied: (activity.total_copied || 0) + 1,
+      daily_copied: dailyCopied + 1,
+      last_copied_date: today,
+      updated_at: new Date().toISOString(),
+    }).eq('user_id', userId)
   }
 
   const handleLike = async () => {
