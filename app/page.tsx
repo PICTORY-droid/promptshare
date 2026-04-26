@@ -167,7 +167,7 @@ function TypingAnimation() {
 }
 
 function CategoryTyping() {
-  const fullText = '카테고리별로 보기 클릭'
+  const fullText = '카테고리'
   const [displayed, setDisplayed] = useState('')
   const [done, setDone] = useState(false)
 
@@ -276,16 +276,13 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
             {prompt.description}
           </p>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center">
             <div className="flex items-center gap-1.5">
               <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold"
                 style={{ background: '#21262d', color: '#58a6ff' }}>
                 {prompt.author_name.charAt(0).toUpperCase()}
               </div>
               <span className="text-xs font-mono" style={{ color: '#8b949e' }}>{prompt.author_name}</span>
-            </div>
-            <div className="flex items-center gap-3 text-xs font-mono" style={{ color: '#484f58' }}>
-
             </div>
           </div>
         </div>
@@ -313,9 +310,7 @@ function HomeInner() {
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 640)
-    }
+    const handleResize = () => setIsSmallScreen(window.innerWidth < 640)
     handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -363,9 +358,7 @@ function HomeInner() {
         p.author_name.toLowerCase().includes(searchQuery.toLowerCase())
       return matchCat && matchSearch
     })
-    .sort((a, b) =>
-      sortBy === 'popular' ? (b.views - a.views) : 0
-    )
+    .sort((a, b) => sortBy === 'popular' ? (b.views - a.views) : 0)
 
   const itemsPerPage = isSmallScreen ? 20 : 30
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
@@ -397,9 +390,7 @@ function HomeInner() {
     const maxButtons = 5
     let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2))
     let endPage = Math.min(totalPages, startPage + maxButtons - 1)
-    if (endPage - startPage + 1 < maxButtons) {
-      startPage = Math.max(1, endPage - maxButtons + 1)
-    }
+    if (endPage - startPage + 1 < maxButtons) startPage = Math.max(1, endPage - maxButtons + 1)
     if (startPage > 1) {
       buttons.push(
         <button key="first" onClick={() => handlePageChange(1)}
@@ -441,20 +432,24 @@ function HomeInner() {
       <NeuralNetwork />
       <HologramCard />
       <style>{`
-        @keyframes blink {
-          0%, 49%, 100% { opacity: 1; }
-          50%, 99% { opacity: 0; }
-        }
+        @keyframes blink { 0%, 49%, 100% { opacity: 1; } 50%, 99% { opacity: 0; } }
         input::placeholder { color: #484f58; }
       `}</style>
 
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
-
-        <div className="mb-8 sm:mb-12 text-center">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-10">
+        <div className="mb-6 sm:mb-8 text-center">
           <TypingAnimation />
         </div>
-        <div className="flex gap-2 mb-5 sm:mb-6">
 
+        {/* 검색바 + 카테고리 한 줄 */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setShowCategories(!showCategories)}
+            className="flex items-center gap-1 whitespace-nowrap"
+            style={{ background: '#161b22', color: '#484f58', border: '1px solid #30363d', borderRadius: '10px', padding: '8px 10px', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', minWidth: '90px' }}>
+            <span style={{ flex: 1, textAlign: 'left' }}>{selectedCategory === 'All' ? <CategoryTyping /> : selectedCategory}</span>
+            <span style={{ fontSize: '10px', marginLeft: '4px' }}>{showCategories ? '▼' : '▶'}</span>
+          </button>
           <div className="relative flex-1">
             <input
               type="text"
@@ -462,10 +457,10 @@ function HomeInner() {
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="단어로 검색하세요"
               style={{
-                width: '100%', padding: '10px 12px',
+                width: '100%', padding: '8px 12px',
                 background: '#161b22', border: '1px solid #30363d',
                 borderRadius: '10px', color: '#e6edf3',
-                fontFamily: 'monospace', fontSize: '14px', outline: 'none',
+                fontFamily: 'monospace', fontSize: '13px', outline: 'none',
               }}
               onFocus={e => e.target.style.borderColor = '#58a6ff'}
               onBlur={e => e.target.style.borderColor = '#30363d'}
@@ -474,72 +469,48 @@ function HomeInner() {
           </div>
           <button
             onClick={handleSearch}
-            className="px-4 py-2.5 rounded-xl font-mono font-bold text-sm transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
-            style={{
-              background: 'transparent',
-              color: '#3fb950',
-              border: '2px solid #3fb950',
-              boxShadow: 'none',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#ffffff'
-              e.currentTarget.style.boxShadow = '0 0 15px #3fb95066'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#3fb950'
-              e.currentTarget.style.boxShadow = 'none'
-            }}>
-            🔍 search
+            className="px-3 py-2 rounded-xl font-mono font-bold text-sm transition-all hover:scale-105 active:scale-95"
+            style={{ background: 'transparent', color: '#3fb950', border: '2px solid #3fb950' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff'; e.currentTarget.style.boxShadow = '0 0 15px #3fb95066' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#3fb950'; e.currentTarget.style.boxShadow = 'none' }}>
+            🔍
           </button>
         </div>
 
-        <div className="mb-6">
-          <button
-            onClick={() => setShowCategories(!showCategories)}
-            className="w-full px-4 py-2.5 rounded-xl font-mono font-normal text-sm transition-all flex items-center justify-between"
-            style={{ background: '#161b22', color: '#484f58', border: '1px solid #30363d' }}>
-            <span>
-              {selectedCategory === 'All' ? <CategoryTyping /> : selectedCategory}
-            </span>
-            <span style={{ marginLeft: '8px' }}>{showCategories ? '▼' : '▶'}</span>
-          </button>
-          {showCategories && (
-            <div className="mt-2 p-3 rounded-xl" style={{ background: '#161b22', border: '1px solid #30363d' }}>
-              <div className="flex flex-wrap gap-2">
-                {CATEGORIES.map(cat => {
-                  const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
-                  const isActive = selectedCategory === cat
-                  return (
-                    <button key={cat}
-                      onClick={() => { handleCategoryChange(cat); setShowCategories(false) }}
-                      className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all active:scale-95"
-                      style={{
-                        background: isActive ? (colors?.bg || '#21262d') : 'transparent',
-                        color: isActive ? (colors?.text || '#e6edf3') : '#484f58',
-                        border: `1px solid ${isActive ? (colors?.border || '#30363d') : '#21262d'}`,
-                      }}>
-                      {cat}
-                    </button>
-                  )
-                })}
-              </div>
+        {/* 카테고리 드롭다운 */}
+        {showCategories && (
+          <div className="mb-4 p-3 rounded-xl" style={{ background: '#161b22', border: '1px solid #30363d' }}>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map(cat => {
+                const colors = cat === 'All' ? null : CATEGORY_COLORS[cat]
+                const isActive = selectedCategory === cat
+                return (
+                  <button key={cat}
+                    onClick={() => { handleCategoryChange(cat); setShowCategories(false) }}
+                    className="px-3 py-1.5 rounded-full font-mono text-xs font-semibold transition-all active:scale-95"
+                    style={{
+                      background: isActive ? (colors?.bg || '#21262d') : 'transparent',
+                      color: isActive ? (colors?.text || '#e6edf3') : '#484f58',
+                      border: `1px solid ${isActive ? (colors?.border || '#30363d') : '#21262d'}`,
+                    }}>
+                    {cat}
+                  </button>
+                )
+              })}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="flex items-center gap-1 mb-5" style={{ borderBottom: '1px solid #21262d', paddingBottom: '0' }}>
+        <div className="flex items-center gap-1 mb-4" style={{ borderBottom: '1px solid #21262d' }}>
           {(['latest', 'popular'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => handleSortChange(tab)}
+            <button key={tab} onClick={() => handleSortChange(tab)}
               className="px-4 py-2 font-mono text-xs transition-all"
               style={{
                 background: 'transparent',
                 color: sortBy === tab ? '#58a6ff' : '#484f58',
                 border: 'none',
                 borderBottom: sortBy === tab ? '2px solid #58a6ff' : '2px solid transparent',
-                cursor: 'pointer',
-                marginBottom: '-1px',
+                cursor: 'pointer', marginBottom: '-1px',
               }}>
               {tab === 'latest' ? '// 최신순' : '// 인기순'}
             </button>
@@ -548,8 +519,7 @@ function HomeInner() {
 
         {loading ? (
           <div className="text-center py-20 font-mono" style={{ color: '#58a6ff' }}>
-            <span style={{ color: '#3fb950' }}>$</span> loading prompts
-            <span className="blink">_</span>
+            <span style={{ color: '#3fb950' }}>$</span> loading prompts<span className="blink">_</span>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 font-mono" style={{ color: '#484f58' }}>
@@ -560,27 +530,15 @@ function HomeInner() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
               {paginatedPrompts.map((prompt, index) => (
-                <PromptCard
-                  key={prompt.id}
-                  prompt={prompt}
-                  index={index}
-                  currentPage={currentPage}
-                  selectedCategory={selectedCategory}
-                  searchQuery={searchQuery}
-                />
+                <PromptCard key={prompt.id} prompt={prompt} index={index}
+                  currentPage={currentPage} selectedCategory={selectedCategory} searchQuery={searchQuery} />
               ))}
             </div>
-
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-1 sm:gap-2 flex-wrap">
                 {getPaginationButtons()}
               </div>
             )}
-
-            <div className="text-center mt-6 font-mono text-xs sm:text-sm" style={{ color: '#484f58' }}>
-              <span style={{ color: '#8b949e' }}>
-              </span>
-            </div>
           </>
         )}
       </div>
