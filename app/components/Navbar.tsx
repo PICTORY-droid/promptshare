@@ -181,6 +181,11 @@ export default function Navbar() {
                         onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
                         📁 내 컬렉션
                       </a>
+                      <a href="/persona" style={{ display: 'block', padding: '10px 14px', color: '#bc8cff', fontSize: '12px', fontFamily: 'monospace', textDecoration: 'none', borderBottom: '1px solid #21262d' }}
+                        onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
+                        onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
+                        🤖 AI 페르소나 카드
+                      </a>
                       <button onClick={handleLogout}
                         style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', color: '#f85149', fontSize: '12px', fontFamily: 'monospace', background: 'none', border: 'none', cursor: 'pointer' }}
                         onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
