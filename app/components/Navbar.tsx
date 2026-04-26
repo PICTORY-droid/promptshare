@@ -209,14 +209,22 @@ export default function Navbar() {
       setUser(session?.user ?? null)
       if (session?.user) {
         const { data } = await supabase.from('user_activity').select('total_copied').eq('user_id', session.user.id).single()
-        if (data) setTotalCopied(data.total_copied || 0)
+        if (data) {
+          setTotalCopied(data.total_copied || 0)
+        } else {
+          await supabase.from('user_activity').insert({ user_id: session.user.id, total_copied: 0, daily_copied: 0 })
+        }
       }
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null)
       if (session?.user) {
         const { data } = await supabase.from('user_activity').select('total_copied').eq('user_id', session.user.id).single()
-        if (data) setTotalCopied(data.total_copied || 0)
+        if (data) {
+          setTotalCopied(data.total_copied || 0)
+        } else {
+          await supabase.from('user_activity').insert({ user_id: session.user.id, total_copied: 0, daily_copied: 0 })
+        }
       }
     })
 
