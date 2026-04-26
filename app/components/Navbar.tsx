@@ -287,11 +287,8 @@ export default function Navbar() {
               user ? (
                 <div className="relative" ref={menuRef}>
                   <button onClick={() => setShowMenu(!showMenu)}
-                    style={{ background: 'none', border: '1px solid #30363d', borderRadius: '50%', padding: 0, cursor: 'pointer', width: '32px', height: '32px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {avatarUrl
-                      ? <img src={avatarUrl} alt="프로필" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-                      : <span style={{ color: '#58a6ff', fontSize: '14px', fontFamily: 'monospace' }}>{displayName[0].toUpperCase()}</span>
-                    }
+                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <GradeAvatar avatarUrl={avatarUrl} displayName={displayName} grade={getGrade(totalCopied)} />
                   </button>
                   {showMenu && (
                     <div style={{ position: 'absolute', right: 0, top: '40px', background: '#161b22', border: '1px solid #30363d', borderRadius: '8px', minWidth: '160px', zIndex: 100, overflow: 'hidden' }}>
