@@ -303,10 +303,12 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2 flex-shrink-0">
             <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{ background: '#21262d', color: '#3fb950', fontFamily: 'monospace', border: '1px solid #30363d' }}>v2.0.1</span>
-            <a href="/persona" className="hidden sm:flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
-              style={{ background: '#2d1f3d', color: '#bc8cff', border: '1px solid #8957e5', fontFamily: 'monospace', textDecoration: 'none' }}>
-              🤖 <span>AI 페르소나</span>
-            </a>
+            {mounted && user && (
+              <a href="/persona" className="hidden sm:flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
+                style={{ background: '#2d1f3d', color: '#bc8cff', border: '1px solid #8957e5', fontFamily: 'monospace', textDecoration: 'none' }}>
+                🤖 <span>AI 페르소나</span>
+              </a>
+            )}
 
             {mounted && (
               user ? (
