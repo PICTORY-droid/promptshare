@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   verification: {
     google: "jnR9e_2rD2cYJr5-ZfNaCKWLBgqx9n9i411RoqO2A8s",
+    other: { "naver-site-verification": "df6d569e5ba268b4baf19c9035c3640d610fefcd" },
   },
   openGraph: {
     title: 'PromptLab - 프롬프트 공유 커뮤니티',
