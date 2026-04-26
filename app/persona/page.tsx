@@ -96,8 +96,7 @@ export default function PersonaPage() {
           </div>
           <div style={{ padding: '16px' }}>
             <p style={{ fontSize: '12px', color: '#8b949e', fontFamily: 'sans-serif', marginBottom: '14px', lineHeight: 1.8, wordBreak: 'keep-all' }}>
-              PromptLab은 무료입니다. 서로 다른 프롬프트를 복사할수록 등급이 올라갑니다.<br/>
-              AI 페르소나 카드는 <span style={{ color: '#bc8cff' }}>활동 등급</span>에 따라 일일 생성 횟수가 달라집니다.
+              프롬프트 복사할수록 등급 상승 → <span style={{ color: '#bc8cff' }}>등급별</span> 페르소나 카드 생성 횟수 증가
             </p>
 
             {/* 등급 카드 */}
