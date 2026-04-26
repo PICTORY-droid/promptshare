@@ -127,8 +127,6 @@ export default function FitAnalysisPage() {
       <div style={{ borderBottom: "1px solid #21262d", padding: "14px 24px", display: "flex", alignItems: "center", gap: "10px" }}>
         <a href="/" style={{ color: "#58a6ff", textDecoration: "none", fontSize: "13px" }}>← PromptLab</a>
         <span style={{ color: "#30363d" }}>/</span>
-        <a href="/resume" style={{ color: "#58a6ff", textDecoration: "none", fontSize: "13px" }}>자소서 생성기</a>
-        <span style={{ color: "#30363d" }}>/</span>
         <span style={{ fontSize: "13px" }}>지원 핏 분석</span>
         <span style={{ background: "#1f6feb", color: "#fff", fontSize: "10px", padding: "2px 8px", borderRadius: "999px", fontWeight: "bold" }}>BETA</span>
         <span style={{ marginLeft: "auto", fontSize: "10px", color: "#e3b341", background: "#2d1b00", border: "1px solid #bb690244", borderRadius: "4px", padding: "2px 8px" }}>👁 인사담당자 시선으로 분석</span>
@@ -148,7 +146,7 @@ export default function FitAnalysisPage() {
             <span style={{ fontSize: "12px", color: "#8b949e", fontWeight: 600 }}>자소서 / 이력서 내용 <span style={{ color: "#f85149" }}>*</span></span>
             <span style={{ fontSize: "10px", color: resumeText.length > 50 ? "#3fb950" : "#6e7681" }}>{resumeText.length}자</span>
           </div>
-          <textarea value={resumeText} onChange={(e) => setResumeText(e.target.value)} placeholder={"자소서 생성기에서 만든 내용을 붙여넣거나\n직접 작성한 자소서/이력서를 입력하세요"} rows={8}
+          <textarea value={resumeText} onChange={(e) => setResumeText(e.target.value)} placeholder={"직접 작성한 자소서/이력서를 텍스트로 붙여넣기 또는 입력하세요"} rows={8}
             style={{ width: "100%", background: "#161b22", border: `1px solid ${resumeText.length > 50 ? "#238636" : "#30363d"}`, borderRadius: "8px", color: "#e6edf3", fontSize: "12px", padding: "12px", resize: "vertical", fontFamily: "'Courier New', monospace", lineHeight: 1.7, boxSizing: "border-box", outline: "none" }} />
         </div>
 

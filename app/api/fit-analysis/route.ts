@@ -1,165 +1,77 @@
-// app/api/fit-analysis/route.ts
-// OpenRouter 무료 티어 기반 — 비용 0원
-// 텍스트 모델: qwen/qwen2.5-72b-instruct:free
-// ANTHROPIC_API_KEY는 Claude Code 자동화 전용 — 이 파일에서 사용 안 함
-
+import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 
-const client = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    "HTTP-Referer": "https://promptlab.io.kr",
-    "X-Title": "PromptLab",
-  },
+const client = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY!,
 });
-
-const TEXT_MODEL = "qwen/qwen2.5-72b-instruct:free";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { resumeText }: { resumeText?: string } = body;
+    const { coverLetter } = await req.json();
 
-    if (!resumeText || resumeText.trim().length < 50) {
-      return NextResponse.json(
-        { error: "자소서/이력서 내용이 너무 짧습니다." },
-        { status: 400 }
-      );
+    if (!coverLetter || typeof coverLetter !== "string") {
+      return NextResponse.json({ error: "자소서 내용을 전달해주세요." }, { status: 400 });
     }
 
-    const prompt = `당신은 10년 경력의 채용 전문가입니다.
-아래 지원서(자소서 + 이력서)를 분석해서 "지원자 입장의 핏 분석 리포트"를 작성하세요.
+    const prompt = `당신은 대한민국 채용 ATS 전문 분석 AI입니다.
 
----
-${resumeText.trim()}
----
+아래 자기소개서를 ATS 4대 기준으로 채점하고 레드플래그를 탐지해주세요.
 
-아래 4개 영역을 각각 0~100점으로 채점하고 피드백을 주세요.
+## 분석 대상 자소서
+${coverLetter}
 
-=== 채점 기준 (실제 ATS + HR 담당자 평가 기준) ===
+## ATS 4대 채점 기준 (각 25점, 총 100점)
+1. 키워드 매칭 - 직무 관련 키워드 포함도
+2. 수치화 - 경험의 구체적 수치화 정도
+3. 경험 적합도 - 직무와 경험의 연관성
+4. 문서 완성도 - 구조, 문법, 가독성
 
-[1. 직무 키워드 매칭 (0~100점)]
-- 채용공고/직무에서 요구하는 핵심 기술/역량 키워드가 자소서에 포함됐는가
-- 키워드가 자연스럽게 맥락 안에 녹아있는가 (단순 나열 아닌지)
-- 직무 관련 없는 키워드 남발은 감점
+## 레드플래그 8종 탐지
+1. AI 전형 표현
+2. 수치 없는 경험 서술
+3. 직무와 무관한 내용
+4. 너무 일반적인 표현
+5. 부정적 표현 또는 자기비하
+6. 근거 없는 자기자랑
+7. 문법/맞춤법 오류
+8. 항목별 분량 불균형
 
-[2. 경험 수치화 (0~100점)]
-- 성과/경험에 구체적인 수치가 있는가 (기간, 규모, 결과 퍼센트 등)
-- "[수치 직접 입력]" 같은 빈칸이 남아있으면 대폭 감점
-- 수치 없이 "열심히 했습니다", "성과를 냈습니다" 수준이면 낮은 점수
+## 출력 형식
 
-[3. 직무 경험 적합도 (0~100점)]
-- 자소서에 서술된 경험이 지원 직무와 얼마나 연관되는가
-- 관련 없는 경험 위주로 서술됐으면 낮은 점수
-- 전공/인턴/프로젝트/자격증이 직무와 연결됐는가
+### 📊 ATS 점수
 
-[4. 문서 완성도 (0~100점)]
-- 각 항목(지원동기/성장과정/직무역량/포부)이 고르게 작성됐는가
-- 두괄식 구성인가 (결론 먼저)
-- AI가 쓴 것 같은 전형적 표현 비율 (높으면 감점)
-- 빈칸/[본인 경험 입력] 같은 미완성 항목 존재 여부
+| 기준 | 점수 | 등급 |
+|------|------|------|
+| 키워드 매칭 | X/25 | |
+| 수치화 | X/25 | |
+| 경험 적합도 | X/25 | |
+| 문서 완성도 | X/25 | |
+| **총점** | **X/100** | **X등급** |
 
-=== 레드플래그 탐지 기준 (실제 HR 담당자가 주의 깊게 보는 항목) ===
+등급 기준: S(95+) / A(85+) / B(70+) / C(55+) / D(54이하)
 
-아래 항목을 자소서에서 탐지하세요. 발견된 것만 출력하세요.
+### 🚩 레드플래그
 
-1. 수치 없는 성과 나열 — "성과를 냈습니다", "기여했습니다" 처럼 수치 없이 결과만 주장
-2. AI 전형 문체 — "~해왔습니다", "~하고자 합니다", "성장하는 인재가 되겠습니다" 반복
-3. 직무 무관 경험 강조 — 지원 직무와 관련 없는 경험을 지나치게 많이 서술
-4. 과도한 자기 칭찬 — 구체적 근거 없이 "최고", "탁월", "누구보다" 류 표현
-5. 추상적 포부 — "열심히 하겠습니다", "최선을 다하겠습니다" 수준의 포부
-6. 미완성 항목 — [본인 경험 입력], [수치 직접 입력] 등 빈칸 그대로 존재
-7. 앞뒤 불일치 — 자소서 내에서 경력/날짜/역할이 서로 모순되거나 불일치
-8. 지나치게 짧은 항목 — 한 항목이 100자 미만으로 성의 없어 보임
+- **[심각도: high/medium/low]** 항목명
+  - 발견 내용: (구체적 문장 인용)
+  - 인사담당자 시선: (어떻게 보이는지)
+  - 수정 제안: (구체적 개선 방법)
 
-=== 강점 탐지 ===
-인사담당자가 긍정적으로 볼 요소들을 찾아서 나열하세요.
+### 💡 종합 피드백
 
-=== 출력 형식 (JSON만 출력, 다른 텍스트 절대 금지) ===
+(3~5줄 전체 평가 및 개선 우선순위)`;
 
-{
-  "totalScore": 전체 평균 점수 (0~100 정수),
-  "grade": "S/A/B/C/D 중 하나 (90+: S, 80+: A, 70+: B, 60+: C, 60미만: D)",
-  "gradeLabel": "등급 한 줄 설명 (예: '합격 가능성 높음', '보완 후 재지원 권장')",
-  "categories": [
-    {
-      "name": "직무 키워드 매칭",
-      "score": 점수(0~100),
-      "feedback": "2~3줄 구체적 피드백. 자소서 근거만 사용.",
-      "improve": "개선 방법 1줄"
-    },
-    {
-      "name": "경험 수치화",
-      "score": 점수(0~100),
-      "feedback": "2~3줄 구체적 피드백",
-      "improve": "개선 방법 1줄"
-    },
-    {
-      "name": "직무 경험 적합도",
-      "score": 점수(0~100),
-      "feedback": "2~3줄 구체적 피드백",
-      "improve": "개선 방법 1줄"
-    },
-    {
-      "name": "문서 완성도",
-      "score": 점수(0~100),
-      "feedback": "2~3줄 구체적 피드백",
-      "improve": "개선 방법 1줄"
-    }
-  ],
-  "redFlags": [
-    {
-      "type": "레드플래그 유형명",
-      "severity": "high/medium/low",
-      "description": "자소서에서 발견된 구체적 내용 (실제 문장 인용 또는 위치 명시)",
-      "hrPerspective": "인사담당자 입장에서 왜 문제인지 1줄",
-      "fix": "수정 방법 1줄"
-    }
-  ],
-  "strengths": [
-    {
-      "type": "강점 유형명",
-      "description": "자소서에서 발견된 구체적 강점",
-      "hrPerspective": "인사담당자가 어떻게 볼지 1줄"
-    }
-  ],
-  "summary": "전체 총평 3~4줄. 자소서 근거만 사용. AI 말투 금지."
-}`;
-
-    const response = await client.chat.completions.create({
-      model: TEXT_MODEL,
-      max_tokens: 4000,
+    const response = await client.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2000,
       messages: [{ role: "user", content: prompt }],
     });
 
-    const result = response.choices[0]?.message?.content;
-    if (!result) {
-      return NextResponse.json({ error: "응답 형식 오류" }, { status: 500 });
-    }
-
-    let parsed;
-    try {
-      const clean = result.replace(/```json|```/g, "").trim();
-      const jsonMatch = clean.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error("JSON not found");
-      parsed = JSON.parse(jsonMatch[0]);
-    } catch (e) {
-      console.error("Parse error:", e);
-      return NextResponse.json(
-        { error: "응답 파싱 오류. 다시 시도해주세요." },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(parsed);
+    const text = response.content[0].type === "text" ? response.content[0].text : "";
+    return NextResponse.json({ result: text });
   } catch (error: unknown) {
-    console.error("Fit analysis API error:", error);
-    const msg = error instanceof Error ? error.message : "서버 오류";
-    return NextResponse.json(
-      { error: `오류가 발생했습니다: ${msg}` },
-      { status: 500 }
-    );
+    console.error("Fit-analysis API error:", error);
+    const message = error instanceof Error ? error.message : "알 수 없는 오류";
+    return NextResponse.json({ error: `Claude API 오류: ${message}` }, { status: 500 });
   }
 }

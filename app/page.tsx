@@ -467,19 +467,11 @@ function HomeInner() {
               📄 AI 취업 도구 <span style={{ fontSize: '10px', background: '#1f6feb', color: '#fff', borderRadius: '999px', padding: '1px 7px', marginLeft: '6px' }}>BETA</span>
             </div>
             <div style={{ fontSize: '11px', color: '#8b949e', fontFamily: 'monospace' }}>
-              채용공고 사진 한 장 → 자소서 생성 · 핏 분석 · 면접 질문
+              자소서/이력서 텍스트 → 핏 분석 · 면접 질문
             </div>
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <a href="/resume" style={{
-              background: '#238636', color: '#fff', border: 'none',
-              borderRadius: '8px', padding: '8px 14px', fontSize: '12px',
-              fontWeight: 700, fontFamily: 'monospace', textDecoration: 'none',
-              cursor: 'pointer',
-            }}>
-              📝 자소서 생성
-            </a>
-            <a href="/fit-analysis" style={{
+<a href="/fit-analysis" style={{
               background: '#2d1b00', color: '#e3b341',
               border: '1px solid #bb690288',
               borderRadius: '8px', padding: '8px 14px', fontSize: '12px',
