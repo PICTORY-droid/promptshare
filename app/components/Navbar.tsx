@@ -307,7 +307,7 @@ export default function Navbar() {
               <button onClick={() => {
                 if (user) { window.location.href = '/persona' }
                 else { alert('회원 전용 메뉴입니다.\n로그인 후 이용해주세요.'); }
-              }} className="hidden sm:flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
+              }} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-all hover:scale-105"
                 style={{ background: '#2d1f3d', color: '#bc8cff', border: '1px solid #8957e5', fontFamily: 'monospace', cursor: 'pointer', textDecoration: 'none' }}>
                 🤖 <span>AI 페르소나</span>
               </button>
