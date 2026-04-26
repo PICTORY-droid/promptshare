@@ -102,6 +102,13 @@ export default function PersonaPage() {
 
             {/* 등급 카드 */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '14px' }}>
+              <style>{`
+                @keyframes grade-pulse-bronze { 0%,100% { box-shadow: 0 0 0 0 rgba(240,136,62,0); } 50% { box-shadow: 0 0 16px 6px rgba(240,136,62,0.7); } }
+                @keyframes grade-pulse-silver { 0%,100% { box-shadow: 0 0 0 0 rgba(180,178,169,0); } 50% { box-shadow: 0 0 18px 6px rgba(180,178,169,0.8); } }
+                @keyframes grade-pulse-gold { 0%,100% { box-shadow: 0 0 0 0 rgba(210,153,34,0); } 50% { box-shadow: 0 0 24px 8px rgba(210,153,34,0.9); } }
+                @keyframes grade-dia-glow { 0%,100% { box-shadow: 0 0 10px 4px rgba(188,140,255,0.5); } 50% { box-shadow: 0 0 30px 12px rgba(188,140,255,0.9), 0 0 50px 20px rgba(88,166,255,0.4); } }
+                @keyframes grade-scale { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+              `}</style>
               {GRADES.map(g => (
                 <div key={g.key} style={{
                   background: '#0d1117',
@@ -109,6 +116,13 @@ export default function PersonaPage() {
                   borderTop: '3px solid ' + g.color,
                   borderRadius: '8px', padding: '10px 6px', textAlign: 'center',
                   opacity: currentGrade === g.key ? 1 : 0.7,
+                  animation: currentGrade === g.key ? (
+                    g.key === 'bronze' ? 'grade-pulse-bronze 1.5s ease-in-out infinite, grade-scale 1.5s ease-in-out infinite' :
+                    g.key === 'silver' ? 'grade-pulse-silver 1.2s ease-in-out infinite, grade-scale 1.2s ease-in-out infinite' :
+                    g.key === 'gold' ? 'grade-pulse-gold 1s ease-in-out infinite, grade-scale 1s ease-in-out infinite' :
+                    g.key === 'diamond' ? 'grade-dia-glow 0.8s ease-in-out infinite, grade-scale 0.8s ease-in-out infinite' :
+                    'grade-scale 2s ease-in-out infinite'
+                  ) : 'none',
                 }}>
                   <div style={{ fontSize: '18px', marginBottom: '4px' }}>{g.emoji}</div>
                   <div style={{ fontSize: '11px', color: g.color, fontWeight: 700, marginBottom: '3px', fontFamily: 'monospace' }}>{g.label}</div>
