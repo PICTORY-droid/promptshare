@@ -142,7 +142,7 @@ ${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '20px 16px' }}>
         <button onClick={() => router.push('/')}
           style={{ background: 'none', border: 'none', color: '#58a6ff', fontFamily: 'monospace', fontSize: '13px', cursor: 'pointer', marginBottom: '24px', padding: 0 }}>
           ← cd ..
@@ -157,7 +157,7 @@ ${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
           // 나만의 AI 챗봇 설정을 만들고 링크로 공유하세요
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
           
           {/* 왼쪽: 입력 폼 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
