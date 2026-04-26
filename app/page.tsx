@@ -285,8 +285,7 @@ function PromptCard({ prompt, index, currentPage, selectedCategory, searchQuery 
               <span className="text-xs font-mono" style={{ color: '#8b949e' }}>{prompt.author_name}</span>
             </div>
             <div className="flex items-center gap-3 text-xs font-mono" style={{ color: '#484f58' }}>
-              <span>♥ {prompt.likes}</span>
-              <span>◎ {prompt.views}</span>
+
             </div>
           </div>
         </div>
