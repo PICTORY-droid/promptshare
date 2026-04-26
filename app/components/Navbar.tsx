@@ -303,7 +303,9 @@ export default function Navbar() {
             <span className="blink ml-0.5 text-lg sm:text-2xl font-bold" style={{ color: '#58a6ff' }}>_</span>
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-col items-end gap-1 flex-shrink-0">
+            <span className="hidden sm:inline text-xs" style={{ color: '#484f58', fontFamily: 'monospace' }}>프롬프트를 제대로 알면 AI 수준이 달라진다</span>
+            <div className="flex items-center gap-2">
             <span className="hidden sm:inline text-xs px-2 py-1 rounded" style={{ background: '#21262d', color: '#3fb950', fontFamily: 'monospace', border: '1px solid #30363d' }}>v2.0.1</span>
             {mounted && (
               <>
@@ -378,6 +380,7 @@ export default function Navbar() {
                 </div>
               )
             )}
+            </div>
           </div>
         </div>
       </nav>
