@@ -382,21 +382,6 @@ export default function Navbar() {
             )}
             </div>
           </div>
-          <div style={{ borderTop: '1px solid #21262d', display: 'flex', alignItems: 'center' }}>
-            <button onClick={() => { window.location.href = '/bigbang' }}
-              style={{ background: 'transparent', border: 'none', borderBottom: '2px solid transparent', color: '#484f58', padding: '8px 14px', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-              onMouseOver={e => { e.currentTarget.style.color = '#3fb950' }}
-              onMouseOut={e => { e.currentTarget.style.color = '#484f58' }}>
-              ⚡ 빅뱅
-            </button>
-            <button onClick={() => { if (user) { window.location.href = '/persona' } else { alert('회원 전용 메뉴입니다.
-로그인 후 이용해주세요.') } }}
-              style={{ background: 'transparent', border: 'none', borderBottom: '2px solid transparent', color: '#484f58', padding: '8px 14px', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-              onMouseOver={e => { e.currentTarget.style.color = '#bc8cff' }}
-              onMouseOut={e => { e.currentTarget.style.color = '#484f58' }}>
-              🤖 AI 페르소나
-            </button>
-          </div>
         </div>
       </nav>
     </>
