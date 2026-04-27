@@ -225,10 +225,7 @@ export default function BigBangPage() {
 
         {/* 버튼 */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-          <button onClick={triggerBigBang} disabled={banging}
-            style={{ background: 'transparent', border: '1.5px solid #3fb950', borderRadius: '10px', padding: '9px 32px', color: '#3fb950', fontFamily: 'monospace', fontSize: '13px', fontWeight: 700, cursor: banging ? 'not-allowed' : 'pointer', letterSpacing: '2px', opacity: banging ? 0.5 : 1 }}>
-            ⚡ BANG
-          </button>
+          
         </div>
 
         {/* 상태 */}
