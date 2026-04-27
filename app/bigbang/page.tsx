@@ -210,10 +210,10 @@ export default function BigBangPage() {
         </div>
 
         {/* 태그 */}
-        <div style={{ display: 'flex', gap: '5px', justifyContent: 'center', overflowX: 'auto', padding: '4px 0 8px', marginBottom: '12px' }}>
-          {TAGS.map((tag, i) => (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', marginBottom: '12px', padding: '0 4px' }}>
+          {TAGS.map((tag) => (
             <button key={tag} className="tag" onClick={() => fillKw(tag)}
-              style={{ background: '#161b22', border: '1px solid #21262d', borderRadius: '999px', padding: '3px 10px', fontSize: '10px', color: '#8b949e', cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'monospace', flexShrink: 0, transition: 'all 0.15s' }}>
+              style={{ background: '#161b22', border: '1px solid #21262d', borderRadius: '999px', padding: '4px 12px', fontSize: '11px', color: '#8b949e', cursor: 'pointer', fontFamily: 'monospace', transition: 'all 0.15s' }}>
               {tag}
             </button>
           ))}
