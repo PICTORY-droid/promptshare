@@ -57,12 +57,12 @@ export default function MyCollectionPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session?.user) { router.push('/'); return }
+      if (!session?.user) { window.location.href = '/'; return }
       setUser(session.user)
       fetchPrompts(session.user.id)
     })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session?.user) { router.push('/'); return }
+      if (!session?.user) { window.location.href = '/'; return }
       setUser(session.user)
     })
     return () => subscription.unsubscribe()
