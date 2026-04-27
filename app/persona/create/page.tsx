@@ -31,6 +31,7 @@ export default function PersonaPage() {
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const [slug, setSlug] = useState('')
+  const [systemPrompt, setSystemPrompt] = useState('')
   const [copied, setCopied] = useState(false)
 
   const [form, setForm] = useState({
@@ -77,6 +78,7 @@ ${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setSlug(data.slug)
+      setSystemPrompt(data.system_prompt || '')
       setDone(true)
     } catch (e) {
       alert('오류가 발생했습니다.')
@@ -134,13 +136,13 @@ ${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
               + 새로 만들기
             </button>
           </div>
-          <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#484f58', margin: '0 0 8px' }}>// 링크 복사 후 아래 AI에 붙여넣으세요</p>
+          <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#484f58', margin: '0 0 8px' }}>// 클릭 시 자동 복사 → AI에서 Ctrl+V 붙여넣기</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '24px' }}>
-            <button onClick={() => window.open('https://chat.openai.com', '_blank')}
+            <button onClick={async () => { await navigator.clipboard.writeText(systemPrompt); window.open('https://chat.openai.com', '_blank') }}
               style={{ padding: '11px', background: '#1a2d1a', border: '1px solid #238636', borderRadius: '8px', color: '#3fb950', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
               ↗ ChatGPT
             </button>
-            <button onClick={() => window.open('https://claude.ai', '_blank')}
+            <button onClick={async () => { await navigator.clipboard.writeText(systemPrompt); window.open('https://claude.ai', '_blank') }}
               style={{ padding: '11px', background: '#1f2d3d', border: '1px solid #1f6feb', borderRadius: '8px', color: '#58a6ff', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
               ↗ Claude
             </button>
