@@ -137,11 +137,11 @@ export default function PersonaPage() {
             {/* 규칙 */}
             <div style={{ background: '#0d1117', border: '1px solid #21262d', borderRadius: '6px', padding: '10px 12px' }}>
               <p style={{ fontSize: '10px', color: '#484f58', fontFamily: 'monospace', lineHeight: 1.7, margin: 0 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px', textAlign: 'left' }}>
-                  <span>✓ 동일 프롬프트 복사 → 미카운트</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+                  <span>✓ 동일 프롬프트 복사 No</span>
                   <span>✓ 하루 최대 <span style={{ color: '#8b949e' }}>30개</span>까지 인정</span>
+                  <span>✓ 다른 프롬프트 복사만 인정</span>
                   <span>✓ 어뷰징 감지 시 경고 후 제외</span>
-                  <span>✓ 다른 프롬프트 복사만 카운트</span>
                 </div>
               </p>
             </div>
