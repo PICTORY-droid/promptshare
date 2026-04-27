@@ -40,8 +40,12 @@ export default function BigBangPage() {
   const [bangCode, setBangCode] = useState('')
 
   useEffect(() => {
-    supabase.from('prompts').select('id, title, description, category').limit(500).then(({ data }) => {
-      if (data) setPrompts(data)
+    supabase.from('prompts').select('id, title, description, category').limit(500).then(({ data, error }) => {
+      if (error) console.error('프롬프트 로드 오류:', error)
+      if (data) {
+        console.log('로드된 프롬프트 수:', data.length)
+        setPrompts(data)
+      }
     })
   }, [])
 
