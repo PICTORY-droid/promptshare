@@ -324,11 +324,10 @@ function HomeInner() {
           .select('*')
           .order('created_at', { ascending: false })
           .limit(2000)
-        if (error) console.error('supabase error:', error)
-        if (data) setPrompts(data)
-        setLoading(false)
+        if (!error && data) setPrompts(data)
       } catch (e) {
         console.error('fetchPrompts error:', e)
+      } finally {
         setLoading(false)
       }
     }
