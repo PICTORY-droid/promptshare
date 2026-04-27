@@ -150,7 +150,7 @@ ${form.forbidden ? `\n[금지 주제]\n${form.forbidden}` : ''}
               ↗ Claude
             </button>
           </div>
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', display: 'none' }}>
+          <div style={{ display: 'none' }}>
           </div>
 
           <button onClick={() => router.push('/')}
