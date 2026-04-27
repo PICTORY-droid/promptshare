@@ -207,7 +207,7 @@ export default function PersonaSlugPage({ params }: { params: Promise<{ slug: st
             </div>
             <span style={{ fontFamily: 'monospace', fontSize: '10px', color: '#484f58' }}>{persona.system_prompt.length}자</span>
           </div>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', maxHeight: '260px', overflowY: 'auto' }}>
             <div style={{ padding: '16px 8px', borderRight: '1px solid #21262d', minWidth: '36px', textAlign: 'right' }}>
               {persona.system_prompt.split('\n').map((_, i) => (
                 <div key={i} style={{ fontFamily: 'monospace', fontSize: '11px', color: '#484f58', lineHeight: '1.7' }}>{i + 1}</div>
@@ -219,23 +219,24 @@ export default function PersonaSlugPage({ params }: { params: Promise<{ slug: st
           </div>
         </div>
 
-        {/* 복사 버튼 */}
-        <button onClick={handleCopy}
-          className="w-full transition-all hover:scale-[1.02] active:scale-95"
-          style={{ width: '100%', padding: '14px', background: 'transparent', color: copied ? '#3fb950' : '#bc8cff', border: `2px solid ${copied ? '#238636' : '#8957e5'}`, borderRadius: '10px', fontFamily: 'monospace', fontSize: '15px', fontWeight: 700, cursor: 'pointer', marginBottom: '12px', boxShadow: copied ? '0 0 20px #3fb95044' : 'none' }}>
-          {copied ? '✓ 프롬프트 복사됨!' : 'copy system prompt'}
-        </button>
-
-        {/* AI 열기 버튼 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-          <button onClick={() => window.open('https://chat.openai.com', '_blank')}
-            style={{ padding: '11px', background: '#1a2d1a', border: '1px solid #238636', borderRadius: '8px', color: '#3fb950', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
-            ↗ ChatGPT에서 열기
+        {/* 복사 + AI 버튼 묶음 */}
+        <div style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
+          <button onClick={handleCopy}
+            className="w-full transition-all hover:scale-[1.02] active:scale-95"
+            style={{ width: '100%', padding: '14px', background: 'transparent', color: copied ? '#3fb950' : '#bc8cff', border: `2px solid ${copied ? '#238636' : '#8957e5'}`, borderRadius: '10px', fontFamily: 'monospace', fontSize: '15px', fontWeight: 700, cursor: 'pointer', marginBottom: '12px', boxShadow: copied ? '0 0 20px #3fb95044' : 'none' }}>
+            {copied ? '✓ 프롬프트 복사됨!' : 'copy system prompt'}
           </button>
-          <button onClick={() => window.open('https://claude.ai', '_blank')}
-            style={{ padding: '11px', background: '#1f2d3d', border: '1px solid #1f6feb', borderRadius: '8px', color: '#58a6ff', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
-            ↗ Claude에서 열기
-          </button>
+          <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#484f58', textAlign: 'center', margin: '0 0 10px' }}>// 복사 후 아래 AI에 붙여넣으세요</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <button onClick={() => window.open('https://chat.openai.com', '_blank')}
+              style={{ padding: '11px', background: '#1a2d1a', border: '1px solid #238636', borderRadius: '8px', color: '#3fb950', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
+              ↗ ChatGPT
+            </button>
+            <button onClick={() => window.open('https://claude.ai', '_blank')}
+              style={{ padding: '11px', background: '#1f2d3d', border: '1px solid #1f6feb', borderRadius: '8px', color: '#58a6ff', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
+              ↗ Claude
+            </button>
+          </div>
         </div>
 
         {/* 사용 가이드 */}
