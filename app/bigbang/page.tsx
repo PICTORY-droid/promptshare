@@ -168,7 +168,7 @@ export default function BigBangPage() {
             프롬프트 <span style={{ color: '#3fb950' }}>빅뱅</span>
           </h1>
           <p style={{ fontFamily: 'monospace', fontSize: '11px', color: '#484f58', marginTop: '6px' }}>
-            원하는 목적의 프롬프트를 찾지 못하는 사용자를 위한 키워드 소환 시스템
+            키워드로 맞춤 프롬프트를 소환하는 시스템
           </p>
         </div>
 
