@@ -318,6 +318,7 @@ function HomeInner() {
 
   useEffect(() => {
     const fetchPrompts = async () => {
+      console.log('fetchPrompts 실행됨')
       try {
         const { data, error } = await supabase
           .from('prompts')

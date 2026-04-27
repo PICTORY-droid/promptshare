@@ -45,7 +45,7 @@ export default function PersonaPage() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) { setUser(session.user) }
-      else { router.push('/') }
+      else { window.location.href = '/' }
     })
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) setUser(session.user)
