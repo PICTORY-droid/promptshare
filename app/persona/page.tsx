@@ -137,10 +137,12 @@ export default function PersonaPage() {
             {/* 규칙 */}
             <div style={{ background: '#0d1117', border: '1px solid #21262d', borderRadius: '6px', padding: '10px 12px' }}>
               <p style={{ fontSize: '10px', color: '#484f58', fontFamily: 'monospace', lineHeight: 1.7, margin: 0 }}>
-                ✓ 서로 다른 프롬프트 복사 시에만 카운트 &nbsp;|&nbsp;
-                ✓ 하루 최대 <span style={{ color: '#8b949e' }}>30개</span>까지 인정 &nbsp;|&nbsp;
-                ✓ 같은 프롬프트 반복 복사 → 1회 처리<br/>
-                ✓ 어뷰징 감지 시 경고 후 제외
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px', textAlign: 'left' }}>
+                  <span>✓ 서로 다른 프롬프트 복사 시에만 카운트</span>
+                  <span>✓ 하루 최대 <span style={{ color: '#8b949e' }}>30개</span>까지 인정</span>
+                  <span>✓ 같은 프롬프트 반복 복사 → 1회 처리</span>
+                  <span>✓ 어뷰징 감지 시 경고 후 제외</span>
+                </div>
               </p>
             </div>
           </div>
