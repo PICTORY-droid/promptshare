@@ -373,7 +373,7 @@ export default function Navbar() {
           {/* 탭 메뉴바 - 2줄 */}
           <div style={{ display: 'flex', alignItems: 'center', borderTop: '1px solid #21262d', marginLeft: '-12px', marginRight: '-12px', paddingLeft: '12px' }}>
             {TAB_MENUS.map((tab) => {
-              const isActive = typeof window !== 'undefined' && window.location.pathname === tab.href
+              const isActive = false
               return (
                 <button
                   key={tab.href}
