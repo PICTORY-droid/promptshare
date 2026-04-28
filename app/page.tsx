@@ -318,7 +318,7 @@ function HomeInner() {
       if (error) throw error
       return data ?? []
     },
-    { revalidateOnFocus: false }
+    { revalidateOnFocus: false, keepPreviousData: true }
   )
   const prompts = swrPrompts ?? []
 
@@ -503,7 +503,7 @@ function HomeInner() {
           ))}
         </div>
 
-        {loading ? (
+        {loading && prompts.length === 0 ? (
           <div className="text-center py-20 font-mono" style={{ color: '#58a6ff' }}>
             <span style={{ color: '#3fb950' }}>$</span> loading prompts<span className="blink">_</span>
           </div>
