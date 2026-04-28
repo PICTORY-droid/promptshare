@@ -88,6 +88,7 @@ export default function BigBangPage() {
 
   const triggerBigBang = async () => {
     if (banging) return
+    if (prompts.length === 0) { setStatus('// 프롬프트 로딩 중... 잠시 후 다시 클릭해주세요'); return }
     setBanging(true)
     setShowCards(false)
     setResults([])
