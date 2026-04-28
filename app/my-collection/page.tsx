@@ -66,7 +66,6 @@ export default function MyCollectionPage() {
     })
     return () => subscription.unsubscribe()
   }, [])
-  }, [])
 
   const fetchPrompts = async (userId: string) => {
     const { data, error } = await supabase
