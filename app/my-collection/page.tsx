@@ -31,7 +31,7 @@ export default function MyCollectionPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [prompts, setPrompts] = useState<UserPrompt[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
   const [deleteId, setDeleteId] = useState<string | null>(null)
