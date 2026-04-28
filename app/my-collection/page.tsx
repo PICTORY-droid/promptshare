@@ -136,7 +136,7 @@ export default function MyCollectionPage() {
     fontFamily: 'monospace', fontSize: '13px', outline: 'none',
   }
 
-  if (loading) {
+  if (loading && prompts.length === 0) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
         <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
