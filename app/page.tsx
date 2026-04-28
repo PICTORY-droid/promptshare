@@ -330,7 +330,8 @@ function HomeInner() {
   useEffect(() => {
     fetchPrompts()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   useEffect(() => {
     const handlePageShow = (e: PageTransitionEvent) => {
       if (e.persisted) { window.location.reload() }
