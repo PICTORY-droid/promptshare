@@ -2,7 +2,7 @@
 
 import { supabase } from '@/app/lib/supabase'
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import GravityEffect from '@/app/components/GravityEffect'
 import NeuralNetwork from '@/app/components/NeuralNetwork'
 import HologramCard from '@/app/components/HologramCard'
@@ -310,23 +310,34 @@ function HomeInner() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  useEffect(() => {
-    const fetchPrompts = async () => {
-      console.log('fetchPrompts 실행됨')
-      try {
-        const { data, error } = await supabase
-          .from('prompts')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(2000)
-        if (!error && data) setPrompts(data)
-      } catch (e) {
-        console.error('fetchPrompts error:', e)
-      } finally {
-        setLoading(false)
-      }
+  const pathname = usePathname()
+  const fetchPrompts = async () => {
+    console.log('fetchPrompts 실행됨')
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('prompts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(2000)
+      if (!error && data) setPrompts(data)
+    } catch (e) {
+      console.error('fetchPrompts error:', e)
+    } finally {
+      setLoading(false)
     }
+  }
+  useEffect(() => {
     fetchPrompts()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
+  useEffect(() => {
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) { setLoading(true); fetchPrompts() }
+    }
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const updateURL = (page: number, category: string, query: string, sort: string = sortBy) => {
