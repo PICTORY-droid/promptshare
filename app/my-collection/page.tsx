@@ -151,7 +151,7 @@ export default function MyCollectionPage() {
   const selected = prompts.find(p => p.id === selectedId)
 
   return (
-    <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }}>
+    <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }} suppressHydrationWarning>
       {/* 공유 모달 */}
       {shareMenu && shareTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
