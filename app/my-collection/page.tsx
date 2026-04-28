@@ -56,6 +56,10 @@ export default function MyCollectionPage() {
   }, [])
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) { setUser(session.user); fetchPrompts(session.user.id) }
+      else { window.location.href = '/' }
+    })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
         setUser(session.user)
