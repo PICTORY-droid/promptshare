@@ -180,7 +180,7 @@ export default function PersonaPage() {
         )}
 
         {/* 페르소나 카드 생성 버튼 */}
-        <button onClick={() => user ? router.push('/persona/create') : router.push('/')}
+        <button onClick={() => user ? router.push('/persona/create') : router.push('/persona/create')}
           style={{ width: '100%', padding: '14px', background: 'transparent', color: '#bc8cff', border: '2px solid #8957e5', borderRadius: '10px', fontFamily: 'monospace', fontSize: '15px', fontWeight: 700, cursor: 'pointer', marginBottom: '12px' }}>
           ⑂ 페르소나 카드 생성하기
         </button>
