@@ -870,7 +870,7 @@ export default function PromptDetailClient({ params }: { params: Promise<{ id: s
     alert('✓ 수정되었습니다.')
   }
 
-  if (loading) {
+  if (loading && !prompt) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
         <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
