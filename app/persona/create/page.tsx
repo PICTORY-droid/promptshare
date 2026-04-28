@@ -271,6 +271,10 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
                   <pre style={{ fontFamily: 'monospace', fontSize: '12px', color: '#e6edf3', whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.7, margin: 0 }}>
                     {previewText}
                   </pre>
+                  <button onClick={async () => { await navigator.clipboard.writeText(previewText); alert('복사됐습니다!\nChatGPT / Claude에 붙여넣기 하세요.') }}
+                    style={{ marginTop: '12px', width: '100%', padding: '10px', background: 'transparent', color: '#bc8cff', border: '1px solid #8957e5', borderRadius: '8px', fontFamily: 'monospace', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}>
+                    copy prompt
+                  </button>
                 ) : (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '280px', flexDirection: 'column', gap: '12px' }}>
                     <div style={{ fontSize: '32px' }}>🤖</div>
