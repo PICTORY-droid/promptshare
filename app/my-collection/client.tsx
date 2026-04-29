@@ -58,7 +58,16 @@ export default function MyCollectionPage() {
 
   useEffect(() => { setMounted(true) }, [])
 
-  // 1단계: 세션 확인 → user 상태만 설정
+  const fetchPrompts = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_prompts')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+    if (!error && data) setPrompts(data)
+    setLoading(false)
+  }
+
   useEffect(() => {
     let isMounted = true
 
@@ -66,6 +75,7 @@ export default function MyCollectionPage() {
       if (!isMounted) return
       if (session?.user) {
         setUser(session.user)
+        fetchPrompts(session.user.id)
       } else {
         router.push('/')
         setLoading(false)
@@ -87,21 +97,6 @@ export default function MyCollectionPage() {
       subscription.unsubscribe()
     }
   }, [router])
-
-  const fetchPrompts = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('user_prompts')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-    if (!error && data) setPrompts(data)
-    setLoading(false)
-  }
-
-  // 2단계: user가 확인되면 딱 한 번만 데이터 fetch
-  useEffect(() => {
-    if (user) fetchPrompts(user.id)
-  }, [user])
 
   const handleEdit = (p: UserPrompt) => {
     setEditingId(p.id)
