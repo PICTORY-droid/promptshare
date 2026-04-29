@@ -66,17 +66,20 @@ export default function MyCollectionPage() {
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUser(session.user)
-        fetchPrompts(session.user.id)
-      } else {
+    // getSession()은 Supabase 초기화 전 null을 반환할 수 있음
+    // INITIAL_SESSION 이벤트는 초기화 완료 후 반드시 한 번 발생
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION') {
+        if (session?.user) {
+          setUser(session.user)
+          fetchPrompts(session.user.id)
+        } else {
+          setLoading(false)
+          router.replace('/')
+        }
+      } else if (event === 'SIGNED_OUT') {
         router.replace('/')
       }
-    }).catch(() => setLoading(false))
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') router.replace('/')
     })
 
     return () => subscription.unsubscribe()

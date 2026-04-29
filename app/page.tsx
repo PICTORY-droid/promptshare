@@ -310,15 +310,17 @@ function HomeInner() {
   const { data: swrPrompts, isLoading: loading } = useSWR(
     'prompts',
     async () => {
-      const { data, error } = await supabase
-        .from('prompts')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(2000)
+      const timeout = new Promise<{ data: null; error: Error }>(resolve =>
+        setTimeout(() => resolve({ data: null, error: new Error('timeout') }), 10000)
+      )
+      const { data, error } = await Promise.race([
+        supabase.from('prompts').select('*').order('created_at', { ascending: false }).limit(2000),
+        timeout,
+      ])
       if (error) throw error
       return data ?? []
     },
-    { revalidateOnFocus: false, keepPreviousData: true }
+    { revalidateOnFocus: false, keepPreviousData: true, errorRetryCount: 1 }
   )
   const prompts = swrPrompts ?? []
 
