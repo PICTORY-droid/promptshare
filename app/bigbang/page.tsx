@@ -31,7 +31,6 @@ export default function BigBangPage() {
   const [kw1, setKw1] = useState('')
   const [kw2, setKw2] = useState('')
   const [kw3, setKw3] = useState('')
-  const [prompts, setPrompts] = useState<Prompt[]>([])
   const [results, setResults] = useState<Prompt[]>([])
   const [status, setStatus] = useState('')
   const [banging, setBanging] = useState(false)
@@ -40,7 +39,7 @@ export default function BigBangPage() {
   const [showCards, setShowCards] = useState(false)
   const [bangCode, setBangCode] = useState('')
 
-  const { data: swrData } = useSWR<Prompt[]>('prompts', async () => {
+  const { data: prompts = [], isLoading: promptsLoading } = useSWR<Prompt[]>('prompts', async () => {
     const { data, error } = await supabase
       .from('prompts')
       .select('id, title, description, category')
@@ -48,9 +47,6 @@ export default function BigBangPage() {
     if (error) throw error
     return data ?? []
   })
-  useEffect(() => {
-    if (swrData && swrData.length > 0) setPrompts(swrData)
-  }, [swrData])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -91,7 +87,7 @@ export default function BigBangPage() {
 
   const triggerBigBang = async () => {
     if (banging) return
-    if (prompts.length === 0) { setStatus('// 프롬프트 로딩 중... 잠시 후 다시 클릭해주세요'); return }
+    if (promptsLoading || prompts.length === 0) { setStatus('// 프롬프트 로딩 중... 잠시 후 다시 클릭해주세요'); return }
     setBanging(true)
     setShowCards(false)
     setResults([])
@@ -233,8 +229,8 @@ export default function BigBangPage() {
         </div>
 
         {/* 상태 */}
-        <div style={{ textAlign: 'center', fontFamily: 'monospace', fontSize: '10px', color: '#3fb950', minHeight: '20px', marginBottom: '16px', letterSpacing: '1px' }}>
-          {status}
+        <div style={{ textAlign: 'center', fontFamily: 'monospace', fontSize: '10px', minHeight: '20px', marginBottom: '16px', letterSpacing: '1px', color: promptsLoading ? '#8b949e' : '#3fb950' }}>
+          {promptsLoading ? '// 프롬프트 데이터 수신 중...' : status}
         </div>
 
         {/* 결과 카드 */}
