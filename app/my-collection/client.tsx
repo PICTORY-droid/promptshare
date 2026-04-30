@@ -28,9 +28,23 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   Other: { bg: '#1f2d2d', text: '#39c5cf', border: '#1b7c83' },
 }
 
+// localStorage['supabase.auth.token'] = { user, expires_at(초 단위), ... }
+// GoTrueClient._saveSession에서 확인된 저장 구조
+function readUserFromStorage(): User | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const stored = JSON.parse(localStorage.getItem('supabase.auth.token') || 'null')
+    if (stored?.user && stored?.expires_at && Date.now() < stored.expires_at * 1000) {
+      return stored.user as User
+    }
+  } catch {}
+  return null
+}
+
 export default function MyCollectionPage() {
   const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
+  // 마운트 즉시 localStorage에서 동기적으로 user 읽기 → INITIAL_SESSION 대기 없이 즉시 SWR key 설정
+  const [user, setUser] = useState<User | null>(readUserFromStorage)
   const [authChecked, setAuthChecked] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
@@ -146,8 +160,9 @@ export default function MyCollectionPage() {
     fontFamily: 'monospace', fontSize: '13px', outline: 'none',
   }
 
-  // 세션 확인 전 또는 데이터 없을 때 로딩
-  if (!authChecked) {
+  // user가 있으면 authChecked 전에도 즉시 콘텐츠 표시 (localStorage에서 읽은 경우)
+  // user도 없고 authChecked도 안 됐으면 로딩 (세션 없는 경우 INITIAL_SESSION에서 redirect)
+  if (!authChecked && !user) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
         <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
