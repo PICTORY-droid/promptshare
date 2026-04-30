@@ -108,12 +108,10 @@ export default function MyCollectionPage() {
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // SIGNED_OUT은 토큰 갱신 중에도 발화하므로 처리하지 않음
+      // 로그아웃 리다이렉트는 Navbar의 handleLogout이 담당
       if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
         doFetch(session.user)
-      } else if (event === 'SIGNED_OUT') {
-        if (redirectTimer) clearTimeout(redirectTimer)
-        setLoading(false)
-        router.replace('/')
       }
     })
 
