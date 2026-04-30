@@ -40,7 +40,14 @@ export default function BigBangPage() {
   const [showCards, setShowCards] = useState(false)
   const [bangCode, setBangCode] = useState('')
 
-  const { data: swrData } = useSWR('prompts')
+  const { data: swrData } = useSWR<Prompt[]>('prompts', async () => {
+    const { data, error } = await supabase
+      .from('prompts')
+      .select('id, title, description, category')
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return data ?? []
+  })
   useEffect(() => {
     if (swrData && swrData.length > 0) setPrompts(swrData)
   }, [swrData])
