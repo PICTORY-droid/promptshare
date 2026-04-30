@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 import { supabase } from '@/app/lib/supabase'
 import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
@@ -30,16 +31,17 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
 export default function MyCollectionPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
-  const [prompts, setPrompts] = useState<UserPrompt[]>([])
-  const [loading, setLoading] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
+  const [shareMenu, setShareMenu] = useState(false)
+  const [shareTarget, setShareTarget] = useState<UserPrompt | null>(null)
 
+  // 카카오 SDK 로드
   useEffect(() => {
-    // 카카오 SDK 로드
     if (typeof window !== 'undefined') {
       if (!window.Kakao) {
         const script = document.createElement('script')
@@ -55,71 +57,40 @@ export default function MyCollectionPage() {
     }
   }, [])
 
-  const fetchPrompts = async (userId: string) => {
-    try {
-      const cached = localStorage.getItem(`pl-collection-${userId}`)
-      if (cached) {
-        setPrompts(JSON.parse(cached))
-        setLoading(false)
+  // 세션 확인: INITIAL_SESSION 이벤트로 즉시 처리
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION') {
+        if (session?.user) {
+          setUser(session.user)
+        } else {
+          router.replace('/')
+          return
+        }
+        setAuthChecked(true)
+      } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        setUser(session.user)
+        setAuthChecked(true)
       }
-    } catch {}
+    })
+    return () => subscription.unsubscribe()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    try {
+  // SWR로 데이터 페칭 - 메인 페이지와 동일한 SWRProvider(localStorage) 사용
+  // key가 null이면 fetch 안 함 (user 없을 때)
+  const { data: prompts = [], mutate } = useSWR<UserPrompt[]>(
+    user ? `user-prompts-${user.id}` : null,
+    async () => {
       const { data, error } = await supabase
         .from('user_prompts')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', user!.id)
         .order('created_at', { ascending: false })
-      if (!error && data) {
-        setPrompts(data)
-        try { localStorage.setItem(`pl-collection-${userId}`, JSON.stringify(data)) } catch {}
-      }
-    } catch {}
-
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    let fetched = false
-    let redirectTimer: ReturnType<typeof setTimeout> | null = null
-
-    const doFetch = (u: User) => {
-      if (fetched) return
-      fetched = true
-      if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
-      setUser(u)
-      fetchPrompts(u.id)
-    }
-
-    // getSession()은 토큰 만료 시 내부에서 자동 갱신까지 처리 후 반환
-    // INITIAL_SESSION에 의존하지 않으므로 타이밍 경쟁 없음
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        doFetch(session.user)
-      } else {
-        redirectTimer = setTimeout(() => {
-          setLoading(false)
-          router.replace('/')
-        }, 300)
-      }
-    }).catch(() => {
-      setLoading(false)
-      router.replace('/')
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // SIGNED_OUT은 토큰 갱신 중에도 발화하므로 처리하지 않음
-      // 로그아웃 리다이렉트는 Navbar의 handleLogout이 담당
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-        doFetch(session.user)
-      }
-    })
-
-    return () => {
-      if (redirectTimer) clearTimeout(redirectTimer)
-      subscription.unsubscribe()
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+      if (error) throw error
+      return data ?? []
+    },
+    { revalidateOnFocus: false, keepPreviousData: true }
+  )
 
   const handleEdit = (p: UserPrompt) => {
     setEditingId(p.id)
@@ -135,7 +106,7 @@ export default function MyCollectionPage() {
       .select()
       .single()
     if (!error && data) {
-      setPrompts(prev => prev.map(p => p.id === editingId ? data : p))
+      mutate(prev => prev?.map(p => p.id === editingId ? data : p), false)
       setEditingId(null)
     }
   }
@@ -143,21 +114,17 @@ export default function MyCollectionPage() {
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from('user_prompts').delete().eq('id', id)
     if (!error) {
-      setPrompts(prev => prev.filter(p => p.id !== id))
+      mutate(prev => prev?.filter(p => p.id !== id), false)
       setDeleteId(null)
       if (selectedId === id) setSelectedId(null)
     }
   }
-
-  const [shareMenu, setShareMenu] = useState(false)
-  const [shareTarget, setShareTarget] = useState<UserPrompt | null>(null)
 
   const handleCopy = async (content: string, id: string) => {
     await navigator.clipboard.writeText(content)
     setCopied(id)
     setTimeout(() => setCopied(null), 2000)
   }
-
 
   const handleShare = (p: UserPrompt) => {
     const url = typeof window !== 'undefined' ? window.location.origin + '/prompts/' + p.original_prompt_id : ''
@@ -179,7 +146,8 @@ export default function MyCollectionPage() {
     fontFamily: 'monospace', fontSize: '13px', outline: 'none',
   }
 
-  if (loading && prompts.length === 0) {
+  // 세션 확인 전 또는 데이터 없을 때 로딩
+  if (!authChecked) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
         <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
