@@ -28,14 +28,14 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   Other: { bg: '#1f2d2d', text: '#39c5cf', border: '#1b7c83' },
 }
 
-// localStorage['supabase.auth.token'] = { user, expires_at(초 단위), ... }
-// GoTrueClient._saveSession에서 확인된 저장 구조
+// SupabaseClient.ts: defaultStorageKey = `sb-${hostname.split('.')[0]}-auth-token`
+// URL: hkijkcoshdzzmaxiihzm.supabase.co → key: sb-hkijkcoshdzzmaxiihzm-auth-token
+const SUPABASE_STORAGE_KEY = `sb-${new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname.split('.')[0]}-auth-token`
+
 function readUserFromStorage(): User | null {
   if (typeof window === 'undefined') return null
   try {
-    const stored = JSON.parse(localStorage.getItem('supabase.auth.token') || 'null')
-    // expires_at 체크 제거: 만료된 토큰이어도 user 즉시 반환
-    // autoRefreshToken:true 로 SDK가 자동 갱신하고 TOKEN_REFRESHED 이벤트로 업데이트됨
+    const stored = JSON.parse(localStorage.getItem(SUPABASE_STORAGE_KEY) || 'null')
     return stored?.user ?? null
   } catch {}
   return null
