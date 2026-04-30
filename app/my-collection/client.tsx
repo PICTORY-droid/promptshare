@@ -87,41 +87,26 @@ export default function MyCollectionPage() {
 
   useEffect(() => {
     let redirectTimer: ReturnType<typeof setTimeout> | null = null
-    let fetchCalled = false
-
-    const doFetch = (u: User) => {
-      if (fetchCalled) return
-      fetchCalled = true
-      if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
-      setUser(u)
-      fetchPrompts(u.id)
-    }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') {
         if (session?.user) {
-          doFetch(session.user)
+          if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
+          setUser(session.user)
+          fetchPrompts(session.user.id)
         } else {
-          // null이면 토큰 만료일 수 있음 — getSession()으로 실제 상태 재확인
-          // getSession()은 내부에서 토큰 갱신까지 처리
-          supabase.auth.getSession().then(({ data: { session: s } }) => {
-            if (s?.user) {
-              doFetch(s.user)
-            } else {
-              redirectTimer = setTimeout(() => {
-                setLoading(false)
-                router.replace('/')
-              }, 500)
-            }
-          }).catch(() => {
+          redirectTimer = setTimeout(() => {
             setLoading(false)
             router.replace('/')
-          })
+          }, 1500)
         }
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        if (session?.user) doFetch(session.user)
+        if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
+        if (session?.user) {
+          setUser(session.user)
+          fetchPrompts(session.user.id)
+        }
       } else if (event === 'SIGNED_OUT') {
-        if (redirectTimer) clearTimeout(redirectTimer)
         router.replace('/')
       }
     })
@@ -190,25 +175,17 @@ export default function MyCollectionPage() {
     fontFamily: 'monospace', fontSize: '13px', outline: 'none',
   }
 
-  const selected = prompts.find(p => p.id === selectedId)
-
-  const SkeletonCard = () => (
-    <div className="rounded-xl overflow-hidden" style={{ background: '#161b22', border: '1px solid #30363d' }}>
-      <div className="flex items-center px-3 py-1.5" style={{ background: '#21262d', borderBottom: '1px solid #30363d' }}>
-        <div className="flex gap-1.5 mr-3">
-          <div className="w-2 h-2 rounded-full" style={{ background: '#30363d' }}></div>
-          <div className="w-2 h-2 rounded-full" style={{ background: '#30363d' }}></div>
-          <div className="w-2 h-2 rounded-full" style={{ background: '#30363d' }}></div>
+  if (loading && prompts.length === 0) {
+    return (
+      <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
+        <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
+          <span style={{ color: '#3fb950' }}>$</span> loading collection<span className="blink">_</span>
         </div>
-        <div className="h-3 rounded w-32" style={{ background: '#21262d', border: '1px solid #30363d' }}></div>
-      </div>
-      <div className="p-4">
-        <div className="h-4 rounded w-3/4 mb-2 animate-pulse" style={{ background: '#21262d' }}></div>
-        <div className="h-3 rounded w-1/2 mb-4 animate-pulse" style={{ background: '#21262d' }}></div>
-        <div className="h-20 rounded animate-pulse" style={{ background: '#0d1117', border: '1px solid #21262d' }}></div>
-      </div>
-    </div>
-  )
+      </main>
+    )
+  }
+
+  const selected = prompts.find(p => p.id === selectedId)
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }} suppressHydrationWarning>
@@ -407,15 +384,11 @@ export default function MyCollectionPage() {
             <span className="blink" style={{ color: '#bc8cff' }}>_</span>
           </h1>
           <p className="font-mono text-xs" style={{ color: '#484f58' }}>
-            // {displayName} · {loading && prompts.length === 0 ? '...' : `${prompts.length}개의 프롬프트`}
+            // {displayName} · {prompts.length}개의 프롬프트
           </p>
         </div>
 
-        {loading && prompts.length === 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
-          </div>
-        ) : prompts.length === 0 ? (
+        {prompts.length === 0 ? (
           <div className="text-center py-20 font-mono">
             <p className="text-4xl mb-4">📭</p>
             <p style={{ color: '#8b949e' }}>// 아직 저장된 프롬프트가 없습니다</p>

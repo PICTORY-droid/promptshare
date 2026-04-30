@@ -231,8 +231,16 @@ export default function Navbar() {
       realtimeSub = ch
     }
 
-    // getSession() 제거 — onAuthStateChange의 INITIAL_SESSION으로 통합
-    // (두 곳에서 loadActivity 동시 호출되던 문제 해결)
+    // getSession(): Supabase 비동기 초기화 완료 보장
+    // 이게 없으면 다른 페이지에서 onAuthStateChange 구독 시 세션 미로드 상태로 INITIAL_SESSION null 발화
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user)
+        loadActivity(session.user.id)
+        setupRealtime(session.user.id)
+      }
+    })
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null)
       if (session?.user) {
