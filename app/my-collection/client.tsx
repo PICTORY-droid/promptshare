@@ -86,35 +86,31 @@ export default function MyCollectionPage() {
   }
 
   useEffect(() => {
-    let redirectTimer: ReturnType<typeof setTimeout> | null = null
+    let mounted = true
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'INITIAL_SESSION') {
-        if (session?.user) {
-          if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
-          setUser(session.user)
-          fetchPrompts(session.user.id)
-        } else {
-          // autoRefreshToken으로 토큰 갱신 중일 수 있으므로 즉시 리다이렉트하지 않고 대기
-          redirectTimer = setTimeout(() => {
-            setLoading(false)
-            router.replace('/')
-          }, 1500)
-        }
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        // 토큰 갱신 완료 후 세션 복구
-        if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
-        if (session?.user) {
-          setUser(session.user)
-          fetchPrompts(session.user.id)
-        }
-      } else if (event === 'SIGNED_OUT') {
+    // getSession()은 localStorage에서 즉시 읽기 — INITIAL_SESSION 이벤트 대기보다 빠름
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return
+      if (session?.user) {
+        setUser(session.user)
+        fetchPrompts(session.user.id)
+      } else {
+        setLoading(false)
         router.replace('/')
       }
     })
 
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return
+      if (event === 'SIGNED_OUT') {
+        router.replace('/')
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        setUser(session.user)
+      }
+    })
+
     return () => {
-      if (redirectTimer) clearTimeout(redirectTimer)
+      mounted = false
       subscription.unsubscribe()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
