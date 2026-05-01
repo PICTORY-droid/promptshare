@@ -84,20 +84,23 @@ export default function BigBangPage() {
     setOrbScale(3)
     setOrbGlow(true)
 
-    // 오브 클릭 시 직접 fetch (마운트 시 대기 불필요)
-    const { data: allPrompts } = await supabase
+    // fetch와 애니메이션 병렬 실행
+    const fetchPromise = supabase
       .from('prompts')
       .select('id, title, description, category')
       .order('created_at', { ascending: false })
       .limit(500)
 
-    await new Promise(r => setTimeout(r, 300))
+    await new Promise(r => setTimeout(r, 500))
     setOrbScale(0)
     setStatus('// ⚡ 빅뱅 발생!')
 
     await new Promise(r => setTimeout(r, 700))
     setOrbScale(1)
     setOrbGlow(false)
+
+    // 애니메이션(1.2s) 완료 후 fetch 결과 수신 (보통 < 1s)
+    const { data: allPrompts } = await fetchPromise
 
     const pool = allPrompts ?? []
     const keywords = [kw1, kw2, kw3].filter(Boolean)
