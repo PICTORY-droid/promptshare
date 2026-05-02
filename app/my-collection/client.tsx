@@ -79,23 +79,33 @@ export default function MyCollectionPage() {
     }
   }, [])
 
-  // 세션 확인: INITIAL_SESSION 이벤트로 즉시 처리
+  // 세션 확인: INITIAL_SESSION 이벤트로 즉시 처리 + 4초 강제 종료
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setAuthChecked(true)
+    }, 4000)
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') {
+        clearTimeout(timer)
         if (session?.user) {
           setUser(session.user)
         } else {
+          setAuthChecked(true)
           router.replace('/')
           return
         }
         setAuthChecked(true)
       } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        clearTimeout(timer)
         setUser(session.user)
         setAuthChecked(true)
       }
     })
-    return () => subscription.unsubscribe()
+    return () => {
+      clearTimeout(timer)
+      subscription.unsubscribe()
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // authChecked 후에만 fetch - INITIAL_SESSION 완료로 JWT가 확보된 시점
