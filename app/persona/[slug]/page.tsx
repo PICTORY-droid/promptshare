@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/app/lib/supabase'
-import { useRouter } from 'next/navigation'
-import { use } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 
 declare global { interface Window { Kakao: { init: (key: string) => void; isInitialized: () => boolean; Share: { sendDefault: (options: Record<string, unknown>) => void } } } }
 
@@ -24,9 +23,9 @@ const TONE_LABEL: Record<string, string> = {
   funny: '😄 유쾌하게',
 }
 
-export default function PersonaSlugPage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = use(params)
-  const slug = String(resolvedParams?.slug || '').trim()
+export default function PersonaSlugPage() {
+  const params = useParams()
+  const slug = String(params?.slug || '').trim()
   const router = useRouter()
   const [persona, setPersona] = useState<PersonaCard | null>(null)
   const [loading, setLoading] = useState(true)
@@ -53,27 +52,55 @@ export default function PersonaSlugPage({ params }: { params: Promise<{ slug: st
     let alive = true
 
     const timer = setTimeout(() => {
-      if (alive) setLoading(false)
+      if (alive) {
+        setLoading(false)
+      }
     }, 4000)
+
+    const loadFromCache = () => {
+      try {
+        const cached = localStorage.getItem('my_personas_cache')
+        if (!cached) return false
+
+        const list = JSON.parse(cached)
+        const found = Array.isArray(list)
+          ? list.find((item) => String(item.slug) === String(slug))
+          : null
+
+        if (found) {
+          setPersona(found)
+          setLoading(false)
+          return true
+        }
+
+        return false
+      } catch {
+        return false
+      }
+    }
 
     const fetch = async () => {
       try {
+        const cachedFound = loadFromCache()
+
         const { data, error } = await supabase
           .from('persona_cards')
           .select('*')
-          .eq('slug', slug)
+          .eq('slug', String(slug))
           .maybeSingle()
 
         if (!alive) return
 
         if (error || !data) {
-          setPersona(null)
+          if (!cachedFound) setPersona(null)
           return
         }
 
         setPersona(data)
       } catch {
-        if (alive) setPersona(null)
+        if (alive) {
+          loadFromCache()
+        }
       } finally {
         if (alive) {
           clearTimeout(timer)
