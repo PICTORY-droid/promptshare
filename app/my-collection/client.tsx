@@ -118,7 +118,7 @@ export default function MyCollectionPage() {
 
   // authChecked 후에만 fetch - INITIAL_SESSION 완료로 JWT가 확보된 시점
   const { data: prompts = [], isLoading: promptsLoading, mutate } = useSWR<UserPrompt[]>(
-    (user && authChecked) ? `user-prompts-${user.id}` : null,
+    user ? `user-prompts-${user.id}` : null,
     async () => {
       try {
         const { data, error } = await supabase
@@ -195,7 +195,7 @@ export default function MyCollectionPage() {
 
   // user가 있으면 authChecked 전에도 즉시 콘텐츠 표시 (localStorage에서 읽은 경우)
   // user도 없고 authChecked도 안 됐으면 로딩 (세션 없는 경우 INITIAL_SESSION에서 redirect)
-  if (!authChecked && !user) {
+  if (!authChecked) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
         <div className="font-mono text-lg" style={{ color: '#58a6ff' }}>
