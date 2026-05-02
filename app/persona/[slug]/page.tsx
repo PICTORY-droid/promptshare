@@ -158,7 +158,7 @@ export default function PersonaSlugPage({ params }: { params: Promise<{ slug: st
       )}
 
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '32px 24px' }}>
-        <button onClick={() => router.push('/')}
+        <button onClick={() => router.push('/my-personas')}
           style={{ background: 'none', border: 'none', color: '#58a6ff', fontFamily: 'monospace', fontSize: '13px', cursor: 'pointer', marginBottom: '24px', padding: 0 }}>
           ← cd ..
         </button>

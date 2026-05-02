@@ -346,10 +346,10 @@ export default function Navbar() {
                           <div style={{ color: '#e6edf3', fontSize: '12px', fontFamily: 'monospace', fontWeight: 700 }}>{displayName}</div>
                           <div style={{ color: '#8b949e', fontSize: '10px', fontFamily: 'monospace', marginTop: '2px' }}>{user.email}</div>
                         </div>
-                        <a href="/my-collection" style={{ display: 'block', padding: '10px 14px', color: '#58a6ff', fontSize: '12px', fontFamily: 'monospace', textDecoration: 'none', borderBottom: '1px solid #21262d' }}
+                        <a href="/my-personas" style={{ display: 'block', padding: '10px 14px', color: '#58a6ff', fontSize: '12px', fontFamily: 'monospace', textDecoration: 'none', borderBottom: '1px solid #21262d' }}
                           onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
                           onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
-                          📁 내 컬렉션
+                          🤖 AI 페르소나
                         </a>
                         <button onClick={handleLogout} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 14px', color: '#f85149', fontSize: '12px', fontFamily: 'monospace', background: 'none', border: 'none', cursor: 'pointer' }}
                           onMouseOver={e => (e.currentTarget.style.background = '#21262d')}
