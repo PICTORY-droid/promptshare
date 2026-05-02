@@ -112,15 +112,23 @@ export default function MyCollectionPage() {
   const { data: prompts = [], isLoading: promptsLoading, mutate } = useSWR<UserPrompt[]>(
     (user && authChecked) ? `user-prompts-${user.id}` : null,
     async () => {
-      const { data, error } = await supabase
-        .from('user_prompts')
-        .select('*')
-        .eq('user_id', user!.id)
-        .order('created_at', { ascending: false })
-      if (error) throw error
-      return data ?? []
+      try {
+        const { data, error } = await supabase
+          .from('user_prompts')
+          .select('*')
+          .eq('user_id', user!.id)
+          .order('created_at', { ascending: false })
+        if (error) throw error
+        const result = data ?? []
+        localStorage.setItem('my_collection_cache', JSON.stringify(result))
+        return result
+      } catch {
+        const cached = localStorage.getItem('my_collection_cache')
+        if (cached) return JSON.parse(cached) as UserPrompt[]
+        return []
+      }
     },
-    { revalidateOnFocus: false, keepPreviousData: true }
+    { revalidateOnFocus: false, keepPreviousData: true, onErrorRetry: () => {}, fallbackData: (() => { try { const c = localStorage.getItem('my_collection_cache'); return c ? JSON.parse(c) : [] } catch { return [] } })() }
   )
 
   const handleEdit = (p: UserPrompt) => {
