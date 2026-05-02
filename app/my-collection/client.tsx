@@ -410,7 +410,7 @@ export default function MyCollectionPage() {
           </p>
         </div>
 
-        {((!authChecked && !!user && prompts.length === 0) || (promptsLoading && prompts.length === 0)) ? (
+        {(!authChecked && !!user && prompts.length === 0) ? (
           <div className="text-center py-20 font-mono">
             <span style={{ color: '#58a6ff' }}>$</span>
             <span style={{ color: '#e6edf3' }}> loading prompts</span>
