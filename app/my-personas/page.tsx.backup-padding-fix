@@ -77,9 +77,7 @@ export default function MyPersonasPage() {
   const pagedPersonas = personas.slice((page - 1) * pageSize, page * pageSize)
 
   return (
-    <div style={{
-      padding: 'clamp(28px, 7vw, 56px)'
-    }}>
+    <div style={{ padding: '40px' }}>
       <h2 style={{ color: '#fff', marginBottom: '20px', fontFamily: 'monospace' }}>
         내 페르소나
       </h2>
@@ -91,8 +89,8 @@ export default function MyPersonasPage() {
       {personas.length > 0 && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr',
-          gap: '24px'
+          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+          gap: '16px'
         }}>
           {pagedPersonas.map((p, i) => (
             <div

@@ -67,8 +67,6 @@ export default function MyCollectionPage() {
   const [copied, setCopied] = useState<string | null>(null)
   const [shareMenu, setShareMenu] = useState(false)
   const [shareTarget, setShareTarget] = useState<UserPrompt | null>(null)
-  const [page, setPage] = useState(1)
-  const PAGE_SIZE = 3
 
   // 카카오 SDK 로드
   useEffect(() => {
@@ -206,8 +204,6 @@ export default function MyCollectionPage() {
   }
 
   const selected = prompts.find(p => p.id === selectedId)
-  const totalPages = Math.max(1, Math.ceil(prompts.length / PAGE_SIZE))
-  const pagedPrompts = prompts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }} suppressHydrationWarning>
@@ -410,7 +406,7 @@ export default function MyCollectionPage() {
           </p>
         </div>
 
-        {((!authChecked && !!user && prompts.length === 0) || (promptsLoading && prompts.length === 0)) ? (
+        {(!authChecked && !!user) || promptsLoading ? (
           <div className="text-center py-20 font-mono">
             <span style={{ color: '#58a6ff' }}>$</span>
             <span style={{ color: '#e6edf3' }}> loading prompts</span>
@@ -429,16 +425,12 @@ export default function MyCollectionPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {pagedPrompts.map(p => {
+            {prompts.map(p => {
               const colors = CATEGORY_COLORS[p.category] || CATEGORY_COLORS['Other']
               const isSelected = selectedId === p.id
               return (
                 <div key={p.id}
-                  onClick={() => {
-  if (p.original_prompt_id) {
-    router.push(`/prompts/${p.original_prompt_id}`)
-  }
-}}
+                  onClick={() => setSelectedId(isSelected ? null : p.id)}
                   className="rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-[1.01]"
                   style={{
                     background: '#161b22',
@@ -515,49 +507,6 @@ export default function MyCollectionPage() {
                 </div>
               )
             })}
-          </div>
-        )}
-
-        {prompts.length > PAGE_SIZE && (
-          <div className="flex items-center justify-center gap-2 mt-8 font-mono">
-            <button
-              onClick={() => setPage(prev => Math.max(1, prev - 1))}
-              disabled={page === 1}
-              className="px-3 py-2 rounded-lg text-xs"
-              style={{
-                background: '#161b22',
-                color: page === 1 ? '#484f58' : '#58a6ff',
-                border: '1px solid #30363d',
-                cursor: page === 1 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              ← prev
-            </button>
-
-            <span
-              className="px-4 py-2 rounded-lg text-xs"
-              style={{
-                background: '#0d1117',
-                color: '#bc8cff',
-                border: '1px solid #30363d'
-              }}
-            >
-              page {page} / {totalPages}
-            </span>
-
-            <button
-              onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={page === totalPages}
-              className="px-3 py-2 rounded-lg text-xs"
-              style={{
-                background: '#161b22',
-                color: page === totalPages ? '#484f58' : '#58a6ff',
-                border: '1px solid #30363d',
-                cursor: page === totalPages ? 'not-allowed' : 'pointer'
-              }}
-            >
-              next →
-            </button>
           </div>
         )}
       </div>

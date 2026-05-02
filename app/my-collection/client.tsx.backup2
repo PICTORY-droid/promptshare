@@ -54,12 +54,6 @@ export default function MyCollectionPage() {
   // 마운트 즉시 localStorage에서 동기적으로 user 읽기 → INITIAL_SESSION 대기 없이 즉시 SWR key 설정
   const [user, setUser] = useState<User | null>(readUserFromStorage)
   const [authChecked, setAuthChecked] = useState(false)
-  const [cachedPrompts, setCachedPrompts] = useState<UserPrompt[]>(() => {
-    try {
-      const c = typeof window !== 'undefined' ? localStorage.getItem('my_collection_cache') : null
-      return c ? JSON.parse(c) : []
-    } catch { return [] }
-  })
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -67,8 +61,6 @@ export default function MyCollectionPage() {
   const [copied, setCopied] = useState<string | null>(null)
   const [shareMenu, setShareMenu] = useState(false)
   const [shareTarget, setShareTarget] = useState<UserPrompt | null>(null)
-  const [page, setPage] = useState(1)
-  const PAGE_SIZE = 3
 
   // 카카오 SDK 로드
   useEffect(() => {
@@ -87,56 +79,38 @@ export default function MyCollectionPage() {
     }
   }, [])
 
-  // 세션 확인: INITIAL_SESSION 이벤트로 즉시 처리 + 4초 강제 종료
+  // 세션 확인: INITIAL_SESSION 이벤트로 즉시 처리
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setAuthChecked(true)
-    }, 4000)
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') {
-        clearTimeout(timer)
         if (session?.user) {
           setUser(session.user)
         } else {
-          setAuthChecked(true)
           router.replace('/')
           return
         }
         setAuthChecked(true)
       } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-        clearTimeout(timer)
         setUser(session.user)
         setAuthChecked(true)
       }
     })
-    return () => {
-      clearTimeout(timer)
-      subscription.unsubscribe()
-    }
+    return () => subscription.unsubscribe()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // authChecked 후에만 fetch - INITIAL_SESSION 완료로 JWT가 확보된 시점
   const { data: prompts = [], isLoading: promptsLoading, mutate } = useSWR<UserPrompt[]>(
     (user && authChecked) ? `user-prompts-${user.id}` : null,
     async () => {
-      try {
-        const { data, error } = await supabase
-          .from('user_prompts')
-          .select('*')
-          .eq('user_id', user!.id)
-          .order('created_at', { ascending: false })
-        if (error) throw error
-        const result = data ?? []
-        localStorage.setItem('my_collection_cache', JSON.stringify(result))
-        return result
-      } catch {
-        const cached = localStorage.getItem('my_collection_cache')
-        if (cached) return JSON.parse(cached) as UserPrompt[]
-        return []
-      }
+      const { data, error } = await supabase
+        .from('user_prompts')
+        .select('*')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data ?? []
     },
-    { revalidateOnFocus: false, keepPreviousData: true, onErrorRetry: () => {}, fallbackData: (() => { try { const c = localStorage.getItem('my_collection_cache'); return c ? JSON.parse(c) : [] } catch { return [] } })() }
+    { revalidateOnFocus: false, keepPreviousData: true }
   )
 
   const handleEdit = (p: UserPrompt) => {
@@ -206,8 +180,6 @@ export default function MyCollectionPage() {
   }
 
   const selected = prompts.find(p => p.id === selectedId)
-  const totalPages = Math.max(1, Math.ceil(prompts.length / PAGE_SIZE))
-  const pagedPrompts = prompts.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }} suppressHydrationWarning>
@@ -410,7 +382,7 @@ export default function MyCollectionPage() {
           </p>
         </div>
 
-        {((!authChecked && !!user && prompts.length === 0) || (promptsLoading && prompts.length === 0)) ? (
+        {(!authChecked && !!user) || promptsLoading ? (
           <div className="text-center py-20 font-mono">
             <span style={{ color: '#58a6ff' }}>$</span>
             <span style={{ color: '#e6edf3' }}> loading prompts</span>
@@ -429,16 +401,12 @@ export default function MyCollectionPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {pagedPrompts.map(p => {
+            {prompts.map(p => {
               const colors = CATEGORY_COLORS[p.category] || CATEGORY_COLORS['Other']
               const isSelected = selectedId === p.id
               return (
                 <div key={p.id}
-                  onClick={() => {
-  if (p.original_prompt_id) {
-    router.push(`/prompts/${p.original_prompt_id}`)
-  }
-}}
+                  onClick={() => setSelectedId(isSelected ? null : p.id)}
                   className="rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-[1.01]"
                   style={{
                     background: '#161b22',
@@ -515,49 +483,6 @@ export default function MyCollectionPage() {
                 </div>
               )
             })}
-          </div>
-        )}
-
-        {prompts.length > PAGE_SIZE && (
-          <div className="flex items-center justify-center gap-2 mt-8 font-mono">
-            <button
-              onClick={() => setPage(prev => Math.max(1, prev - 1))}
-              disabled={page === 1}
-              className="px-3 py-2 rounded-lg text-xs"
-              style={{
-                background: '#161b22',
-                color: page === 1 ? '#484f58' : '#58a6ff',
-                border: '1px solid #30363d',
-                cursor: page === 1 ? 'not-allowed' : 'pointer'
-              }}
-            >
-              ← prev
-            </button>
-
-            <span
-              className="px-4 py-2 rounded-lg text-xs"
-              style={{
-                background: '#0d1117',
-                color: '#bc8cff',
-                border: '1px solid #30363d'
-              }}
-            >
-              page {page} / {totalPages}
-            </span>
-
-            <button
-              onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={page === totalPages}
-              className="px-3 py-2 rounded-lg text-xs"
-              style={{
-                background: '#161b22',
-                color: page === totalPages ? '#484f58' : '#58a6ff',
-                border: '1px solid #30363d',
-                cursor: page === totalPages ? 'not-allowed' : 'pointer'
-              }}
-            >
-              next →
-            </button>
           </div>
         )}
       </div>
