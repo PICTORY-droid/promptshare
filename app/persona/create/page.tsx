@@ -164,10 +164,18 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
   return (
     <main className="min-h-screen" style={{ background: '#0d1117', color: '#e6edf3' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '20px 16px' }}>
-        <button onClick={() => router.push('/')}
-          style={{ background: 'none', border: 'none', color: '#58a6ff', fontFamily: 'monospace', fontSize: '13px', cursor: 'pointer', marginBottom: '24px', padding: 0 }}>
-          ← cd ..
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+          <button onClick={() => router.push('/persona')}
+            style={{ background: 'none', border: 'none', color: '#58a6ff', fontFamily: 'monospace', fontSize: '13px', cursor: 'pointer', padding: 0 }}>
+            ← cd ..
+          </button>
+          {user && (
+            <button onClick={() => router.push('/my-personas')}
+              style={{ background: 'transparent', border: '1px solid #8957e5', color: '#bc8cff', fontFamily: 'monospace', fontSize: '12px', fontWeight: 700, cursor: 'pointer', padding: '6px 14px', borderRadius: '8px' }}>
+              🤖 내 페르소나 카드
+            </button>
+          )}
+        </div>
 
         <h1 style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '22px', marginBottom: '6px' }}>
           <span style={{ color: '#8b949e' }}>// </span>
