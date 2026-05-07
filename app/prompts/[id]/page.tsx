@@ -61,5 +61,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default function Page({ params }: Props) {
-  return <PromptDetailClient params={params} />
+  return <PromptDetailClient />
 }

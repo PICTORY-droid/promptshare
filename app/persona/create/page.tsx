@@ -73,7 +73,7 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
       const res = await fetch('/api/persona', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, userId: (await supabase.auth.getSession()).data.session?.user?.id ?? '' }),
+        body: JSON.stringify({ ...form, userId: user?.id ?? '' }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
@@ -147,8 +147,10 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
               ↗ Claude
             </button>
           </div>
-          <div style={{ display: 'none' }}>
-          </div>
+          <button onClick={() => router.push('/my-personas')}
+            style={{ width: '100%', padding: '12px', background: 'transparent', color: '#bc8cff', border: '1px solid #8957e5', borderRadius: '8px', fontFamily: 'monospace', fontSize: '13px', fontWeight: 700, cursor: 'pointer', marginBottom: '16px' }}>
+            🗂 내 페르소나 목록 보기
+          </button>
 
           <button onClick={() => router.push('/')}
             style={{ background: 'none', border: 'none', color: '#58a6ff', fontFamily: 'monospace', fontSize: '13px', cursor: 'pointer' }}>

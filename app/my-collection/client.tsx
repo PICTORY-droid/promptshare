@@ -28,8 +28,6 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   Other: { bg: '#1f2d2d', text: '#39c5cf', border: '#1b7c83' },
 }
 
-// SupabaseClient.ts: defaultStorageKey = `sb-${hostname.split('.')[0]}-auth-token`
-// URL: hkijkcoshdzzmaxiihzm.supabase.co → key: sb-hkijkcoshdzzmaxiihzm-auth-token
 const getSupabaseKey = () => {
   try {
     const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\n/g, '').trim()
@@ -51,15 +49,9 @@ function readUserFromStorage(): User | null {
 
 export default function MyCollectionPage() {
   const router = useRouter()
-  // 마운트 즉시 localStorage에서 동기적으로 user 읽기 → INITIAL_SESSION 대기 없이 즉시 SWR key 설정
   const [user, setUser] = useState<User | null>(readUserFromStorage)
   const [authChecked, setAuthChecked] = useState(false)
-  const [cachedPrompts, setCachedPrompts] = useState<UserPrompt[]>(() => {
-    try {
-      const c = typeof window !== 'undefined' ? localStorage.getItem('my_collection_cache') : null
-      return c ? JSON.parse(c) : []
-    } catch { return [] }
-  })
+  const [sessionConfirmed, setSessionConfirmed] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({ title: '', content: '', description: '', category: '' })
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -98,6 +90,7 @@ export default function MyCollectionPage() {
         clearTimeout(timer)
         if (session?.user) {
           setUser(session.user)
+          setSessionConfirmed(true)
         } else {
           setAuthChecked(true)
           router.replace('/')
@@ -107,6 +100,7 @@ export default function MyCollectionPage() {
       } else if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
         clearTimeout(timer)
         setUser(session.user)
+        setSessionConfirmed(true)
         setAuthChecked(true)
       }
     })
@@ -116,27 +110,31 @@ export default function MyCollectionPage() {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // authChecked 후에만 fetch - INITIAL_SESSION 완료로 JWT가 확보된 시점
-  const { data: prompts = [], isLoading: promptsLoading, mutate } = useSWR<UserPrompt[]>(
-    user ? `user-prompts-${user.id}` : null,
+  // SWR 키: sessionConfirmed 기준으로만 fetch - JWT 확보된 시점에만 실행
+  const { data: prompts = [], error: promptsError, isLoading: promptsLoading, isValidating: promptsValidating, mutate } = useSWR<UserPrompt[]>(
+    sessionConfirmed ? `user-prompts-${user!.id}` : null,
     async () => {
-      try {
-        const { data, error } = await supabase
-          .from('user_prompts')
-          .select('*')
-          .eq('user_id', user!.id)
-          .order('created_at', { ascending: false })
-        if (error) throw error
-        const result = data ?? []
-        localStorage.setItem('my_collection_cache', JSON.stringify(result))
-        return result
-      } catch {
-        const cached = localStorage.getItem('my_collection_cache')
-        if (cached) return JSON.parse(cached) as UserPrompt[]
-        return []
-      }
+      const { data, error } = await supabase
+        .from('user_prompts')
+        .select('*')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      const result = data ?? []
+      localStorage.setItem('my_collection_cache', JSON.stringify(result))
+      return result
     },
-    { revalidateOnFocus: false, keepPreviousData: true, onErrorRetry: () => {}, fallbackData: (() => { try { const c = localStorage.getItem('my_collection_cache'); return c ? JSON.parse(c) : [] } catch { return [] } })() }
+    {
+      revalidateOnFocus: false,
+      keepPreviousData: true,
+      onErrorRetry: () => {},
+      fallbackData: (() => {
+        try {
+          const c = typeof window !== 'undefined' ? localStorage.getItem('my_collection_cache') : null
+          return c ? JSON.parse(c) : undefined
+        } catch { return undefined }
+      })(),
+    }
   )
 
   const handleEdit = (p: UserPrompt) => {
@@ -193,8 +191,6 @@ export default function MyCollectionPage() {
     fontFamily: 'monospace', fontSize: '13px', outline: 'none',
   }
 
-  // user가 있으면 authChecked 전에도 즉시 콘텐츠 표시 (localStorage에서 읽은 경우)
-  // user도 없고 authChecked도 안 됐으면 로딩 (세션 없는 경우 INITIAL_SESSION에서 redirect)
   if (!authChecked) {
     return (
       <main className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
@@ -410,11 +406,22 @@ export default function MyCollectionPage() {
           </p>
         </div>
 
-        {(!authChecked && !!user && prompts.length === 0) ? (
+        {((!sessionConfirmed && !!user && prompts.length === 0) || ((promptsLoading || promptsValidating) && prompts.length === 0)) ? (
           <div className="text-center py-20 font-mono">
             <span style={{ color: '#58a6ff' }}>$</span>
             <span style={{ color: '#e6edf3' }}> loading prompts</span>
             <span className="blink" style={{ color: '#58a6ff' }}>_</span>
+          </div>
+        ) : promptsError ? (
+          <div className="text-center py-20 font-mono">
+            <p className="text-4xl mb-4">⚠️</p>
+            <p style={{ color: '#f85149' }}>// 프롬프트를 불러오지 못했습니다</p>
+            <p className="text-xs mt-2" style={{ color: '#484f58' }}>// {promptsError?.message ?? '네트워크 오류'}</p>
+            <button onClick={() => mutate()}
+              className="mt-6 px-6 py-2.5 rounded-lg font-mono text-sm"
+              style={{ background: 'transparent', color: '#58a6ff', border: '1px solid #58a6ff', cursor: 'pointer' }}>
+              다시 시도
+            </button>
           </div>
         ) : prompts.length === 0 ? (
           <div className="text-center py-20 font-mono">
