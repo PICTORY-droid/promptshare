@@ -179,19 +179,11 @@ export default function PersonaPage() {
           </div>
         )}
 
-        {/* 페르소나 카드 버튼 영역 */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
-          <button onClick={() => router.push('/persona/create')}
-            style={{ flex: 1, padding: '14px', background: 'transparent', color: '#bc8cff', border: '2px solid #8957e5', borderRadius: '10px', fontFamily: 'monospace', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>
-            ⑂ 페르소나 카드 생성하기
-          </button>
-          {user && (
-            <button onClick={() => router.push('/my-personas')}
-              style={{ flex: 1, padding: '14px', background: 'transparent', color: '#58a6ff', border: '2px solid #1f6feb', borderRadius: '10px', fontFamily: 'monospace', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>
-              🤖 내 페르소나 카드
-            </button>
-          )}
-        </div>
+        {/* 페르소나 카드 생성 버튼 */}
+        <button onClick={() => router.push('/persona/create')}
+          style={{ width: '100%', padding: '14px', background: 'transparent', color: '#bc8cff', border: '2px solid #8957e5', borderRadius: '10px', fontFamily: 'monospace', fontSize: '15px', fontWeight: 700, cursor: 'pointer', marginBottom: '12px' }}>
+          ⑂ 페르소나 카드 생성하기
+        </button>
 
         {!user && (
           <p style={{ textAlign: 'center', fontSize: '11px', color: '#484f58', fontFamily: 'monospace' }}>
