@@ -19,14 +19,6 @@ export default function MyPersonasPage() {
   const pageSize = 6
 
   useEffect(() => {
-    const cached = localStorage.getItem('my_personas_cache')
-    if (cached) {
-      try {
-        setPersonas(JSON.parse(cached))
-        setMessage('')
-      } catch {}
-    }
-
     const fetchPersonas = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
@@ -49,7 +41,6 @@ export default function MyPersonasPage() {
         }
 
         setPersonas(data || [])
-        localStorage.setItem('my_personas_cache', JSON.stringify(data || []))
 
         if (!data || data.length === 0) {
           setMessage('아직 만든 페르소나가 없습니다')
