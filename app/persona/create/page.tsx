@@ -169,12 +169,10 @@ ${form.tone === 'friendly' ? '친근하고 따뜻하게' : form.tone === 'profes
             style={{ background: 'none', border: 'none', color: '#58a6ff', fontFamily: 'monospace', fontSize: '13px', cursor: 'pointer', padding: 0 }}>
             ← cd ..
           </button>
-          {user && (
-            <button onClick={() => router.push('/my-personas')}
-              style={{ background: 'transparent', border: '1px solid #8957e5', color: '#bc8cff', fontFamily: 'monospace', fontSize: '12px', fontWeight: 700, cursor: 'pointer', padding: '6px 14px', borderRadius: '8px' }}>
-              🤖 내 페르소나 카드
-            </button>
-          )}
+          <button onClick={() => router.push('/my-personas')}
+            style={{ background: 'transparent', border: '1px solid #8957e5', color: '#bc8cff', fontFamily: 'monospace', fontSize: '12px', fontWeight: 700, cursor: 'pointer', padding: '6px 14px', borderRadius: '8px' }}>
+            🤖 내 페르소나 카드
+          </button>
         </div>
 
         <h1 style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '22px', marginBottom: '6px' }}>
