@@ -29,9 +29,9 @@ export default function MyPersonasPage() {
 
     const fetchPersonas = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { session } } = await supabase.auth.getSession()
 
-        if (!user) {
+        if (!session?.user) {
           setMessage('로그인 후 이용할 수 있습니다')
           return
         }
@@ -39,10 +39,11 @@ export default function MyPersonasPage() {
         const { data, error } = await supabase
           .from('persona_cards')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', session.user.id)
           .order('created_at', { ascending: false })
 
         if (error) {
+          console.error('[my-personas] DB 쿼리 에러:', error)
           setMessage('페르소나를 불러오지 못했습니다')
           return
         }
@@ -55,7 +56,8 @@ export default function MyPersonasPage() {
         } else {
           setMessage('')
         }
-      } catch {
+      } catch (err) {
+        console.error('[my-personas] fetchPersonas 예외:', err)
         setMessage('페르소나를 불러오지 못했습니다')
       }
     }
