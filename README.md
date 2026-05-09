@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧪 PromptLab
 
-## Getting Started
+> AI 프롬프트 학습 플랫폼 — 검증된 프롬프트를 배우고 활용하세요
 
-First, run the development server:
+## 왜 만들었나
 
-```bash
+AI 툴이 쏟아지는 시대에 좋은 프롬프트를 어떻게 써야 하는지 모르는 사람이 많습니다.
+잘 만들어진 프롬프트를 카테고리별로 모아 학습할 수 있는 플랫폼을 만들었습니다.
+
+## 주요 기능
+
+- 카테고리별 프롬프트 탐색
+- 최신순 프롬프트 정렬
+- 프롬프트 상세 내용 열람
+- 빠른 로딩을 위한 서버사이드 렌더링 (ISR)
+
+## 기술 스택
+
+| 구분 | 기술 |
+|------|------|
+| 프론트엔드 | Next.js, TypeScript, Tailwind CSS |
+| 백엔드/DB | Supabase (PostgreSQL) |
+| 배포 | Vercel |
+| 폰트 | Geist (Vercel) |
+
+## 시작하는 방법
+
+1. 패키지 설치
+
+\`\`\`bash
+npm install
+\`\`\`
+
+2. .env.local 파일 생성 후 아래 내용 입력
+
+\`\`\`
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+\`\`\`
+
+3. 실행
+
+\`\`\`bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 http://localhost:3000 접속
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 현황
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 현재 프롬프트 수: 976개
+- 목표: 50,000개
 
-## Learn More
+## 라이선스
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License
