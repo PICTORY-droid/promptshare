@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import type { PromptCategory } from "@/features/prompts/types/category.types";
 import { createPromptAction, type CreatePromptActionState } from "../actions";
@@ -13,6 +13,15 @@ const initialState: CreatePromptActionState = {
   ok: true,
   message: "",
 };
+
+const FIELD_LIMITS = {
+  title: 120,
+  useCase: 500,
+  promptBody: 12000,
+  exampleInput: 6000,
+  exampleOutput: 6000,
+  safetyNotes: 3000,
+} as const;
 
 type PromptFormProps = {
   categories: PromptCategory[];
@@ -29,19 +38,44 @@ function SubmitButton() {
   );
 }
 
+function FieldCounter({
+  current,
+  max,
+}: {
+  current: number;
+  max: number;
+}) {
+  return (
+    <span className="text-xs text-slate-400">
+      {current.toLocaleString("ko-KR")} / {max.toLocaleString("ko-KR")}자
+    </span>
+  );
+}
+
 export default function PromptForm({
   categories,
   categoryLoadMessage,
 }: PromptFormProps) {
   const [state, formAction] = useActionState(createPromptAction, initialState);
+  const [titleLength, setTitleLength] = useState(0);
+  const [useCaseLength, setUseCaseLength] = useState(0);
+  const [promptBodyLength, setPromptBodyLength] = useState(0);
+  const [exampleInputLength, setExampleInputLength] = useState(0);
+  const [exampleOutputLength, setExampleOutputLength] = useState(0);
+  const [safetyNotesLength, setSafetyNotesLength] = useState(0);
 
   return (
     <form action={formAction} className="space-y-5">
       <label className="block space-y-2">
-        <span className="text-sm font-semibold text-slate-700">제목</span>
+        <span className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-slate-700">제목</span>
+          <FieldCounter current={titleLength} max={FIELD_LIMITS.title} />
+        </span>
         <Input
           name="title"
           placeholder="예: 고객 응대 이메일 작성 프롬프트"
+          maxLength={FIELD_LIMITS.title}
+          onChange={(event) => setTitleLength(event.currentTarget.value.length)}
           required
         />
       </label>
@@ -68,46 +102,74 @@ export default function PromptForm({
       </label>
 
       <label className="block space-y-2">
-        <span className="text-sm font-semibold text-slate-700">사용 목적</span>
+        <span className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-slate-700">사용 목적</span>
+          <FieldCounter current={useCaseLength} max={FIELD_LIMITS.useCase} />
+        </span>
         <Input
           name="useCase"
           placeholder="이 프롬프트를 어떤 상황에서 쓰는지 적어주세요."
+          maxLength={FIELD_LIMITS.useCase}
+          onChange={(event) => setUseCaseLength(event.currentTarget.value.length)}
         />
       </label>
 
       <label className="block space-y-2">
-        <span className="text-sm font-semibold text-slate-700">프롬프트 본문</span>
+        <span className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-slate-700">프롬프트 본문</span>
+          <FieldCounter current={promptBodyLength} max={FIELD_LIMITS.promptBody} />
+        </span>
         <Textarea
           name="promptBody"
           placeholder="AI에게 입력할 프롬프트를 작성하세요."
+          maxLength={FIELD_LIMITS.promptBody}
+          onChange={(event) => setPromptBodyLength(event.currentTarget.value.length)}
           required
         />
+        <span className="block text-xs leading-5 text-slate-500">
+          긴 문서는 그대로 붙여넣기보다 핵심 지시문과 예시만 정리해 넣는 것을 권장합니다.
+        </span>
       </label>
 
       <label className="block space-y-2">
-        <span className="text-sm font-semibold text-slate-700">예시 입력</span>
+        <span className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-slate-700">예시 입력</span>
+          <FieldCounter current={exampleInputLength} max={FIELD_LIMITS.exampleInput} />
+        </span>
         <Textarea
           name="exampleInput"
           className="min-h-28"
           placeholder="프롬프트 사용 예시 입력값을 작성하세요."
+          maxLength={FIELD_LIMITS.exampleInput}
+          onChange={(event) => setExampleInputLength(event.currentTarget.value.length)}
         />
       </label>
 
       <label className="block space-y-2">
-        <span className="text-sm font-semibold text-slate-700">예시 출력</span>
+        <span className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-slate-700">예시 출력</span>
+          <FieldCounter current={exampleOutputLength} max={FIELD_LIMITS.exampleOutput} />
+        </span>
         <Textarea
           name="exampleOutput"
           className="min-h-28"
           placeholder="예상되는 출력 형태를 작성하세요."
+          maxLength={FIELD_LIMITS.exampleOutput}
+          onChange={(event) => setExampleOutputLength(event.currentTarget.value.length)}
         />
       </label>
 
       <label className="block space-y-2">
-        <span className="text-sm font-semibold text-slate-700">안전 주의사항</span>
+        <span className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-slate-700">안전 주의사항</span>
+          <FieldCounter current={safetyNotesLength} max={FIELD_LIMITS.safetyNotes} />
+        </span>
         <Textarea
           name="safetyNotes"
           className="min-h-28"
           placeholder="개인정보, 회사기밀, 저작권 위험 등 사용 시 주의할 내용을 적어주세요."
+          maxLength={FIELD_LIMITS.safetyNotes}
+          onChange={(event) => setSafetyNotesLength(event.currentTarget.value.length)}
         />
       </label>
 
