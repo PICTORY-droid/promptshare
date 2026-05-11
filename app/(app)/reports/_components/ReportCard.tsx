@@ -48,6 +48,16 @@ export default function ReportCard({ report }: ReportCardProps) {
 
       <CardContent>
         <div className="space-y-4">
+          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+            <p className="text-xs font-semibold text-emerald-900">
+              검사 원문은 저장하지 않습니다.
+            </p>
+            <p className="mt-2 text-sm leading-6 text-emerald-800">
+              이 리포트에는 원문 프롬프트, 고객명, 전화번호, 이메일, 회사기밀 원문이 저장되지 않습니다.
+              점수, 판정, 위험 카테고리, 안전 문장 안내만 저장합니다.
+            </p>
+          </div>
+
           <div className="rounded-2xl bg-slate-50 p-4">
             <p className="text-xs font-semibold text-slate-500">안전 문장 안내</p>
             <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">

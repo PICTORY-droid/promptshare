@@ -44,6 +44,44 @@ export default function ReportsShell({
           </p>
         </div>
 
+        <Card className="border-emerald-100 bg-emerald-50">
+          <CardHeader>
+            <CardTitle className="text-emerald-950">
+              원문 미저장 보안 정책
+            </CardTitle>
+            <CardDescription className="text-emerald-800">
+              SafeCheck 리포트는 검사 원문을 보관하지 않고, 필요한 최소 메타데이터만 저장합니다.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-2xl bg-white/70 p-4">
+                <p className="text-sm font-semibold text-emerald-950">
+                  저장하지 않는 데이터
+                </p>
+                <ul className="mt-3 space-y-2 text-sm leading-6 text-emerald-800">
+                  <li>검사 원문 프롬프트</li>
+                  <li>고객명, 전화번호, 이메일 원문</li>
+                  <li>회사기밀, 내부자료, 계약조건 원문</li>
+                  <li>상담기록, 진료기록 같은 민감한 원문</li>
+                </ul>
+              </div>
+
+              <div className="rounded-2xl bg-white/70 p-4">
+                <p className="text-sm font-semibold text-emerald-950">
+                  저장하는 데이터
+                </p>
+                <ul className="mt-3 space-y-2 text-sm leading-6 text-emerald-800">
+                  <li>위험 점수와 판정</li>
+                  <li>위험 카테고리</li>
+                  <li>안전 문장 안내</li>
+                  <li>정책 버전, 탐지기 버전, 검사 시각</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader>
