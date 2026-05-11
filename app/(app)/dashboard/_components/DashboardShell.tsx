@@ -8,14 +8,12 @@ import DashboardPromptCard from "./DashboardPromptCard";
 
 type DashboardShellProps = {
   email: string;
-  userId: string;
   prompts: Prompt[];
   promptLoadMessage: string | null;
 };
 
 export default function DashboardShell({
   email,
-  userId,
   prompts,
   promptLoadMessage,
 }: DashboardShellProps) {
@@ -23,13 +21,12 @@ export default function DashboardShell({
     <main className="min-h-screen bg-slate-50 px-6 py-10">
       <section className="mx-auto flex max-w-6xl flex-col gap-6">
         <div className="space-y-3">
-          <Badge>Protected Page</Badge>
+          <Badge>개인 메뉴</Badge>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
             PromptLab 대시보드
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            로그인한 사용자의 프롬프트 작성, 저장, 공개 상태, SafeCheck 연결 흐름을
-            관리하는 화면입니다.
+            내가 작성한 프롬프트, 공개 상태, 보관 상태, SafeCheck 연결 흐름을 관리합니다.
           </p>
         </div>
 
@@ -37,11 +34,10 @@ export default function DashboardShell({
           <Card>
             <CardHeader>
               <CardTitle>로그인 계정</CardTitle>
-              <CardDescription>현재 Supabase Auth 세션 정보입니다.</CardDescription>
+              <CardDescription>현재 접속 중인 계정입니다.</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="break-all text-sm font-semibold text-slate-950">{email}</p>
-              <p className="mt-2 break-all text-xs text-slate-500">{userId}</p>
             </CardContent>
           </Card>
 
@@ -61,11 +57,11 @@ export default function DashboardShell({
           <Card>
             <CardHeader>
               <CardTitle>AI SafeCheck</CardTitle>
-              <CardDescription>저장 전 안전 검사 연결 예정 영역입니다.</CardDescription>
+              <CardDescription>저장 전 안전 검사와 리포트를 확인합니다.</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm leading-6 text-slate-600">
-                다음 단계에서 프롬프트 저장 전 위험 요소 검사를 연결합니다.
+                검사 원문은 저장하지 않고 점수, 판정, 위험 카테고리만 기록합니다.
               </p>
             </CardContent>
           </Card>
@@ -77,7 +73,7 @@ export default function DashboardShell({
               <div>
                 <CardTitle>내 프롬프트 목록</CardTitle>
                 <CardDescription>
-                  내가 작성한 프롬프트를 확인하고 상세 페이지로 이동합니다.
+                  내가 작성한 프롬프트를 확인하고 수정, 보관, 복구합니다.
                 </CardDescription>
               </div>
 

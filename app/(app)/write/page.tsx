@@ -15,7 +15,6 @@ export default async function WritePage() {
   return (
     <WriteShell
       email={currentUser.user.email ?? "로그인 사용자"}
-      userId={currentUser.user.id}
       categories={categoriesResult.ok ? categoriesResult.categories : []}
       categoryLoadMessage={categoriesResult.ok ? null : categoriesResult.message}
     />

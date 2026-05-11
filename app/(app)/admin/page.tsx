@@ -12,7 +12,6 @@ export default async function AdminPage() {
   return (
     <AdminShell
       email={currentUser.user.email ?? "로그인 사용자"}
-      userId={currentUser.user.id}
     />
   );
 }

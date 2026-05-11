@@ -6,14 +6,12 @@ import WriteSafeCheckPanel from "./WriteSafeCheckPanel.client";
 
 type WriteShellProps = {
   email: string;
-  userId: string;
   categories: PromptCategory[];
   categoryLoadMessage: string | null;
 };
 
 export default function WriteShell({
   email,
-  userId,
   categories,
   categoryLoadMessage,
 }: WriteShellProps) {
@@ -21,18 +19,14 @@ export default function WriteShell({
     <main className="min-h-screen bg-slate-50 px-6 py-10">
       <section className="mx-auto flex max-w-6xl flex-col gap-6">
         <div className="space-y-3">
-          <Badge>Protected Page</Badge>
+          <Badge>개인 작성</Badge>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
             프롬프트 작성
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            PromptLab v3의 프롬프트 작성 화면입니다. 저장 전 AI SafeCheck로
-            개인정보, 회사기밀, 저작권 위험, 허위·과장 표현을 검사하는 구조로
-            확장합니다.
+            저장 전 AI SafeCheck로 개인정보, 회사기밀, 저작권 위험, 허위·과장 표현을 검사합니다.
           </p>
-          <p className="text-xs text-slate-500">
-            로그인 계정: {email} · {userId}
-          </p>
+          <p className="text-xs text-slate-500">로그인 계정: {email}</p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
@@ -40,7 +34,7 @@ export default function WriteShell({
             <CardHeader>
               <CardTitle>프롬프트 정보</CardTitle>
               <CardDescription>
-                제목, 카테고리, 사용 목적, 본문, 예시, 공개 범위를 입력한 뒤 Supabase에 저장합니다.
+                제목, 카테고리, 사용 목적, 본문, 예시, 공개 범위를 입력한 뒤 저장합니다.
               </CardDescription>
             </CardHeader>
 

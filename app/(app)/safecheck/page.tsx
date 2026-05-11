@@ -12,7 +12,6 @@ export default async function SafeCheckPage() {
   return (
     <SafeCheckShell
       email={currentUser.user.email ?? "로그인 사용자"}
-      userId={currentUser.user.id}
     />
   );
 }

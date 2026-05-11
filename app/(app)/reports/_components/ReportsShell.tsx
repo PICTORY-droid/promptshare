@@ -14,14 +14,12 @@ import ReportCard from "./ReportCard";
 
 type ReportsShellProps = {
   email: string;
-  userId: string;
   reports: SafeCheckReport[];
   reportLoadMessage: string | null;
 };
 
 export default function ReportsShell({
   email,
-  userId,
   reports,
   reportLoadMessage,
 }: ReportsShellProps) {
@@ -40,7 +38,7 @@ export default function ReportsShell({
             검사 원문은 저장하지 않고, 점수와 판정, 위험 카테고리, 안전 문장 안내만 저장합니다.
           </p>
           <p className="text-xs text-slate-500">
-            로그인 계정: {email} · {userId}
+            로그인 계정: {email}
           </p>
         </div>
 

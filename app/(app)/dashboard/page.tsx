@@ -15,7 +15,6 @@ export default async function DashboardPage() {
   return (
     <DashboardShell
       email={currentUser.user.email ?? "로그인 사용자"}
-      userId={currentUser.user.id}
       prompts={promptsResult.ok ? promptsResult.prompts : []}
       promptLoadMessage={promptsResult.ok ? null : promptsResult.message}
     />
