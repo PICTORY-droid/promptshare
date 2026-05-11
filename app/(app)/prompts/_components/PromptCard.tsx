@@ -25,6 +25,7 @@ export default function PromptCard({ prompt }: PromptCardProps) {
             </Badge>
             <Badge>{prompt.status}</Badge>
           </div>
+
           <CardTitle>{prompt.title}</CardTitle>
           <CardDescription>
             {prompt.useCase || "사용 목적이 아직 입력되지 않았습니다."}
@@ -34,10 +35,6 @@ export default function PromptCard({ prompt }: PromptCardProps) {
         <CardContent>
           <p className="line-clamp-4 text-sm leading-6 text-slate-600">
             {prompt.promptBody}
-          </p>
-
-          <p className="mt-4 text-xs text-slate-400">
-            생성일: {new Date(prompt.createdAt).toLocaleDateString("ko-KR")}
           </p>
         </CardContent>
       </Card>
