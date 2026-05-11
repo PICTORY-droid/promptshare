@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/server/auth/get-current-user";
 import { createPrompt } from "@/features/prompts/server/create-prompt";
 import { PROMPT_STATUS } from "@/features/prompts/constants/prompt-status";
 import { PROMPT_VISIBILITY } from "@/features/prompts/constants/prompt-visibility";
+import { validatePromptSave } from "@/features/safecheck/server/validate-prompt-save";
 
 export type CreatePromptActionState = {
   ok: boolean;
@@ -42,22 +43,41 @@ export async function createPromptAction(
   const visibilityValue = getStringValue(formData, "visibility");
   const statusValue = getStringValue(formData, "status");
 
+  const visibility =
+    visibilityValue === PROMPT_VISIBILITY.PUBLIC
+      ? PROMPT_VISIBILITY.PUBLIC
+      : PROMPT_VISIBILITY.PRIVATE;
+
+  const status =
+    statusValue === PROMPT_STATUS.PUBLISHED
+      ? PROMPT_STATUS.PUBLISHED
+      : PROMPT_STATUS.DRAFT;
+
+  const promptBody = getStringValue(formData, "promptBody");
+
+  const saveValidation = validatePromptSave({
+    promptBody,
+    visibility,
+    status,
+  });
+
+  if (!saveValidation.ok) {
+    return {
+      ok: false,
+      message: saveValidation.message,
+    };
+  }
+
   const result = await createPrompt(currentUser.user.id, {
     categoryId: getNullableStringValue(formData, "categoryId"),
     title: getStringValue(formData, "title"),
     useCase: getNullableStringValue(formData, "useCase"),
-    promptBody: getStringValue(formData, "promptBody"),
+    promptBody,
     exampleInput: getNullableStringValue(formData, "exampleInput"),
     exampleOutput: getNullableStringValue(formData, "exampleOutput"),
     safetyNotes: getNullableStringValue(formData, "safetyNotes"),
-    visibility:
-      visibilityValue === PROMPT_VISIBILITY.PUBLIC
-        ? PROMPT_VISIBILITY.PUBLIC
-        : PROMPT_VISIBILITY.PRIVATE,
-    status:
-      statusValue === PROMPT_STATUS.PUBLISHED
-        ? PROMPT_STATUS.PUBLISHED
-        : PROMPT_STATUS.DRAFT,
+    visibility,
+    status,
   });
 
   if (!result.ok) {
