@@ -2,6 +2,7 @@ import type { PromptCategory } from "@/features/prompts/types/category.types";
 import Badge from "@/shared/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import PromptForm from "./PromptForm.client";
+import WriteSafeCheckPanel from "./WriteSafeCheckPanel.client";
 
 type WriteShellProps = {
   email: string;
@@ -54,6 +55,18 @@ export default function WriteShell({
           <aside className="flex flex-col gap-6">
             <Card>
               <CardHeader>
+                <CardTitle>저장 전 AI SafeCheck</CardTitle>
+                <CardDescription>
+                  왼쪽 프롬프트 본문을 복사해 붙여넣고 저장 전 위험 요소를 검사합니다.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <WriteSafeCheckPanel />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>공개 범위와 상태 안내</CardTitle>
                 <CardDescription>
                   저장한 프롬프트가 어디에 보이는지 결정하는 기준입니다.
@@ -77,26 +90,6 @@ export default function WriteShell({
 
                   <p>
                     처음 저장할 때는 비공개, 초안을 권장합니다. 검토가 끝난 프롬프트만 공개, 게시로 바꾸세요.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>AI SafeCheck</CardTitle>
-                <CardDescription>
-                  저장 전 검사 모듈이 연결될 영역입니다.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5">
-                  <p className="text-sm font-semibold text-slate-800">
-                    아직 검사 결과가 없습니다.
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    다음 단계에서 프롬프트 본문을 검사하고 위험 점수, 판정,
-                    탐지 근거, 안전 문장을 표시합니다.
                   </p>
                 </div>
               </CardContent>
