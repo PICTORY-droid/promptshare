@@ -21,6 +21,7 @@ const initialState: SafeCheckActionState = {
   ok: true,
   message: "",
   result: null,
+  reportId: null,
 };
 
 function SubmitButton() {
@@ -119,6 +120,7 @@ export default function SafeCheckForm() {
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge>{getLevelLabel(state.result.level)}</Badge>
                   <Badge>점수 {state.result.score}</Badge>
+                  {state.reportId ? <Badge>리포트 저장됨</Badge> : null}
                   <Badge>{state.result.metadata.policyVersion}</Badge>
                 </div>
 
