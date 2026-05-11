@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/shared/ui/card";
 import ArchivePromptButton from "./ArchivePromptButton.client";
+import RestorePromptButton from "./RestorePromptButton.client";
 
 type DashboardPromptCardProps = {
   prompt: Prompt;
@@ -55,10 +56,17 @@ export default function DashboardPromptCard({
           <Link href={`/prompts/${prompt.id}`}>
             <Button variant="secondary">상세 보기</Button>
           </Link>
-          <Link href={`/prompts/${prompt.id}/edit`}>
-            <Button disabled={isArchived}>수정하기</Button>
-          </Link>
-          <ArchivePromptButton promptId={prompt.id} disabled={isArchived} />
+
+          {isArchived ? (
+            <RestorePromptButton promptId={prompt.id} />
+          ) : (
+            <>
+              <Link href={`/prompts/${prompt.id}/edit`}>
+                <Button>수정하기</Button>
+              </Link>
+              <ArchivePromptButton promptId={prompt.id} />
+            </>
+          )}
         </div>
       </CardContent>
     </Card>
