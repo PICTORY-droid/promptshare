@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
+import LinkButton from "@/shared/ui/link-button";
 
 const navigationItems = [
   { href: "/", label: "홈" },
@@ -27,7 +27,7 @@ export default function AppNavigation({
     <div className="relative">
       <button
         type="button"
-        className="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 md:hidden"
+        className="inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition duration-150 ease-out hover:bg-slate-50 active:scale-[0.98] active:bg-slate-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-200 md:hidden"
         onClick={() => setIsOpen((current) => !current)}
         aria-expanded={isOpen}
         aria-controls="mobile-navigation"
@@ -37,13 +37,9 @@ export default function AppNavigation({
 
       <nav className="hidden items-center justify-end gap-2 text-sm font-semibold text-slate-600 md:flex">
         {navigationItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950"
-          >
+          <LinkButton key={item.href} href={item.href}>
             {item.label}
-          </Link>
+          </LinkButton>
         ))}
 
         {email ? (
@@ -53,19 +49,11 @@ export default function AppNavigation({
         ) : null}
 
         {isLoggedIn ? (
-          <a
-            href="/logout"
-            className="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950"
-          >
+          <LinkButton href="/logout" useAnchor>
             로그아웃
-          </a>
+          </LinkButton>
         ) : (
-          <Link
-            href="/login"
-            className="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950"
-          >
-            로그인
-          </Link>
+          <LinkButton href="/login">로그인</LinkButton>
         )}
       </nav>
 
@@ -87,31 +75,35 @@ export default function AppNavigation({
 
           <div className="grid gap-1">
             {navigationItems.map((item) => (
-              <Link
+              <LinkButton
                 key={item.href}
                 href={item.href}
-                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+                size="md"
+                className="justify-start"
                 onClick={() => setIsOpen(false)}
               >
                 {item.label}
-              </Link>
+              </LinkButton>
             ))}
 
             {isLoggedIn ? (
-              <a
+              <LinkButton
                 href="/logout"
-                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+                size="md"
+                className="justify-start"
+                useAnchor
               >
                 로그아웃
-              </a>
+              </LinkButton>
             ) : (
-              <Link
+              <LinkButton
                 href="/login"
-                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+                size="md"
+                className="justify-start"
                 onClick={() => setIsOpen(false)}
               >
                 로그인
-              </Link>
+              </LinkButton>
             )}
           </div>
         </div>
