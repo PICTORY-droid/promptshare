@@ -87,10 +87,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          <Card className="bg-slate-950 text-white">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-white">AI SafeCheck inside</CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardTitle>AI SafeCheck inside</CardTitle>
+              <CardDescription>
                 공개하거나 저장하기 전, 위험한 프롬프트를 먼저 점검합니다.
               </CardDescription>
             </CardHeader>
@@ -99,12 +99,12 @@ export default function HomePage() {
                 {workflowItems.map((item, index) => (
                   <div
                     key={item}
-                    className="flex items-center gap-3 rounded-2xl bg-white/10 p-3"
+                    className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-black text-slate-950">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white">
                       {index + 1}
                     </span>
-                    <span className="text-sm font-semibold text-white">
+                    <span className="text-sm font-semibold text-slate-800">
                       {item}
                     </span>
                   </div>
