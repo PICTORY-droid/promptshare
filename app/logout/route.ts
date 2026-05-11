@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/server/db/supabase-server";
 
 export async function GET() {
@@ -6,5 +6,11 @@ export async function GET() {
 
   await supabase.auth.signOut();
 
-  redirect("/login");
+  const response = NextResponse.redirect(
+    new URL("/login", "https://promptlab.io.kr"),
+  );
+
+  response.headers.set("Cache-Control", "no-store, max-age=0");
+
+  return response;
 }

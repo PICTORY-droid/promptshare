@@ -23,9 +23,6 @@ export default function AppNavigation({
 }: AppNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const authHref = isLoggedIn ? "/logout" : "/login";
-  const authLabel = isLoggedIn ? "로그아웃" : "로그인";
-
   return (
     <div className="relative">
       <button
@@ -55,12 +52,21 @@ export default function AppNavigation({
           </span>
         ) : null}
 
-        <Link
-          href={authHref}
-          className="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950"
-        >
-          {authLabel}
-        </Link>
+        {isLoggedIn ? (
+          <a
+            href="/logout"
+            className="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            로그아웃
+          </a>
+        ) : (
+          <Link
+            href="/login"
+            className="rounded-full px-4 py-2 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            로그인
+          </Link>
+        )}
       </nav>
 
       {isOpen ? (
@@ -91,13 +97,22 @@ export default function AppNavigation({
               </Link>
             ))}
 
-            <Link
-              href={authHref}
-              className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
-              onClick={() => setIsOpen(false)}
-            >
-              {authLabel}
-            </Link>
+            {isLoggedIn ? (
+              <a
+                href="/logout"
+                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              >
+                로그아웃
+              </a>
+            ) : (
+              <Link
+                href="/login"
+                className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+                onClick={() => setIsOpen(false)}
+              >
+                로그인
+              </Link>
+            )}
           </div>
         </div>
       ) : null}

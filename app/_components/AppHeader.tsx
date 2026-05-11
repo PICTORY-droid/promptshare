@@ -1,8 +1,11 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { getCurrentUser } from "@/server/auth/get-current-user";
 import AppLogo from "./AppLogo";
 import AppNavigation from "./AppNavigation";
 
 export default async function AppHeader() {
+  noStore();
+
   const currentUser = await getCurrentUser();
 
   return (
