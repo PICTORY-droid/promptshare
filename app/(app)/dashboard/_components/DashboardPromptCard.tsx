@@ -42,6 +42,7 @@ export default function DashboardPromptCard({
         <p className="line-clamp-3 text-sm leading-6 text-slate-600">
           {prompt.promptBody}
         </p>
+
         <p className="mt-4 text-xs text-slate-400">
           수정일: {new Date(prompt.updatedAt).toLocaleDateString("ko-KR")}
         </p>
@@ -62,7 +63,7 @@ export default function DashboardPromptCard({
           ) : (
             <>
               <Link href={`/prompts/${prompt.id}/edit`}>
-                <Button>수정</Button>
+                <Button variant="secondary">수정</Button>
               </Link>
               <ArchivePromptButton promptId={prompt.id} />
             </>
