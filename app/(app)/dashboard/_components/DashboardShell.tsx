@@ -65,32 +65,32 @@ export default function DashboardShell({
       <PageHeader
         badge="개인 메뉴"
         title="PromptLab 대시보드"
-        description="내 프롬프트와 최근 SafeCheck 검사 기록을 확인합니다."
+        description="내 프롬프트와 최근 SafeCheck 검사 기록을 확인합니다"
         meta={<>로그인 계정: {email}</>}
       />
 
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard
           title="로그인 계정"
-          description="현재 접속 중인 계정입니다."
+          description="현재 접속 중인 계정입니다"
           value={<span className="block break-all text-base">{email}</span>}
         />
 
         <StatCard
           title="내 프롬프트"
-          description="현재 저장된 프롬프트 개수입니다."
+          description="현재 저장된 프롬프트 개수입니다"
           value={prompts.length}
-          helperText="초안, 게시, 보관 상태를 포함합니다."
+          helperText="초안, 게시, 보관 상태를 포함합니다"
         />
 
         <StatCard
           title="최근 SafeCheck"
-          description="가장 최근 검사 결과입니다."
+          description="가장 최근 검사 결과입니다"
           value={getLevelLabel(latestReport?.level)}
           helperText={
             latestReport
               ? `위험 점수 ${latestReport.score}`
-              : "SafeCheck 검사 기록 없음."
+              : "SafeCheck 기록 없음"
           }
         />
       </div>
@@ -103,7 +103,7 @@ export default function DashboardShell({
               <CardDescription>
                 SafeCheck로 검사한 최근 결과
                 <br />
-                검사 원문은 저장하지 않습니다.
+                검사 원문은 저장하지 않습니다
               </CardDescription>
             </div>
 
@@ -123,7 +123,7 @@ export default function DashboardShell({
             />
           ) : recentReports.length === 0 ? (
             <EmptyState
-              title="SafeCheck 검사 기록 없음."
+              title="SafeCheck 기록 없음"
               description=""
               action={
                 <Link href="/safecheck">
@@ -154,7 +154,7 @@ export default function DashboardShell({
                     {formatDate(report.createdAt)}
                   </p>
                   <p className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600">
-                    {report.safePrompt || "저장된 안전 문장 안내가 없습니다."}
+                    {report.safePrompt || "저장된 안전 문장 안내가 없습니다"}
                   </p>
                 </div>
               ))}
@@ -169,7 +169,7 @@ export default function DashboardShell({
             <div>
               <CardTitle>내 프롬프트 목록</CardTitle>
               <CardDescription>
-                프롬프트 확인, 수정, 보관, 복구.
+                프롬프트 확인, 수정, 보관, 복구
               </CardDescription>
             </div>
 
@@ -188,7 +188,7 @@ export default function DashboardShell({
           ) : prompts.length === 0 ? (
             <EmptyState
               title="아직 저장한 프롬프트가 없습니다"
-              description="프롬프트 작성 화면에서 첫 프롬프트를 저장하세요."
+              description="프롬프트 작성 화면에서 첫 프롬프트를 저장하세요"
               action={
                 <Link href="/write">
                   <Button>첫 프롬프트 작성하기</Button>

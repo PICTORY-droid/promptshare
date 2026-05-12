@@ -56,7 +56,7 @@ export default function SafeCheckForm() {
         <CardHeader className="p-5 sm:p-6">
           <CardTitle>프롬프트 검사</CardTitle>
           <CardDescription>
-            개인정보, 회사기밀, 계약정보, 저작권 위험, 허위·과장 표현을 검사합니다.
+            개인정보, 회사기밀, 계약정보, 저작권 위험, 허위·과장 표현을 검사합니다
           </CardDescription>
         </CardHeader>
 
@@ -77,7 +77,7 @@ export default function SafeCheckForm() {
                 name="promptText"
                 className="min-h-52 sm:min-h-72"
                 maxLength={MAX_PROMPT_LENGTH}
-                placeholder="검사할 프롬프트를 입력하세요."
+                placeholder="검사할 프롬프트를 입력하세요"
                 onChange={(event) =>
                   setTextLength(event.currentTarget.value.length)
                 }
@@ -86,7 +86,7 @@ export default function SafeCheckForm() {
             </label>
 
             <p className="text-xs leading-5 text-slate-500">
-              긴 문서는 핵심 지시문과 예시로 검사 권장.
+              긴 문서는 핵심 지시문과 예시로 검사 권장
             </p>
 
             {!state.ok ? <ErrorMessage message={state.message} /> : null}
@@ -101,7 +101,7 @@ export default function SafeCheckForm() {
           <CardHeader className="p-5 sm:p-6">
             <CardTitle>검사 결과</CardTitle>
             <CardDescription>
-              룰 기반 검사 결과. LLM 미사용.
+              룰 기반 검사 결과. LLM 미사용
             </CardDescription>
           </CardHeader>
 
@@ -109,10 +109,10 @@ export default function SafeCheckForm() {
             {!state.result ? (
               <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 sm:p-5">
                 <p className="text-sm font-semibold text-slate-800">
-                  검사결과 없음.
+                  검사결과 없음
                 </p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  상단 입력창에 프롬프트를 넣고 검사하기.
+                  상단 입력창에서 검사하기
                 </p>
               </div>
             ) : (
@@ -127,10 +127,10 @@ export default function SafeCheckForm() {
                 {state.result.findings.length === 0 ? (
                   <div className="rounded-2xl bg-emerald-50 p-4">
                     <p className="text-sm font-semibold text-emerald-900">
-                      탐지된 위험 요소가 없습니다.
+                      탐지된 위험 요소가 없습니다
                     </p>
                     <p className="mt-1 text-sm leading-6 text-emerald-800">
-                      공개 전 최종 문맥 검토는 별도로 진행하는 것을 권장합니다.
+                      공개 전 최종 문맥 검토는 별도로 진행하는 것을 권장합니다
                     </p>
                   </div>
                 ) : (
@@ -167,14 +167,14 @@ export default function SafeCheckForm() {
           <CardHeader className="p-5 sm:p-6">
             <CardTitle>안전 문장 안내</CardTitle>
             <CardDescription>
-              위험 요소 발생시 공개 전 수정 방향 안내.
+              위험 요소 발생시 공개 전 수정 방향 안내
             </CardDescription>
           </CardHeader>
 
           <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
             <div className="rounded-2xl bg-slate-50 p-4">
               <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
-                {state.result?.safePrompt ?? "검사 후 이곳에 표시됨."}
+                {state.result?.safePrompt ?? "검사 후 이곳에 표시됨"}
               </p>
             </div>
           </CardContent>

@@ -32,7 +32,7 @@ export default function WriteShell({
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
             프롬프트를 저장하기 전 SafeCheck로 개인정보,
             <br />
-            회사기밀, 저작권 위험, 과장 표현 확인합니다.
+            회사기밀, 저작권 위험, 과장 표현 확인합니다
           </p>
           <p className="break-all text-xs text-slate-500">로그인 계정: {email}</p>
         </div>
@@ -41,7 +41,9 @@ export default function WriteShell({
           <CardHeader className="p-5 sm:p-6">
             <CardTitle>저장 전 SafeCheck</CardTitle>
             <CardDescription>
-              작성한 프롬프트 본문을 저장하기 전에 검사합니다. Write 저장 전 점검용.
+              작성한 프롬프트 본문을 저장하기 전 검사
+              <br />
+              Write 저장 전 점검용
             </CardDescription>
           </CardHeader>
           <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
@@ -54,7 +56,7 @@ export default function WriteShell({
             <CardHeader className="p-5 sm:p-6">
               <CardTitle>프롬프트 정보</CardTitle>
               <CardDescription>
-                제목과 사용 목적은 나중에 찾기 쉽게, 본문과 예시는 실제 사용자가 바로 따라 쓸 수 있게 작성하세요.
+                제목과 사용 목적은 나중에 찾기 쉽게, 본문과 예시는 실제 사용자가 바로 따라 쓸 수 있게 작성하세요
               </CardDescription>
             </CardHeader>
 
@@ -73,29 +75,29 @@ export default function WriteShell({
                 <CardDescription>
                   저장한 프롬프트가 본인에게만 보일지,
                   <br />
-                  공개 목록에 보일지 결정합니다.
+                  공개 목록에 보일지 결정합니다
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
                 <div className="space-y-4 text-sm leading-6 text-slate-600">
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <p className="font-semibold text-slate-950">비공개 + 초안</p>
-                    <p className="mt-1">비공개 개인 작업용.</p>
+                    <p className="mt-1">비공개 개인 작업용</p>
                   </div>
 
                   <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <p className="font-semibold text-slate-950">공개 + 게시</p>
                     <p className="mt-1">
-                      공개 프롬프트 목록에 표시됩니다.
+                      공개 프롬프트 목록에 표시됩니다
                       <br />
-                      SafeCheck 검사 후 설정하세요.
+                      SafeCheck 검사 후 설정하세요
                     </p>
                   </div>
 
                   <p>
-                    처음 저장시 비공개, 초안 권장.
+                    처음 저장시 비공개, 초안 권장
                     <br />
-                    검토가 끝난 프롬프트만 공개, 게시로.
+                    검토가 끝난 프롬프트만 공개, 게시로
                   </p>
                 </div>
               </CardContent>
@@ -105,7 +107,7 @@ export default function WriteShell({
               <CardHeader className="p-5 sm:p-6">
                 <CardTitle>작성 기준</CardTitle>
                 <CardDescription>
-                  저장하기 전에 아래 기준을 확인하세요.
+                  저장하기 전에 아래 기준을 확인하세요
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
