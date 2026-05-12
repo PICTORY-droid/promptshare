@@ -90,7 +90,7 @@ export default function DashboardShell({
           helperText={
             latestReport
               ? `위험 점수 ${latestReport.score}`
-              : "아직 저장된 검사 기록이 없습니다."
+              : "SafeCheck 검사 기록 없음."
           }
         />
       </div>
@@ -101,7 +101,9 @@ export default function DashboardShell({
             <div>
               <CardTitle>최근 SafeCheck 검사 기록</CardTitle>
               <CardDescription>
-                SafeCheck로 검사한 최근 결과입니다. 검사 원문은 저장하지 않습니다.
+                SafeCheck로 검사한 최근 결과
+                <br />
+                검사 원문은 저장하지 않습니다.
               </CardDescription>
             </div>
 
@@ -121,8 +123,8 @@ export default function DashboardShell({
             />
           ) : recentReports.length === 0 ? (
             <EmptyState
-              title="아직 저장된 검사 기록이 없습니다"
-              description="SafeCheck 탭에서 텍스트를 검사하면 최근 기록을 이곳에서 확인할 수 있습니다."
+              title="SafeCheck 검사 기록 없음."
+              description=""
               action={
                 <Link href="/safecheck">
                   <Button>SafeCheck 실행하기</Button>
@@ -167,7 +169,7 @@ export default function DashboardShell({
             <div>
               <CardTitle>내 프롬프트 목록</CardTitle>
               <CardDescription>
-                내가 작성한 프롬프트를 확인하고 수정, 보관, 복구합니다.
+                프롬프트 확인, 수정, 보관, 복구.
               </CardDescription>
             </div>
 

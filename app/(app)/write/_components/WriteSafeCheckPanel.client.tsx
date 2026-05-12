@@ -104,7 +104,7 @@ export default function WriteSafeCheckPanel() {
           <p className="mt-3 text-sm leading-6 text-slate-600">
             {result
               ? getLevelDescription(result.level)
-              : "프롬프트 본문을 붙여넣고 저장 전 검사하기를 누르세요."}
+              : "프롬프트 본문넣고 저장 전 검사하기"}
           </p>
         </div>
       </div>

@@ -86,7 +86,7 @@ export default function SafeCheckForm() {
             </label>
 
             <p className="text-xs leading-5 text-slate-500">
-              긴 문서는 그대로 붙여넣기보다 핵심 지시문과 예시만 정리해 검사하는 것을 권장합니다.
+              긴 문서는 핵심 지시문과 예시로 검사 권장.
             </p>
 
             {!state.ok ? <ErrorMessage message={state.message} /> : null}
@@ -101,7 +101,7 @@ export default function SafeCheckForm() {
           <CardHeader className="p-5 sm:p-6">
             <CardTitle>검사 결과</CardTitle>
             <CardDescription>
-              룰 기반 검사 결과입니다. LLM은 사용하지 않습니다.
+              룰 기반 검사 결과. LLM 미사용.
             </CardDescription>
           </CardHeader>
 
@@ -109,10 +109,10 @@ export default function SafeCheckForm() {
             {!state.result ? (
               <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 sm:p-5">
                 <p className="text-sm font-semibold text-slate-800">
-                  아직 검사 결과가 없습니다.
+                  검사결과 없음.
                 </p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  왼쪽 입력창에 프롬프트를 넣고 검사하기를 누르세요.
+                  상단 입력창에 프롬프트를 넣고 검사하기.
                 </p>
               </div>
             ) : (
@@ -167,15 +167,14 @@ export default function SafeCheckForm() {
           <CardHeader className="p-5 sm:p-6">
             <CardTitle>안전 문장 안내</CardTitle>
             <CardDescription>
-              위험 요소가 있으면 공개 전 수정 방향을 안내합니다.
+              위험 요소 발생시 공개 전 수정 방향 안내.
             </CardDescription>
           </CardHeader>
 
           <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
             <div className="rounded-2xl bg-slate-50 p-4">
               <p className="whitespace-pre-wrap text-sm leading-7 text-slate-700">
-                {state.result?.safePrompt ??
-                  "검사 후 안전 문장 또는 수정 안내가 이곳에 표시됩니다."}
+                {state.result?.safePrompt ?? "검사 후 이곳에 표시됨."}
               </p>
             </div>
           </CardContent>

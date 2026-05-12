@@ -48,7 +48,7 @@ export default function ReportsShell({
       <PageHeader
         badge="SafeCheck History"
         title="SafeCheck 검사 기록"
-        description="SafeCheck로 검사한 결과를 확인합니다. 검사 원문은 저장하지 않고 점수, 판정, 위험 카테고리, 안전 문장 안내만 기록합니다."
+        description="SafeCheck로 검사한 결과를 확인합니다."
         meta={<>로그인 계정: {email}</>}
       />
 
@@ -78,7 +78,7 @@ export default function ReportsShell({
             원문 미저장 기준
           </CardTitle>
           <CardDescription className="text-emerald-800">
-            이 페이지는 검사 기록을 보여주지만, 검사 원문은 보관하지 않습니다.
+            검사 기록은 보여주지만, 검사 원문은 보관하지 않습니다.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
@@ -113,8 +113,8 @@ export default function ReportsShell({
             />
           ) : reports.length === 0 ? (
             <EmptyState
-              title="아직 저장된 검사 기록이 없습니다"
-              description="SafeCheck 탭에서 텍스트를 검사하면 이곳에서 결과를 확인할 수 있습니다."
+              title="SafeCheck 검사 기록 없음."
+              description=""
               action={
                 <Link href="/safecheck">
                   <Button>첫 검사 실행하기</Button>

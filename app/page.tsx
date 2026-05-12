@@ -12,7 +12,7 @@ import {
 const workflowItems = [
   "프롬프트 작성",
   "저장 전 AI SafeCheck 검사",
-  "비공개 초안으로 안전하게 보관",
+  "비공개 초안으로 안전하게",
   "검토 후 공개 게시 전환",
   "SafeCheck 리포트 확인",
 ];
@@ -21,7 +21,7 @@ const featureCards = [
   {
     title: "프롬프트 작성과 관리",
     description:
-      "업무, 글쓰기, 마케팅, 음악 생성 등 목적별 프롬프트를 작성하고 내 대시보드에서 관리합니다.",
+      "목적별 프롬프트를 작성하고 내 대시보드에서 관리합니다.",
   },
   {
     title: "AI SafeCheck",
@@ -31,12 +31,12 @@ const featureCards = [
   {
     title: "공개와 비공개 관리",
     description:
-      "처음에는 비공개 초안으로 저장하고, 검토가 끝난 프롬프트만 공개 게시할 수 있습니다.",
+      "비공개 초안으로 저장하고, 검토 후 프롬프트만 공개 게시합니다.",
   },
   {
     title: "리포트와 원문 미저장",
     description:
-      "검사 원문은 저장하지 않고 점수, 판정, 위험 카테고리, 안전 문장 안내만 리포트로 보관합니다.",
+      "검사 원문 미저장. 점수, 판정, 위험 카테고리, 안전 문장 안내만 리포트로 보관합니다.",
   },
 ];
 
@@ -65,12 +65,15 @@ export default function HomePage() {
 
             <div className="space-y-3 sm:space-y-4">
               <h1 className="max-w-4xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
-                프롬프트를 만들고, 저장하고, 안전하게 공개하는 AI 작업실
+                프롬프트를 만들고, 저장하고,
+                <br />
+                안전하게 공개하는 AI 작업실
               </h1>
 
               <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
-                PromptLab은 프롬프트 작성, 개인 보관, 공개 게시, AI SafeCheck
-                검사, 리포트 관리를 하나로 연결한 프롬프트 작업 공간입니다.
+                PromptLab은 프롬프트 작성, 개인 보관, 공개 게시,
+                <br className="hidden sm:block" />
+                AI SafeCheck, 리포트 관리를 연결한 작업 공간입니다.
               </p>
             </div>
 
@@ -95,7 +98,7 @@ export default function HomePage() {
             <CardHeader className="p-5 sm:p-6">
               <CardTitle>AI SafeCheck inside</CardTitle>
               <CardDescription>
-                공개하거나 저장하기 전, 위험한 프롬프트를 먼저 점검합니다.
+                공개, 저장 전, 위험한 프롬프트 점검.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
