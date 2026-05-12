@@ -65,7 +65,7 @@ export default function HomePage() {
 
             <div className="space-y-3 sm:space-y-4">
               <h1 className="max-w-4xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
-                프롬프트를 만들고, 저장,
+                프롬프트를 작성, 저장,
                 <br />
                 안전하게 공개하는 AI 작업실
               </h1>
