@@ -50,9 +50,7 @@ export default function PrivacyPage() {
 
       <Card className="border-emerald-100 bg-emerald-50">
         <CardHeader className="p-5 sm:p-6">
-          <CardTitle className="text-emerald-950">
-            핵심 원칙
-          </CardTitle>
+          <CardTitle className="text-emerald-950">핵심 원칙</CardTitle>
           <CardDescription className="text-emerald-800">
             PromptLab은 SafeCheck 검사 원문을 리포트에 저장하지 않습니다.
           </CardDescription>
@@ -136,6 +134,7 @@ export default function PrivacyPage() {
         <PolicySection
           title="7. 문의"
           items={[
+            "Developer: PICTORY-DROID, Seoin Kim",
             "서비스 운영자: PromptLab",
             "문의 이메일: oceanlumes@gmail.com",
             "운영 사이트: https://promptlab.io.kr",

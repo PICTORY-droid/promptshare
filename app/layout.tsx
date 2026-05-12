@@ -16,9 +16,13 @@ const geistMono = Geist_Mono({
 
 const SITE_URL = "https://promptlab.io.kr";
 
+const siteTitle = "PromptLab - AI 프롬프트 작업실";
+const siteDescription =
+  "AI 프롬프트를 작성, 저장, 관리하고 SafeCheck로 저장 전 위험 요소를 확인하는 웹 서비스입니다.";
+
 export const metadata: Metadata = {
-  title: "PromptLab - 프롬프트 공유 커뮤니티",
-  description: "AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.",
+  title: siteTitle,
+  description: siteDescription,
   metadataBase: new URL(SITE_URL),
   verification: {
     google: "jnR9e_2rD2cYJr5-ZfNaCKWLBgqx9n9i411RoqO2A8s",
@@ -27,8 +31,8 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "PromptLab - 프롬프트 공유 커뮤니티",
-    description: "AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.",
+    title: siteTitle,
+    description: siteDescription,
     url: SITE_URL,
     siteName: "PromptLab",
     type: "website",
@@ -43,8 +47,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PromptLab - 프롬프트 공유 커뮤니티",
-    description: "AI 프롬프트를 발견하고, 공유하고, 함께 성장하세요.",
+    title: siteTitle,
+    description: siteDescription,
     images: [`${SITE_URL}/og-image-v2.png`],
   },
 };
@@ -86,29 +90,15 @@ export default function RootLayout({
         {children}
 
         <footer
-          className="mt-auto py-4 text-center font-mono"
+          className="mt-auto py-5 text-center"
           style={{ borderTop: "1px solid #21262d" }}
         >
-          <p className="text-xs" style={{ color: "#a0b4c8" }}>
-            $ whoami → PromptLab · seoin
-            <span
-              style={{
-                color: "#7ec99a",
-                animation: "blink 1s step-end infinite",
-              }}
-            >
-              ▌
-            </span>
-          </p>
-          <p className="text-xs mt-1" style={{ color: "#6b7988" }}>
-            // since 2024.01
+          <p className="text-xs font-medium" style={{ color: "#a0b4c8" }}>
+            © 2026 PromptLab · PICTORY-DROID
           </p>
         </footer>
 
         <style>{`
-          @keyframes blink {
-            50% { opacity: 0; }
-          }
           @keyframes noise {
             0%   { transform: translate(0px, 0px); }
             10%  { transform: translate(-2px, 1px); }

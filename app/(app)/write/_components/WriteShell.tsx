@@ -1,6 +1,12 @@
 import type { PromptCategory } from "@/features/prompts/types/category.types";
 import Badge from "@/shared/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/shared/ui/card";
 import PromptForm from "./PromptForm.client";
 import WriteSafeCheckPanel from "./WriteSafeCheckPanel.client";
 
@@ -24,11 +30,22 @@ export default function WriteShell({
             프롬프트 작성
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            좋은 프롬프트는 역할, 작업 목표, 입력 예시, 출력 형식, 주의사항이 분명해야 합니다.
-            저장 전 AI SafeCheck로 위험 표현을 먼저 확인하세요.
+            프롬프트를 저장하기 전에 SafeCheck로 개인정보, 회사기밀, 저작권 위험, 과장 표현을 먼저 확인합니다.
           </p>
           <p className="break-all text-xs text-slate-500">로그인 계정: {email}</p>
         </div>
+
+        <Card className="border-slate-200 bg-white">
+          <CardHeader className="p-5 sm:p-6">
+            <CardTitle>저장 전 SafeCheck</CardTitle>
+            <CardDescription>
+              작성한 프롬프트 본문을 저장하기 전에 검사합니다. 이 검사는 Write 화면의 저장 전 점검용입니다.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+            <WriteSafeCheckPanel />
+          </CardContent>
+        </Card>
 
         <div className="grid gap-5 lg:grid-cols-[1.4fr_0.8fr] lg:gap-6">
           <Card>
@@ -48,18 +65,6 @@ export default function WriteShell({
           </Card>
 
           <aside className="flex flex-col gap-5 sm:gap-6">
-            <Card>
-              <CardHeader className="p-5 sm:p-6">
-                <CardTitle>저장 전 AI SafeCheck</CardTitle>
-                <CardDescription>
-                  프롬프트 본문을 저장하기 전에 개인정보, 회사기밀, 저작권 위험, 과장 표현을 검사합니다.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
-                <WriteSafeCheckPanel />
-              </CardContent>
-            </Card>
-
             <Card>
               <CardHeader className="p-5 sm:p-6">
                 <CardTitle>공개 범위와 상태 안내</CardTitle>

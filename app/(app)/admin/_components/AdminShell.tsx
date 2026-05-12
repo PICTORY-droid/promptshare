@@ -16,14 +16,15 @@ export default function AdminShell({ email }: AdminShellProps) {
     <main className="min-h-screen bg-slate-50 px-6 py-10">
       <section className="mx-auto flex max-w-6xl flex-col gap-6">
         <div className="space-y-3">
-          <Badge>Admin</Badge>
+          <Badge>Policy</Badge>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950">
-            관리자 설정
+            운영 기준
           </h1>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            프롬프트 공개 기준, SafeCheck 저장 기준, 리포트 보안 원칙을 확인합니다.
+            PromptLab에서 프롬프트를 저장하고 공개할 때 적용하는 기본 기준입니다.
+            이 화면은 설정 변경 화면이 아니라 현재 서비스에 적용된 정책을 확인하는 페이지입니다.
           </p>
-          <p className="text-xs text-slate-500">로그인 계정: {email}</p>
+          <p className="text-xs text-slate-500">현재 로그인 계정: {email}</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
@@ -45,7 +46,7 @@ export default function AdminShell({ email }: AdminShellProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>SafeCheck 저장 정책</CardTitle>
+              <CardTitle>SafeCheck 저장 기준</CardTitle>
               <CardDescription>
                 저장과 공개 전 검사 기준입니다.
               </CardDescription>
@@ -61,9 +62,9 @@ export default function AdminShell({ email }: AdminShellProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>원문 미저장 원칙</CardTitle>
+              <CardTitle>리포트 보안 원칙</CardTitle>
               <CardDescription>
-                SafeCheck 리포트 보안 기준입니다.
+                SafeCheck 검사 기록의 원문 미저장 기준입니다.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -80,7 +81,7 @@ export default function AdminShell({ email }: AdminShellProps) {
           <CardHeader>
             <CardTitle>운영 기준 요약</CardTitle>
             <CardDescription>
-              PromptLab에서 프롬프트를 안전하게 관리하기 위한 기본 원칙입니다.
+              PromptLab에서 프롬프트와 SafeCheck 결과를 관리할 때 적용하는 기본 원칙입니다.
             </CardDescription>
           </CardHeader>
           <CardContent>

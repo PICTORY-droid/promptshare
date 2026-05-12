@@ -24,6 +24,16 @@ function getLevelLabel(level: string) {
   return "허용";
 }
 
+function formatDate(value: string) {
+  return new Date(value).toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function ReportCard({ report }: ReportCardProps) {
   return (
     <Card>
@@ -40,9 +50,9 @@ export default function ReportCard({ report }: ReportCardProps) {
           )}
         </div>
 
-        <CardTitle>SafeCheck 리포트</CardTitle>
+        <CardTitle>검사 기록</CardTitle>
         <CardDescription>
-          검사일: {new Date(report.createdAt).toLocaleString("ko-KR")}
+          검사일: {formatDate(report.createdAt)}
         </CardDescription>
       </CardHeader>
 
@@ -53,7 +63,7 @@ export default function ReportCard({ report }: ReportCardProps) {
               검사 원문은 저장하지 않습니다.
             </p>
             <p className="mt-2 text-sm leading-6 text-emerald-800">
-              이 리포트에는 원문 프롬프트, 고객명, 전화번호, 이메일, 회사기밀 원문이 저장되지 않습니다.
+              이 기록에는 원문 프롬프트, 고객명, 전화번호, 이메일, 회사기밀 원문이 저장되지 않습니다.
               점수, 판정, 위험 카테고리, 안전 문장 안내만 저장합니다.
             </p>
           </div>

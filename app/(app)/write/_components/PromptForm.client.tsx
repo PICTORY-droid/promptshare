@@ -53,11 +53,7 @@ function FieldCounter({
 }
 
 function FieldHelp({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs leading-5 text-slate-500">
-      {children}
-    </p>
-  );
+  return <p className="text-xs leading-5 text-slate-500">{children}</p>;
 }
 
 export default function PromptForm({
@@ -240,7 +236,8 @@ export default function PromptForm({
       <div className="space-y-3">
         <SubmitButton />
         <p className="rounded-2xl bg-slate-50 p-4 text-xs leading-5 text-slate-500">
-          저장 전에 오른쪽 AI SafeCheck에서 본문을 검사하세요. block 판정은 저장되지 않고, review 판정은 비공개 초안으로만 저장할 수 있습니다.
+          저장 전에는 상단 SafeCheck 요약 카드에서 프롬프트 본문을 먼저 검사하세요.
+          block 판정은 저장되지 않고, review 판정은 비공개 초안으로만 저장할 수 있습니다.
         </p>
       </div>
     </form>

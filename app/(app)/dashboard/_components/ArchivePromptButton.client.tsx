@@ -22,7 +22,7 @@ function SubmitButton({ disabled }: { disabled?: boolean }) {
   return (
     <Button
       type="submit"
-      variant="danger"
+      variant="secondary"
       disabled={pending || disabled}
     >
       {pending ? "보관 중" : "보관"}
