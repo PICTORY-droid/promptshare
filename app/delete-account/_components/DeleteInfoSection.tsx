@@ -27,9 +27,11 @@ export default function DeleteInfoSection({
             ) : null}
           </div>
 
-          <ul className="space-y-1.5 text-sm leading-6 text-slate-600">
+          <ul className="list-disc space-y-1.5 pl-5 text-sm leading-6 text-slate-600">
             {items.map((item) => (
-              <li key={item}>{item}</li>
+              <li key={item} className="break-keep">
+                {item}
+              </li>
             ))}
           </ul>
         </div>
