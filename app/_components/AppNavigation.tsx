@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import LinkButton from "@/shared/ui/link-button";
@@ -7,7 +7,7 @@ const navigationItems = [
   { href: "/", label: "홈" },
   { href: "/dashboard", label: "대시보드" },
   { href: "/write", label: "작성" },
-  { href: "/safecheck", label: "SafeCheck" },
+  { href: "/check", label: "검사" },
   { href: "/admin", label: "정책" },
 ];
 
