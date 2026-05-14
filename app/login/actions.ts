@@ -1,17 +1,29 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/server/db/supabase-server";
 
-const SITE_URL = "https://promptlab.io.kr";
+function getRequestOrigin() {
+  const requestHeaders = headers();
+  const host = requestHeaders.get("host");
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? "http";
+
+  if (!host) {
+    return "https://promptlab.io.kr";
+  }
+
+  return `${protocol}://${host}`;
+}
 
 export async function signInWithGoogleAction() {
   const supabase = await createSupabaseServerClient();
+  const origin = getRequestOrigin();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${SITE_URL}/auth/callback`,
+      redirectTo: `${origin}/auth/callback`,
     },
   });
 
@@ -24,11 +36,12 @@ export async function signInWithGoogleAction() {
 
 export async function signInWithKakaoAction() {
   const supabase = await createSupabaseServerClient();
+  const origin = getRequestOrigin();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "kakao",
     options: {
-      redirectTo: `${SITE_URL}/auth/callback`,
+      redirectTo: `${origin}/auth/callback`,
     },
   });
 

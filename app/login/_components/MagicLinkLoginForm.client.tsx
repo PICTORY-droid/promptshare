@@ -6,7 +6,13 @@ import Button from "@/shared/ui/button";
 import ErrorMessage from "@/shared/ui/error-message";
 import Input from "@/shared/ui/input";
 
-const SITE_URL = "https://promptlab.io.kr";
+function getBrowserOrigin() {
+  if (typeof window === "undefined") {
+    return "https://promptlab.io.kr";
+  }
+
+  return window.location.origin;
+}
 
 export default function MagicLinkLoginForm() {
   const [email, setEmail] = useState("");
@@ -22,11 +28,12 @@ export default function MagicLinkLoginForm() {
     setIsPending(true);
 
     const supabase = createSupabaseBrowserClient();
+    const origin = getBrowserOrigin();
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${SITE_URL}/auth/callback`,
+        emailRedirectTo: `${origin}/auth/callback`,
       },
     });
 
