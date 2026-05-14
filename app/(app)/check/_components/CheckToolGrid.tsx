@@ -8,61 +8,77 @@ const primaryTool: CheckToolCardProps = {
   variant: "primary",
 };
 
-const secondaryTools: CheckToolCardProps[] = [
+const quickTools: CheckToolCardProps[] = [
   {
     title: "StyleCheck",
-    description: "문장 길이, 반복 표현, 어색한 연결어를 점검합니다.",
+    description: "반복 표현 점검",
     status: "준비 중",
+    variant: "compact",
   },
   {
-    title: "AI 문체 점검",
-    description: "지나치게 기계적인 문장 패턴 가능성을 확인합니다.",
+    title: "AI 문체",
+    description: "기계적 문장 가능성",
     status: "준비 중",
+    variant: "compact",
   },
   {
     title: "Humanize",
-    description: "규칙 기반으로 딱딱한 문장을 더 자연스럽게 다듬습니다.",
+    description: "규칙 기반 다듬기",
     status: "준비 중",
+    variant: "compact",
   },
   {
     title: "Similarity",
-    description: "중복 표현과 원문 반복 위험을 점검합니다.",
+    description: "중복 표현 점검",
     status: "준비 중",
+    variant: "compact",
   },
+];
+
+const laterTools: CheckToolCardProps[] = [
   {
     title: "Report",
-    description: "검사 결과를 저장하고 출력할 수 있게 정리합니다.",
+    description: "검사 기록 정리",
     status: "준비 중",
+    variant: "mini",
   },
   {
     title: "영상 자막 요약",
-    description: "사용자가 붙여넣은 영상 자막이나 원고를 정리합니다.",
+    description: "붙여넣은 원고 정리",
     status: "준비 중",
+    variant: "mini",
   },
   {
     title: "YouTube 채널 카드",
-    description: "채널 URL 또는 ID 기반 카드 관리를 검토합니다.",
+    description: "출시 전 검토",
     status: "검토 예정",
+    variant: "mini",
   },
 ];
 
 export default function CheckToolGrid() {
   return (
-    <section className="grid gap-4">
+    <section className="grid gap-3">
       <CheckToolCard {...primaryTool} />
 
-      <div>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-slate-900">
-            다음 도구
+      <div className="grid grid-cols-2 gap-2">
+        {quickTools.map((tool) => (
+          <CheckToolCard key={tool.title} {...tool} />
+        ))}
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-3">
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-xs font-bold text-slate-900">
+            이후 도구
           </h2>
-          <p className="text-xs font-medium text-slate-500">
-            준비 중인 기능
-          </p>
+          <span className="text-[11px] font-medium text-slate-500">
+            준비 중
+          </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {secondaryTools.map((tool) => (
+        <div className="grid gap-1.5 sm:grid-cols-3">
+          {laterTools.map((tool) => (
             <CheckToolCard key={tool.title} {...tool} />
           ))}
         </div>
