@@ -8,7 +8,6 @@ const navigationItems = [
   { href: "/dashboard", label: "대시보드" },
   { href: "/write", label: "작성" },
   { href: "/check", label: "검사" },
-  { href: "/admin", label: "정책" },
 ];
 
 type AppNavigationProps = {
