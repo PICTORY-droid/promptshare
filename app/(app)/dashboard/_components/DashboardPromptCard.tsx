@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { Prompt } from "@/features/prompts/types/prompt.types";
-import Badge from "@/shared/ui/badge";
 import {
   Card,
   CardContent,
@@ -32,33 +31,33 @@ function getVisibilityLabel(visibility: string) {
   return "비공개";
 }
 
+function PromptPill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold leading-none text-slate-700">
+      {children}
+    </span>
+  );
+}
+
 export default function DashboardPromptCard({
   prompt,
 }: DashboardPromptCardProps) {
-  const description = prompt.useCase || prompt.promptBody || "설명이 없습니다.";
-
   return (
     <Link href={`/prompts/${prompt.id}`} className="block h-full">
-      <Card className="h-full transition hover:border-slate-300">
+      <Card className="h-full min-h-36 transition hover:border-slate-300">
         <CardHeader className="p-3 pb-2">
-          <div className="flex items-center gap-1.5">
-            <Badge variant={prompt.visibility === "public" ? "success" : "default"}>
-              {getVisibilityLabel(prompt.visibility)}
-            </Badge>
-            <Badge>{getStatusLabel(prompt.status)}</Badge>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <PromptPill>{getVisibilityLabel(prompt.visibility)}</PromptPill>
+            <PromptPill>{getStatusLabel(prompt.status)}</PromptPill>
           </div>
+        </CardHeader>
 
+        <CardContent className="flex min-h-24 flex-col justify-between p-3 pt-0">
           <CardTitle className="line-clamp-2 text-sm leading-5">
             {prompt.title}
           </CardTitle>
-        </CardHeader>
 
-        <CardContent className="p-3 pt-0">
-          <p className="line-clamp-2 min-h-10 text-xs leading-5 text-slate-600">
-            {description}
-          </p>
-
-          <p className="mt-3 text-[11px] text-slate-400">
+          <p className="mt-4 text-[11px] font-medium text-slate-400">
             {new Date(prompt.updatedAt).toLocaleDateString("ko-KR")}
           </p>
         </CardContent>
