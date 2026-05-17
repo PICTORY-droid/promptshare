@@ -1,5 +1,4 @@
 import type { SafeCheckReport } from "@/features/safecheck/types/report.types";
-import Badge from "@/shared/ui/badge";
 
 type ReportCardProps = {
   report: SafeCheckReport;
@@ -29,26 +28,32 @@ export default function ReportCard({ report }: ReportCardProps) {
   const firstCategory = report.riskCategories[0] ?? "위험 없음";
 
   return (
-    <article className="rounded-2xl border border-slate-200 bg-white p-3">
+    <article className="rounded-2xl border border-slate-200 bg-white px-3 py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="mb-2 flex flex-wrap items-center gap-1.5">
-            <Badge>{getLevelLabel(report.level)}</Badge>
-            <Badge>점수 {report.score}</Badge>
-            <Badge>{firstCategory}</Badge>
+          <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-bold text-slate-500">
+            <span className="whitespace-nowrap">
+              {getLevelLabel(report.level)}
+            </span>
+            <span className="text-slate-300">·</span>
+            <span className="whitespace-nowrap">점수 {report.score}</span>
+            <span className="text-slate-300">·</span>
+            <span className="max-w-28 truncate whitespace-nowrap">
+              {firstCategory}
+            </span>
           </div>
 
-          <p className="line-clamp-2 text-sm font-semibold leading-6 text-slate-950">
+          <p className="mt-1 line-clamp-1 text-sm font-semibold leading-6 text-slate-950">
             {report.safePrompt || "저장된 안전 문장 안내가 없습니다."}
           </p>
 
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-1 text-[11px] text-slate-400">
             {formatDate(report.createdAt)}
           </p>
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-400">
+      <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-400">
         <span>정책 {report.policyVersion}</span>
         <span>탐지기 {report.detectorVersion}</span>
       </div>

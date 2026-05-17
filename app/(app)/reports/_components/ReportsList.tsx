@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/shared/ui/card";
 import EmptyState from "@/shared/ui/empty-state";
-import ReportCard from "./ReportCard";
+import ReportsPagination from "./ReportsPagination.client";
 
 type ReportsListProps = {
   reports: SafeCheckReport[];
@@ -27,7 +27,7 @@ export default function ReportsList({
           <div>
             <CardTitle>기록 목록</CardTitle>
             <CardDescription>
-              최근 검사부터 표시합니다.
+              5개씩 나눠 확인합니다.
             </CardDescription>
           </div>
 
@@ -54,17 +54,7 @@ export default function ReportsList({
             }
           />
         ) : (
-          <div className="space-y-3">
-            <p className="text-xs font-semibold text-slate-500">
-              총 {reports.length.toLocaleString("ko-KR")}개
-            </p>
-
-            <div className="grid gap-2">
-              {reports.map((report) => (
-                <ReportCard key={report.id} report={report} />
-              ))}
-            </div>
-          </div>
+          <ReportsPagination reports={reports} />
         )}
       </CardContent>
     </Card>
