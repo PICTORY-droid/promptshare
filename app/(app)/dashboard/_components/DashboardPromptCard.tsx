@@ -3,8 +3,6 @@ import type { Prompt } from "@/features/prompts/types/prompt.types";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/shared/ui/card";
 
 type DashboardPromptCardProps = {
@@ -31,9 +29,9 @@ function getVisibilityLabel(visibility: string) {
   return "비공개";
 }
 
-function PromptStatePill({ prompt }: { prompt: Prompt }) {
+function PromptStateText({ prompt }: { prompt: Prompt }) {
   return (
-    <span className="inline-flex max-w-full shrink-0 items-center truncate whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold leading-none text-slate-700">
+    <span className="shrink-0 whitespace-nowrap text-[11px] font-bold text-slate-500">
       {getVisibilityLabel(prompt.visibility)} {getStatusLabel(prompt.status)}
     </span>
   );
@@ -43,20 +41,22 @@ export default function DashboardPromptCard({
   prompt,
 }: DashboardPromptCardProps) {
   return (
-    <Link href={`/prompts/${prompt.id}`} className="block h-full">
-      <Card className="h-full min-h-36 transition hover:border-slate-300">
-        <CardHeader className="p-3 pb-2">
-          <PromptStatePill prompt={prompt} />
-        </CardHeader>
+    <Link href={`/prompts/${prompt.id}`} className="block">
+      <Card className="transition hover:border-slate-300">
+        <CardContent className="p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h3 className="line-clamp-1 text-sm font-bold leading-5 text-slate-950">
+                {prompt.title}
+              </h3>
 
-        <CardContent className="flex min-h-24 flex-col justify-between p-3 pt-0">
-          <CardTitle className="line-clamp-2 text-sm leading-5">
-            {prompt.title}
-          </CardTitle>
+              <p className="mt-1 text-[11px] font-medium text-slate-400">
+                {new Date(prompt.updatedAt).toLocaleDateString("ko-KR")}
+              </p>
+            </div>
 
-          <p className="mt-4 text-[11px] font-medium text-slate-400">
-            {new Date(prompt.updatedAt).toLocaleDateString("ko-KR")}
-          </p>
+            <PromptStateText prompt={prompt} />
+          </div>
         </CardContent>
       </Card>
     </Link>
