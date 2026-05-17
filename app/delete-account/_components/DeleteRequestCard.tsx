@@ -20,7 +20,7 @@ export default function DeleteRequestCard() {
           <div className="space-y-1.5">
             <CardTitle>삭제 요청 방법</CardTitle>
             <CardDescription>
-              아래 정보만 적으면 접수할 수 있습니다.
+              아래 안내를 따라주세요.
             </CardDescription>
           </div>
 
