@@ -27,7 +27,6 @@ export default function DashboardShell({
         badge="개인 메뉴"
         title="대시보드"
         description="내 프롬프트와 최근 검사 기록을 확인합니다."
-        meta={<>로그인 계정: {email}</>}
       />
 
       <DashboardSummaryCards
