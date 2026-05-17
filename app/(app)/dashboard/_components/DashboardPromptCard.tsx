@@ -31,10 +31,10 @@ function getVisibilityLabel(visibility: string) {
   return "비공개";
 }
 
-function PromptPill({ children }: { children: React.ReactNode }) {
+function PromptStatePill({ prompt }: { prompt: Prompt }) {
   return (
-    <span className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold leading-none text-slate-700">
-      {children}
+    <span className="inline-flex max-w-full shrink-0 items-center truncate whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold leading-none text-slate-700">
+      {getVisibilityLabel(prompt.visibility)} {getStatusLabel(prompt.status)}
     </span>
   );
 }
@@ -46,10 +46,7 @@ export default function DashboardPromptCard({
     <Link href={`/prompts/${prompt.id}`} className="block h-full">
       <Card className="h-full min-h-36 transition hover:border-slate-300">
         <CardHeader className="p-3 pb-2">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <PromptPill>{getVisibilityLabel(prompt.visibility)}</PromptPill>
-            <PromptPill>{getStatusLabel(prompt.status)}</PromptPill>
-          </div>
+          <PromptStatePill prompt={prompt} />
         </CardHeader>
 
         <CardContent className="flex min-h-24 flex-col justify-between p-3 pt-0">
