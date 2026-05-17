@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "@/shared/ui/card";
+import { Card, CardContent, CardDescription } from "@/shared/ui/card";
 
 type DeleteInfoGroup = {
   title: string;
@@ -27,7 +22,9 @@ export default function DeleteInfoSection({
         <details>
           <summary className="cursor-pointer list-none">
             <div className="space-y-1.5">
-              <CardTitle>{title}</CardTitle>
+              <p className="text-sm font-semibold text-slate-800">
+                {title}
+              </p>
               {description ? (
                 <CardDescription>{description}</CardDescription>
               ) : null}
