@@ -10,7 +10,7 @@ export default function ContactShell() {
         <PageHeader
           badge="Contact"
           title="PromptLab 문의"
-          description="서비스 문의, 오류 제보, 계정·데이터 삭제 요청을 접수합니다."
+          description="서비스 문의, 오류 제보, 계정·데이터 삭제 요청 접수"
         />
 
         <ContactSafetyNotice />
