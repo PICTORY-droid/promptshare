@@ -4,7 +4,6 @@ import Button from "@/shared/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
@@ -24,12 +23,7 @@ export default function ReportsList({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
-          <div>
-            <CardTitle>기록 목록</CardTitle>
-            <CardDescription>
-              5개씩 나눠 확인합니다.
-            </CardDescription>
-          </div>
+          <CardTitle>기록 목록</CardTitle>
 
           <Link href="/safecheck">
             <Button className="whitespace-nowrap">새 검사</Button>
