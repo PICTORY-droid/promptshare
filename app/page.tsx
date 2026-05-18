@@ -1,72 +1,55 @@
 import Link from "next/link";
 import Badge from "@/shared/ui/badge";
 import Button from "@/shared/ui/button";
-import { Card, CardContent } from "@/shared/ui/card";
 import PageShell from "@/shared/ui/page-shell";
-
-const trustItems = [
-  {
-    title: "입력 전 점검",
-    description:
-      "개인정보, 회사기밀, 계약정보, 저작권 원문, 과장 표현을 AI 입력 전에 확인합니다.",
-  },
-  {
-    title: "안전 문장 안내",
-    description:
-      "위험한 표현을 바로 넣지 않도록 저장 전 점검과 안전한 문장 안내를 분리합니다.",
-  },
-  {
-    title: "원문 저장 최소화",
-    description:
-      "검사 원문 대신 점수, 판정, 위험 카테고리, 안전 문장 안내 중심으로 기록합니다.",
-  },
-];
 
 export default function HomePage() {
   return (
-    <PageShell maxWidth="lg" contentClassName="gap-6 sm:gap-8 lg:gap-10">
+    <PageShell maxWidth="lg" contentClassName="gap-6 sm:gap-8">
       <section className="space-y-5 sm:space-y-6">
         <Badge>PromptLab</Badge>
 
-        <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
-          생성형 AI 입력 전, 민감정보와 업무 보안 위험 점검
-        </p>
+        <div className="space-y-3">
+          <p className="max-w-2xl text-xl font-semibold leading-8 text-slate-950 sm:text-2xl sm:leading-9">
+            AI에 입력하기 전, 민감정보와 보안 위험을 먼저 확인하세요.
+          </p>
+
+          <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
+            프롬프트 작성, SafeCheck 검사, 기록 관리를 한곳에서 정리합니다.
+          </p>
+        </div>
       </section>
 
-      <Card>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            {trustItems.map((item) => (
-              <section key={item.title} className="space-y-1.5">
-                <h2 className="text-sm font-semibold text-slate-950">
-                  {item.title}
-                </h2>
-                <p className="text-sm leading-6 text-slate-600">
-                  {item.description}
-                </p>
-              </section>
-            ))}
+      <section className="rounded-3xl border border-slate-200 bg-white p-4 sm:p-5">
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <p className="text-sm font-semibold text-slate-950">
+              지금 할 수 있는 작업
+            </p>
+            <p className="text-sm leading-6 text-slate-600">
+              저장하거나 공개하기 전, 위험한 입력 내용을 먼저 점검합니다.
+            </p>
           </div>
-        </CardContent>
-      </Card>
 
-      <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
-        <Link href="/safecheck" className="w-full sm:w-auto">
-          <Button className="w-full sm:w-auto">SafeCheck 시작</Button>
-        </Link>
+          <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
+            <Link href="/safecheck" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto">SafeCheck 시작</Button>
+            </Link>
 
-        <Link href="/write" className="w-full sm:w-auto">
-          <Button variant="secondary" className="w-full sm:w-auto">
-            프롬프트 작성
-          </Button>
-        </Link>
+            <Link href="/write" className="w-full sm:w-auto">
+              <Button variant="secondary" className="w-full sm:w-auto">
+                프롬프트 작성
+              </Button>
+            </Link>
 
-        <Link href="/reports" className="w-full sm:w-auto">
-          <Button variant="ghost" className="w-full sm:w-auto">
-            검사 기록 보기
-          </Button>
-        </Link>
-      </div>
+            <Link href="/reports" className="w-full sm:w-auto">
+              <Button variant="ghost" className="w-full sm:w-auto">
+                검사 기록 보기
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
     </PageShell>
   );
 }
