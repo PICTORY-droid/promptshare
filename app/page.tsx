@@ -29,8 +29,7 @@ export default function HomePage() {
         <Badge>PromptLab</Badge>
 
         <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
-          생성형 AI에 입력하기 전, 민감정보와 업무 보안 위험을 먼저
-          점검합니다.
+          생성형 AI 입력 전, 민감정보와 업무 보안 위험 점검
         </p>
       </section>
 
