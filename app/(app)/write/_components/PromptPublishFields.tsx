@@ -52,7 +52,7 @@ export default function PromptPublishFields({
           저장 전 안전 검사
         </p>
         <p className="mt-1 text-xs leading-5 text-slate-600">
-          저장 시 개인정보, 회사기밀, 저작권 위험, 과장 표현 기준이 적용됩니다.
+          개인정보, 회사기밀, 저작권 원문, 과장 표현 포함여부 확인
         </p>
       </div>
 
@@ -74,7 +74,7 @@ export default function PromptPublishFields({
       <div className="rounded-2xl bg-slate-50 p-3">
         <p className="text-sm font-bold text-slate-950">권장 설정</p>
         <p className="mt-1 text-xs leading-5 text-slate-600">
-          처음 저장은 비공개 초안이 안전합니다. 검토 후 공개 게시로 바꾸세요.
+          첫 저장시 비공개 초안 추천 검토 후 공개 게시
         </p>
       </div>
     </div>
