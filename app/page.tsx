@@ -35,7 +35,7 @@ export default function HomePage() {
             <h1 className="max-w-4xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl md:text-5xl lg:text-6xl">
               생성형 AI 입력 전,
               <br />
-              민감정보와 보안 위험을 점검합니다.
+              민감정보와 보안 위험 점검
             </h1>
 
             <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
