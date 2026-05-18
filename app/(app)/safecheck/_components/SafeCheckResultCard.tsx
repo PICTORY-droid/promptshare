@@ -36,7 +36,6 @@ export default function SafeCheckResultCard({
       <CardHeader>
         <CardTitle>검사 결과</CardTitle>
         <CardDescription>
-          점수와 판정을 먼저 확인하세요.
         </CardDescription>
       </CardHeader>
 

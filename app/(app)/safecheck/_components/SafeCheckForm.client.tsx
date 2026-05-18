@@ -34,7 +34,6 @@ export default function SafeCheckForm() {
         <CardHeader>
           <CardTitle>검사할 내용</CardTitle>
           <CardDescription>
-            핵심 문단을 붙여넣고 바로 검사하세요.
           </CardDescription>
         </CardHeader>
 
