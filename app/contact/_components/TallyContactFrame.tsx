@@ -7,7 +7,7 @@ export default function TallyContactFrame() {
       <iframe
         src={TALLY_FORM_URL}
         title="PromptLab 문의"
-        className="block h-[500px] w-full sm:h-[620px]"
+        className="block h-[640px] w-full sm:h-[720px]"
         loading="lazy"
       />
     </div>
