@@ -28,18 +28,10 @@ export default function HomePage() {
       <section className="space-y-5 sm:space-y-6">
         <Badge>PromptLab</Badge>
 
-        <div className="space-y-3 sm:space-y-4">
-          <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-4xl md:text-5xl">
-            생성형 AI 입력 전,
-            <br />
-            민감정보와 보안 위험 점검
-          </h1>
-
-          <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
-            PromptLab은 프롬프트 작성, SafeCheck 검사, 리포트 관리를 연결한
-            AI 입력 보안 점검 워크스페이스입니다.
-          </p>
-        </div>
+        <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
+          PromptLab은 프롬프트 작성, SafeCheck 검사, 리포트 관리를 연결한
+          AI 입력 보안 점검 워크스페이스입니다.
+        </p>
 
         <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
           <Link href="/safecheck" className="w-full sm:w-auto">
