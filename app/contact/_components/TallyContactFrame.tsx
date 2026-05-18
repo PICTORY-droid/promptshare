@@ -3,11 +3,11 @@ const TALLY_FORM_URL =
 
 export default function TallyContactFrame() {
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
       <iframe
         src={TALLY_FORM_URL}
         title="PromptLab 문의"
-        className="block h-[500px] w-full sm:h-[620px]"
+        className="block h-[520px] w-full sm:h-[640px]"
         loading="lazy"
       />
     </div>
