@@ -41,9 +41,10 @@ export default function MobileBottomNavigation() {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={isActive ? "page" : undefined}
               className={
                 isActive
-                  ? "rounded-2xl bg-slate-950 px-2 py-2 text-center text-xs font-bold text-white"
+                  ? "rounded-2xl border border-slate-300 bg-slate-100 px-2 py-2 text-center text-xs font-bold text-slate-950"
                   : "rounded-2xl px-2 py-2 text-center text-xs font-bold text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900"
               }
             >
