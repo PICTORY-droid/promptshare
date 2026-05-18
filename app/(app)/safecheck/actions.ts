@@ -76,6 +76,6 @@ export async function scanPromptAction(
     ok: true,
     message: "검사가 완료되고 리포트가 저장되었습니다.",
     result,
-    reportId: reportResult.reportId,
+    reportId: reportResult.data.reportId,
   };
 }

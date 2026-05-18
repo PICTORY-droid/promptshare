@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "../../../server/db/supabase-server";
+import type { ActionResult } from "@/shared/lib/result";
 import type { SafeCheckResult } from "../types/safecheck.types";
 
 export type CreateSafeCheckReportInput = {
@@ -7,17 +8,9 @@ export type CreateSafeCheckReportInput = {
   result: SafeCheckResult;
 };
 
-export type CreateSafeCheckReportResult =
-  | {
-      ok: true;
-      reportId: string;
-      message: null;
-    }
-  | {
-      ok: false;
-      reportId: null;
-      message: string;
-    };
+export type CreateSafeCheckReportResult = ActionResult<{
+  reportId: string;
+}>;
 
 export async function createSafeCheckReport(
   input: CreateSafeCheckReportInput,
@@ -42,14 +35,16 @@ export async function createSafeCheckReport(
   if (error || !data) {
     return {
       ok: false,
-      reportId: null,
+      data: null,
       message: error?.message ?? "SafeCheck 리포트 저장에 실패했습니다.",
     };
   }
 
   return {
     ok: true,
-    reportId: data.id as string,
+    data: {
+      reportId: data.id as string,
+    },
     message: null,
   };
 }
