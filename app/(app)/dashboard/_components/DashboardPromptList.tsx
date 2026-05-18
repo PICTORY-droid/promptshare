@@ -21,7 +21,7 @@ export default function DashboardPromptList({
 }: DashboardPromptListProps) {
   return (
     <Card>
-      <CardHeader className="p-4 pb-3 sm:p-5 sm:pb-3">
+      <CardHeader>
         <div className="flex items-center justify-between gap-3">
           <CardTitle>프롬프트 목록</CardTitle>
 
@@ -31,7 +31,7 @@ export default function DashboardPromptList({
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 pt-0 sm:p-5 sm:pt-0">
+      <CardContent>
         {promptLoadMessage ? (
           <EmptyState
             title="프롬프트를 불러오지 못했습니다"

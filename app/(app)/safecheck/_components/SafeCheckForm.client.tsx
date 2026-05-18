@@ -31,14 +31,14 @@ export default function SafeCheckForm() {
   return (
     <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
       <Card>
-        <CardHeader className="p-4 sm:p-6">
+        <CardHeader>
           <CardTitle>검사할 내용</CardTitle>
           <CardDescription>
             핵심 문단을 붙여넣고 바로 검사하세요.
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+        <CardContent>
           <form action={formAction} className="space-y-3">
             <label className="block space-y-2">
               <span className="flex items-center justify-between gap-3">
