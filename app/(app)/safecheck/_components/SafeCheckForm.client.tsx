@@ -7,7 +7,6 @@ import Textarea from "@/shared/ui/textarea";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
@@ -58,11 +57,6 @@ export default function SafeCheckForm() {
                 required
               />
             </label>
-
-            <p className="text-xs leading-5 text-slate-500">
-              긴 문서는 핵심 문단으로 나눠 검사하세요.
-            </p>
-
             {!state.ok ? <ErrorMessage message={state.message} /> : null}
 
             <SafeCheckSubmitButton />
