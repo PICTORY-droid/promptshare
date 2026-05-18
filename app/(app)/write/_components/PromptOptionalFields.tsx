@@ -27,13 +27,13 @@ export default function PromptOptionalFields({
   return (
     <div className="space-y-4">
       <label className="block space-y-2">
-        <span className="text-sm font-semibold text-slate-700">카테고리</span>
+        <span className="text-sm font-semibold text-slate-700">보관 분류</span>
         <select
           value={draft.categoryId}
           onChange={(event) => onChange("categoryId", event.currentTarget.value)}
           className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
         >
-          <option value="">선택 안 함</option>
+          <option value="">분류 없이 저장</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -43,7 +43,7 @@ export default function PromptOptionalFields({
 
         {categoryLoadMessage ? (
           <span className="block text-xs text-red-600">
-            카테고리를 불러오지 못했습니다. {categoryLoadMessage}
+            분류를 불러오지 못했습니다. {categoryLoadMessage}
           </span>
         ) : null}
       </label>

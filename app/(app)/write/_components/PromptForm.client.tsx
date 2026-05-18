@@ -98,6 +98,7 @@ export default function PromptForm({
 
       {step === "settings" ? (
         <div className="space-y-4">
+          <PromptPublishFields draft={draft} onChange={updateDraft} />
           <PromptOptionalFields
             draft={draft}
             limits={FIELD_LIMITS}
@@ -105,7 +106,6 @@ export default function PromptForm({
             categoryLoadMessage={categoryLoadMessage}
             onChange={updateDraft}
           />
-          <PromptPublishFields draft={draft} onChange={updateDraft} />
         </div>
       ) : null}
 
