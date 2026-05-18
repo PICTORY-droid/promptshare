@@ -33,14 +33,14 @@ export default function SafeCheckResultCard({
 }: SafeCheckResultCardProps) {
   return (
     <Card>
-      <CardHeader className="p-4 sm:p-6">
+      <CardHeader>
         <CardTitle>검사 결과</CardTitle>
         <CardDescription>
           점수와 판정을 먼저 확인하세요.
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+      <CardContent>
         {!result ? (
           <SafeCheckEmptyResult />
         ) : (

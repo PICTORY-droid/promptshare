@@ -27,11 +27,11 @@ function DetailBlock({
 }) {
   return (
     <Card>
-      <CardHeader className="p-5 sm:p-6">
+      <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description ? <CardDescription>{description}</CardDescription> : null}
       </CardHeader>
-      <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+      <CardContent>
         <p className="whitespace-pre-wrap break-words text-sm leading-7 text-slate-700">
           {content || "등록된 내용이 없습니다."}
         </p>

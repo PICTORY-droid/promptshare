@@ -22,15 +22,15 @@ export default function StatCard({
 }: StatCardProps) {
   return (
     <Card>
-      <CardHeader className="p-5 sm:p-6">
+      <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description ? (
           <CardDescription>{description}</CardDescription>
         ) : null}
       </CardHeader>
 
-      <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
-        <div className="text-3xl font-black text-slate-950">
+      <CardContent>
+        <div className="text-3xl font-semibold text-slate-950">
           {value}
         </div>
 

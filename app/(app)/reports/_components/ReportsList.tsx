@@ -22,7 +22,7 @@ export default function ReportsList({
 }: ReportsListProps) {
   return (
     <Card>
-      <CardHeader className="p-4 pb-3 sm:p-5 sm:pb-3">
+      <CardHeader>
         <div className="flex items-center justify-between gap-3">
           <div>
             <CardTitle>기록 목록</CardTitle>
@@ -37,7 +37,7 @@ export default function ReportsList({
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 pt-0 sm:p-5 sm:pt-0">
+      <CardContent>
         {reportLoadMessage ? (
           <EmptyState
             title="검사 기록을 불러오지 못했습니다"

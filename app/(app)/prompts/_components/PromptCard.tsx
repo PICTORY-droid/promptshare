@@ -17,7 +17,7 @@ type PromptCardProps = {
 export default function PromptCard({ prompt }: PromptCardProps) {
   return (
     <Card className="h-full">
-      <CardHeader className="p-5 sm:p-6">
+      <CardHeader>
         <div className="flex flex-wrap items-center gap-2">
           {prompt.categoryName ? <Badge>{prompt.categoryName}</Badge> : null}
           <Badge variant={prompt.visibility === "public" ? "success" : "default"}>
@@ -40,7 +40,7 @@ export default function PromptCard({ prompt }: PromptCardProps) {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+      <CardContent>
         <div className="space-y-4">
           <p className="line-clamp-4 whitespace-pre-wrap text-sm leading-7 text-slate-600">
             {prompt.promptBody}
