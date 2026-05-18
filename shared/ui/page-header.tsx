@@ -18,10 +18,10 @@ export default function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn("space-y-3", className)}>
+    <header className={cn("space-y-2.5 sm:space-y-3", className)}>
       {badge ? <Badge>{badge}</Badge> : null}
 
-      <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+      <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
         {title}
       </h1>
 
@@ -32,10 +32,10 @@ export default function PageHeader({
       ) : null}
 
       {meta ? (
-        <div className="break-all text-xs text-slate-500">
+        <div className="break-all text-xs leading-5 text-slate-500">
           {meta}
         </div>
       ) : null}
-    </div>
+    </header>
   );
 }

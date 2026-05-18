@@ -25,13 +25,13 @@ export default function PageShell({
   return (
     <main
       className={cn(
-        "min-h-screen bg-slate-50 px-4 py-8 sm:px-6 sm:py-10",
+        "min-h-screen bg-slate-50 px-4 py-6 sm:px-6 sm:py-8 lg:py-10",
         className,
       )}
     >
       <section
         className={cn(
-          "mx-auto flex flex-col gap-5 sm:gap-6",
+          "mx-auto flex w-full flex-col gap-4 sm:gap-5 lg:gap-6",
           maxWidthClassName[maxWidth],
           contentClassName,
         )}
