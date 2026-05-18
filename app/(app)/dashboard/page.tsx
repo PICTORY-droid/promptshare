@@ -21,7 +21,7 @@ export default async function DashboardPage() {
       email={currentUser.user.email ?? "로그인 사용자"}
       prompts={promptsResult.ok ? promptsResult.prompts : []}
       promptLoadMessage={promptsResult.ok ? null : promptsResult.message}
-      reports={reportsResult.ok ? reportsResult.reports : []}
+      reports={reportsResult.ok ? reportsResult.data.reports : []}
       reportLoadMessage={reportsResult.ok ? null : reportsResult.message}
     />
   );

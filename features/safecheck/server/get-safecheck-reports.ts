@@ -1,21 +1,14 @@
 import { createSupabaseServerClient } from "../../../server/db/supabase-server";
+import type { ActionResult } from "@/shared/lib/result";
 import {
   mapSafeCheckReportRowToReport,
   type SafeCheckReport,
   type SafeCheckReportRow,
 } from "../types/report.types";
 
-export type GetSafeCheckReportsResult =
-  | {
-      ok: true;
-      reports: SafeCheckReport[];
-      message: null;
-    }
-  | {
-      ok: false;
-      reports: [];
-      message: string;
-    };
+export type GetSafeCheckReportsResult = ActionResult<{
+  reports: SafeCheckReport[];
+}>;
 
 export async function getSafeCheckReports(
   userId: string,
@@ -44,16 +37,18 @@ export async function getSafeCheckReports(
   if (error) {
     return {
       ok: false,
-      reports: [],
+      data: null,
       message: error.message,
     };
   }
 
   return {
     ok: true,
-    reports: ((data ?? []) as SafeCheckReportRow[]).map(
-      mapSafeCheckReportRowToReport,
-    ),
+    data: {
+      reports: ((data ?? []) as SafeCheckReportRow[]).map(
+        mapSafeCheckReportRowToReport,
+      ),
+    },
     message: null,
   };
 }

@@ -15,7 +15,7 @@ export default async function ReportsPage() {
   return (
     <ReportsShell
       email={currentUser.user.email ?? "로그인 사용자"}
-      reports={reportsResult.ok ? reportsResult.reports : []}
+      reports={reportsResult.ok ? reportsResult.data.reports : []}
       reportLoadMessage={reportsResult.ok ? null : reportsResult.message}
     />
   );

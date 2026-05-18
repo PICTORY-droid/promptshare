@@ -4,7 +4,7 @@ import {
   createSuccessResult,
   isFailureResult,
   isSuccessResult,
-} from "@/shared/lib/result";
+} from "../../shared/lib/result";
 
 describe("ActionResult helpers", () => {
   it("creates a success result", () => {
