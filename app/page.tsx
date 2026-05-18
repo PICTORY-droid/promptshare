@@ -26,7 +26,7 @@ export default function HomePage() {
   return (
     <PageShell maxWidth="lg" contentClassName="gap-6 sm:gap-8 lg:gap-10">
       <section className="space-y-5 sm:space-y-6">
-        <Badge>PromptLab</Badge>
+        <Badge>HOME</Badge>
 
         <p className="max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8">
           PromptLab은 프롬프트 작성, SafeCheck 검사, 리포트 관리를 연결한
