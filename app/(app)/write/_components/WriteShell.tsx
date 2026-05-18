@@ -3,7 +3,6 @@ import Badge from "@/shared/ui/badge";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
@@ -30,9 +29,6 @@ export default function WriteShell({
               <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">
                 프롬프트 작성
               </h1>
-              <p className="mt-1 text-sm leading-5 text-slate-600">
-                핵심부터 작성하고, 옵션은 나중에 채웁니다.
-              </p>
             </div>
 
             <p className="hidden max-w-48 truncate rounded-2xl bg-slate-50 px-3 py-2 text-right text-xs font-semibold text-slate-500 sm:block">
@@ -43,10 +39,7 @@ export default function WriteShell({
 
         <Card>
           <CardHeader className="p-4 pb-3 sm:p-5 sm:pb-3">
-            <CardTitle>작성 흐름</CardTitle>
-            <CardDescription>
-              작성, 옵션, 저장 순서로 나눠 모바일 스크롤을 줄입니다.
-            </CardDescription>
+            <CardTitle>작성 단계</CardTitle>
           </CardHeader>
 
           <CardContent className="p-4 pt-0 sm:p-5 sm:pt-0">

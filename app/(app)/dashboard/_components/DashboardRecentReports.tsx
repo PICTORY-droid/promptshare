@@ -5,7 +5,6 @@ import Button from "@/shared/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
@@ -47,12 +46,7 @@ export default function DashboardRecentReports({
     <Card>
       <CardHeader className="p-4 pb-3 sm:p-5 sm:pb-3">
         <div className="flex items-center justify-between gap-3">
-          <div>
-            <CardTitle>최근 검사</CardTitle>
-            <CardDescription>
-              원문 없이 결과만 확인합니다.
-            </CardDescription>
-          </div>
+          <CardTitle>최근 검사</CardTitle>
 
           <Link href="/reports">
             <Button variant="secondary" className="whitespace-nowrap">

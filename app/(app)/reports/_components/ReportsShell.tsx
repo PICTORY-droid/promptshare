@@ -2,7 +2,6 @@ import type { SafeCheckReport } from "@/features/safecheck/types/report.types";
 import PageHeader from "@/shared/ui/page-header";
 import PageShell from "@/shared/ui/page-shell";
 import ReportsList from "./ReportsList";
-import ReportsPrivacyNotice from "./ReportsPrivacyNotice";
 import ReportsSummary from "./ReportsSummary";
 
 type ReportsShellProps = {
@@ -22,15 +21,12 @@ export default function ReportsShell({
       <PageHeader
         badge="기록"
         title="검사 기록"
-        description="SafeCheck 결과만 짧게 확인합니다."
       />
 
       <ReportsSummary
         reportCount={reports.length}
         latestReport={latestReport}
       />
-
-      <ReportsPrivacyNotice />
 
       <ReportsList
         reports={reports}
