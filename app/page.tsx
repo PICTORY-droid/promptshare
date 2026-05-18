@@ -32,24 +32,6 @@ export default function HomePage() {
           PromptLab은 프롬프트 작성, SafeCheck 검사, 리포트 관리를 연결한
           AI 입력 보안 점검 워크스페이스입니다.
         </p>
-
-        <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
-          <Link href="/safecheck" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto">SafeCheck 시작</Button>
-          </Link>
-
-          <Link href="/write" className="w-full sm:w-auto">
-            <Button variant="secondary" className="w-full sm:w-auto">
-              프롬프트 작성
-            </Button>
-          </Link>
-
-          <Link href="/reports" className="w-full sm:w-auto">
-            <Button variant="ghost" className="w-full sm:w-auto">
-              검사 기록 보기
-            </Button>
-          </Link>
-        </div>
       </section>
 
       <Card>
@@ -68,6 +50,24 @@ export default function HomePage() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
+        <Link href="/safecheck" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto">SafeCheck 시작</Button>
+        </Link>
+
+        <Link href="/write" className="w-full sm:w-auto">
+          <Button variant="secondary" className="w-full sm:w-auto">
+            프롬프트 작성
+          </Button>
+        </Link>
+
+        <Link href="/reports" className="w-full sm:w-auto">
+          <Button variant="ghost" className="w-full sm:w-auto">
+            검사 기록 보기
+          </Button>
+        </Link>
+      </div>
     </PageShell>
   );
 }
