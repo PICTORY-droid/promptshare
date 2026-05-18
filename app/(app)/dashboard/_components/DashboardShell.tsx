@@ -1,5 +1,5 @@
 import type { Prompt } from "@/features/prompts/types/prompt.types";
-import PageHeader from "@/shared/ui/page-header";
+import Badge from "@/shared/ui/badge";
 import PageShell from "@/shared/ui/page-shell";
 import DashboardPromptList from "./DashboardPromptList";
 import DashboardSummaryCards from "./DashboardSummaryCards";
@@ -16,11 +16,12 @@ export default function DashboardShell({
 }: DashboardShellProps) {
   return (
     <PageShell>
-      <PageHeader
-        badge="개인 메뉴"
-        title="대시보드"
-        description="내 프롬프트를 확인합니다."
-      />
+      <header className="space-y-2">
+        <Badge>개인 메뉴</Badge>
+        <p className="max-w-2xl text-sm leading-6 text-slate-600">
+          내 프롬프트를 확인합니다.
+        </p>
+      </header>
 
       <DashboardSummaryCards promptCount={prompts.length} />
 

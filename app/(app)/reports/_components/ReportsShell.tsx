@@ -1,5 +1,5 @@
 import type { SafeCheckReport } from "@/features/safecheck/types/report.types";
-import PageHeader from "@/shared/ui/page-header";
+import Badge from "@/shared/ui/badge";
 import PageShell from "@/shared/ui/page-shell";
 import ReportsList from "./ReportsList";
 import ReportsSummary from "./ReportsSummary";
@@ -18,10 +18,9 @@ export default function ReportsShell({
 
   return (
     <PageShell>
-      <PageHeader
-        badge="기록"
-        title="검사 기록"
-      />
+      <header className="space-y-2">
+        <Badge>기록</Badge>
+      </header>
 
       <ReportsSummary
         reportCount={reports.length}

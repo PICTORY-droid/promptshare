@@ -1,11 +1,11 @@
 import type { PromptCategory } from "@/features/prompts/types/category.types";
+import Badge from "@/shared/ui/badge";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/shared/ui/card";
-import PageHeader from "@/shared/ui/page-header";
 import PageShell from "@/shared/ui/page-shell";
 import PromptForm from "./PromptForm.client";
 
@@ -21,11 +21,12 @@ export default function WriteShell({
 }: WriteShellProps) {
   return (
     <PageShell maxWidth="md">
-      <PageHeader
-        badge="개인 작성"
-        title="프롬프트 작성"
-        description="작성 단계에 맞춰 프롬프트를 저장합니다."
-      />
+      <header className="space-y-2">
+        <Badge>개인 작성</Badge>
+        <p className="max-w-2xl text-sm leading-6 text-slate-600">
+          작성 단계에 맞춰 프롬프트를 저장합니다.
+        </p>
+      </header>
 
       <Card>
         <CardHeader>
