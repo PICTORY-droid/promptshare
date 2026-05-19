@@ -24,9 +24,7 @@ export default function HomePage() {
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <p className="text-sm font-semibold text-slate-950">
-                오늘의 기본 작업
-              </p>
+
               <p className="text-sm leading-6 text-slate-600">
                 SafeCheck로 입력 위험 확인/, 필요 기록 저장
               </p>
