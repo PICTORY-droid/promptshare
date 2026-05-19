@@ -26,13 +26,13 @@ export default function HomePage() {
             <div className="space-y-1.5">
 
               <p className="text-sm leading-6 text-slate-600">
-                SafeCheck로 입력 위험 확인/, 필요 기록 저장
+                SafeCheck 점검 / 기록 저장
               </p>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
               <p className="text-xs font-semibold leading-5 text-slate-600">
-                원문 저장 최소화 · 위험 카테고리 기록 · 안전 문장 안내
+                원문 최소화 · 위험 기록 · 안전 안내
               </p>
             </div>
 
