@@ -8,9 +8,15 @@ import {
 import DeleteInfoSection from "./DeleteInfoSection";
 import DeleteRequestCard from "./DeleteRequestCard";
 
-const lastUpdated = "2026-05-13";
+const lastUpdated = "2026-05-19";
 
-export default function DeleteAccountShell() {
+type DeleteAccountShellProps = {
+  isLoggedIn: boolean;
+};
+
+export default function DeleteAccountShell({
+  isLoggedIn,
+}: DeleteAccountShellProps) {
   return (
     <PageShell>
       <p className="text-xs text-slate-500">
@@ -18,9 +24,9 @@ export default function DeleteAccountShell() {
       </p>
 
       <PageHeader
-        badge="Account & Data Deletion"
-        title="계정·데이터 삭제"
-        description="PromptLab 연결과 저장 데이터 삭제를 요청하는 페이지입니다."
+        badge="Account Deletion"
+        title="계정 탈퇴"
+        description="PromptLab 계정과 저장 데이터를 직접 삭제할 수 있습니다."
       />
 
       <Card className="border-amber-200 bg-amber-50">
@@ -30,27 +36,26 @@ export default function DeleteAccountShell() {
               Google, Kakao 계정 삭제가 아닙니다
             </p>
             <CardDescription className="text-amber-900">
-              이 페이지는 PromptLab 서비스 계정 연결과 저장 데이터 삭제 요청만
-              안내합니다.
+              이 기능은 PromptLab 서비스 계정 연결과 PromptLab에 저장된 데이터만
+              삭제합니다.
             </CardDescription>
           </div>
         </CardContent>
       </Card>
 
-      <DeleteRequestCard />
+      <DeleteRequestCard isLoggedIn={isLoggedIn} />
 
       <DeleteInfoSection
-        title="삭제 전 확인사항"
+        title="탈퇴 전 확인사항"
         description="삭제 대상, 제외 대상, 보관 기준 확인"
         sections={[
           {
             title: "삭제 대상",
             items: [
               "PromptLab 서비스 계정 연결 정보",
-              "Supabase Auth 사용자 정보 삭제 요청",
+              "Supabase Auth 사용자 정보",
               "저장한 프롬프트 제목과 본문",
               "사용자 계정과 연결된 SafeCheck 검사 기록",
-              "Contact를 통해 접수된 문의 기록 중 삭제 요청 대상 정보",
             ],
           },
           {
