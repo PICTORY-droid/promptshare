@@ -11,7 +11,7 @@ export default async function ReportsPage() {
         email={null}
         isLoggedIn={false}
         reports={[]}
-        reportLoadMessage="검사 기록은 로그인 후 확인할 수 있습니다. 개인 계정에 저장된 기록만 표시됩니다."
+        reportLoadMessage="로그인 후 개인 계정에 저장된 기록을 확인할 수 있습니다."
       />
     );
   }
