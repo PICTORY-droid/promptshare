@@ -33,13 +33,17 @@ export default function SafeCheckForm({ isLoggedIn }: SafeCheckFormProps) {
   const [textLength, setTextLength] = useState(0);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
 
+  function openLoginDialog() {
+    setIsLoginDialogOpen(true);
+  }
+
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     if (isLoggedIn) {
       return;
     }
 
     event.preventDefault();
-    setIsLoginDialogOpen(true);
+    openLoginDialog();
   }
 
   return (
@@ -50,34 +54,49 @@ export default function SafeCheckForm({ isLoggedIn }: SafeCheckFormProps) {
             <CardTitle>검사할 내용</CardTitle>
           </CardHeader>
           <CardContent>
-            <form action={formAction} onSubmit={handleSubmit} className="space-y-3">
-              <label className="block space-y-2">
-                <span className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-semibold text-slate-700">
-                    프롬프트 본문
-                  </span>
-                  <span className="shrink-0 text-xs text-slate-400">
-                    {textLength.toLocaleString("ko-KR")} /{" "}
-                    {MAX_PROMPT_LENGTH.toLocaleString("ko-KR")}자
-                  </span>
-                </span>
-
-                <Textarea
-                  name="promptText"
-                  className="min-h-44 sm:min-h-72"
-                  maxLength={MAX_PROMPT_LENGTH}
-                  placeholder="검사할 프롬프트를 입력하세요."
-                  onChange={(event) =>
-                    setTextLength(event.currentTarget.value.length)
-                  }
-                  required
+            <div className="relative">
+              {!isLoggedIn ? (
+                <button
+                  type="button"
+                  className="absolute inset-0 z-10 cursor-pointer rounded-2xl bg-transparent"
+                  aria-label="로그인 안내 열기"
+                  onClick={openLoginDialog}
                 />
-              </label>
+              ) : null}
 
-              {!state.ok ? <ErrorMessage message={state.message} /> : null}
+              <form
+                action={formAction}
+                onSubmit={handleSubmit}
+                className="space-y-3"
+              >
+                <label className="block space-y-2">
+                  <span className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-semibold text-slate-700">
+                      프롬프트 본문
+                    </span>
+                    <span className="shrink-0 text-xs text-slate-400">
+                      {textLength.toLocaleString("ko-KR")} /{" "}
+                      {MAX_PROMPT_LENGTH.toLocaleString("ko-KR")}자
+                    </span>
+                  </span>
 
-              <SafeCheckSubmitButton />
-            </form>
+                  <Textarea
+                    name="promptText"
+                    className="min-h-44 sm:min-h-72"
+                    maxLength={MAX_PROMPT_LENGTH}
+                    placeholder="검사할 프롬프트를 입력하세요."
+                    onChange={(event) =>
+                      setTextLength(event.currentTarget.value.length)
+                    }
+                    required
+                  />
+                </label>
+
+                {!state.ok ? <ErrorMessage message={state.message} /> : null}
+
+                <SafeCheckSubmitButton />
+              </form>
+            </div>
           </CardContent>
         </Card>
 
@@ -96,7 +115,7 @@ export default function SafeCheckForm({ isLoggedIn }: SafeCheckFormProps) {
       <LoginRequiredDialog
         isOpen={isLoginDialogOpen}
         title="로그인이 필요한 기능입니다"
-        description="검사를 실행하면 결과와 기록이 개인 계정에 연결됩니다. 내 검사 기록을 안전하게 저장하고 다시 확인하려면 로그인이 필요합니다."
+        description="검사를 실행하면 결과와 기록이 개인 계정에 연결됩니다. 입력 내용을 점검하고 기록을 안전하게 관리하려면 로그인이 필요합니다."
         onClose={() => setIsLoginDialogOpen(false)}
       />
     </>

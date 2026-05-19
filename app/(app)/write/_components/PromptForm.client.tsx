@@ -55,13 +55,15 @@ const initialDraft: PromptDraftState = {
   status: "draft",
 };
 
-export default function PromptForm({
-  isLoggedIn,
-}: PromptFormProps) {
+export default function PromptForm({ isLoggedIn }: PromptFormProps) {
   const [state, formAction] = useActionState(createPromptAction, initialState);
   const [step, setStep] = useState<PromptFormStep>("core");
   const [draft, setDraft] = useState<PromptDraftState>(initialDraft);
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
+
+  function openLoginDialog() {
+    setIsLoginDialogOpen(true);
+  }
 
   function updateDraft<Key extends keyof PromptDraftState>(
     key: Key,
@@ -79,7 +81,7 @@ export default function PromptForm({
     }
 
     event.preventDefault();
-    setIsLoginDialogOpen(true);
+    openLoginDialog();
   }
 
   const canGoNextFromCore =
@@ -87,51 +89,62 @@ export default function PromptForm({
 
   return (
     <>
-      <form action={formAction} onSubmit={handleSubmit} className="space-y-4">
-        <input type="hidden" name="title" value={draft.title} />
-        <input type="hidden" name="categoryId" value={draft.categoryId} />
-        <input type="hidden" name="useCase" value={draft.useCase} />
-        <input type="hidden" name="promptBody" value={draft.promptBody} />
-        <input type="hidden" name="exampleInput" value={draft.exampleInput} />
-        <input type="hidden" name="exampleOutput" value={draft.exampleOutput} />
-        <input type="hidden" name="safetyNotes" value={draft.safetyNotes} />
-        <input type="hidden" name="visibility" value={draft.visibility} />
-        <input type="hidden" name="status" value={draft.status} />
-
-        <PromptFormStepTabs currentStep={step} onStepChange={setStep} />
-
-        {step === "core" ? (
-          <PromptCoreFields
-            draft={draft}
-            limits={FIELD_LIMITS}
-            onChange={updateDraft}
+      <div className="relative">
+        {!isLoggedIn ? (
+          <button
+            type="button"
+            className="absolute inset-0 z-10 cursor-pointer rounded-2xl bg-transparent"
+            aria-label="로그인 안내 열기"
+            onClick={openLoginDialog}
           />
         ) : null}
 
-        {step === "settings" ? (
-          <div className="space-y-4">
-            <PromptPublishFields draft={draft} onChange={updateDraft} />
-            <PromptOptionalFields
+        <form action={formAction} onSubmit={handleSubmit} className="space-y-4">
+          <input type="hidden" name="title" value={draft.title} />
+          <input type="hidden" name="categoryId" value={draft.categoryId} />
+          <input type="hidden" name="useCase" value={draft.useCase} />
+          <input type="hidden" name="promptBody" value={draft.promptBody} />
+          <input type="hidden" name="exampleInput" value={draft.exampleInput} />
+          <input type="hidden" name="exampleOutput" value={draft.exampleOutput} />
+          <input type="hidden" name="safetyNotes" value={draft.safetyNotes} />
+          <input type="hidden" name="visibility" value={draft.visibility} />
+          <input type="hidden" name="status" value={draft.status} />
+
+          <PromptFormStepTabs currentStep={step} onStepChange={setStep} />
+
+          {step === "core" ? (
+            <PromptCoreFields
               draft={draft}
               limits={FIELD_LIMITS}
               onChange={updateDraft}
             />
-          </div>
-        ) : null}
+          ) : null}
 
-        {!state.ok ? <ErrorMessage message={state.message} /> : null}
+          {step === "settings" ? (
+            <div className="space-y-4">
+              <PromptPublishFields draft={draft} onChange={updateDraft} />
+              <PromptOptionalFields
+                draft={draft}
+                limits={FIELD_LIMITS}
+                onChange={updateDraft}
+              />
+            </div>
+          ) : null}
 
-        <PromptFormActions
-          currentStep={step}
-          canGoNextFromCore={canGoNextFromCore}
-          onStepChange={setStep}
-        />
-      </form>
+          {!state.ok ? <ErrorMessage message={state.message} /> : null}
+
+          <PromptFormActions
+            currentStep={step}
+            canGoNextFromCore={canGoNextFromCore}
+            onStepChange={setStep}
+          />
+        </form>
+      </div>
 
       <LoginRequiredDialog
         isOpen={isLoginDialogOpen}
         title="로그인이 필요한 기능입니다"
-        description="프롬프트를 저장하면 작성한 내용과 설정이 개인 계정에 연결되어 보관됩니다. 저장한 프롬프트를 다시 확인하려면 로그인이 필요합니다."
+        description="프롬프트를 작성하거나 저장하면 내용과 설정이 개인 계정에 연결됩니다. 저장한 프롬프트를 다시 확인하고 관리하려면 로그인이 필요합니다."
         onClose={() => setIsLoginDialogOpen(false)}
       />
     </>
