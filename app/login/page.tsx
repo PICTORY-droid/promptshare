@@ -2,7 +2,7 @@ import LoginForm from "./_components/LoginForm.client";
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-16">
+    <main className="bg-slate-50 px-6 pb-28 pt-8 sm:py-16">
       <section className="mx-auto flex max-w-md flex-col gap-6">
         <div className="space-y-3 text-center">
           <p className="text-sm font-semibold text-slate-500">PromptLab Auth</p>
