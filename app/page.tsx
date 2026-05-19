@@ -15,7 +15,7 @@ export default function HomePage() {
             AI 입력 전 보안 점검 워크스페이스
           </p>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            생성형 AI에 넣기 전, 민감정보와 업무 보안 위험을 먼저 확인합니다.
+            생성형 AI에 입력 전, 민감정보와 업무 보안 위험 확인
           </p>
         </div>
       </section>
@@ -28,7 +28,7 @@ export default function HomePage() {
                 오늘의 기본 작업
               </p>
               <p className="text-sm leading-6 text-slate-600">
-                SafeCheck로 입력 위험을 확인한 뒤, 필요한 기록만 남깁니다.
+                SafeCheck로 입력 위험 확인/, 필요 기록 저장
               </p>
             </div>
 
